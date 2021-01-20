@@ -23,7 +23,7 @@ dim.add = function(df, rows, addition) {
   return(df)
 }
 
-init.sim.overlap = function(a = c(1/2, -1/2), params, theta0) {
+init.sim2 = function(a = c(1/2, -1/2), params, theta0) {
   # Inputs:
   # a - an array of length two (bi-allelic model)
   # each element is a contribution to the genotype
@@ -98,7 +98,7 @@ init.sim.overlap = function(a = c(1/2, -1/2), params, theta0) {
 # 
 # set.seed(9929)
 # 
-# popn0 = init.sim.overlap(a = c(-1/2, 1/2), params = pars, theta0 = 2.75)
+# popn0 = init.sim2(a = c(-1/2, 1/2), params = pars, theta0 = 2.75)
 # popn0
 
 # Looks good.
@@ -113,7 +113,7 @@ init.sim.overlap = function(a = c(1/2, -1/2), params, theta0) {
 # popn0 = init.sim(params = pars)
 # popn0
 
-propagate.sim.overlap = function(a = c(1/2, -1/2), params, theta, popn) {
+propagate.sim2 = function(a = c(1/2, -1/2), params, theta, popn) {
   
   n.loci = params$n.loci
   # number of loci determining the genotype
@@ -235,49 +235,49 @@ propagate.sim.overlap = function(a = c(1/2, -1/2), params, theta, popn) {
 # ##### Testing:
 # # # # Try it out.
 # set.seed(85)
-# popn1 = propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75, popn = popn0)
-# popn2 = propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75, popn = popn1)
+# popn1 = propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75, popn = popn0)
+# popn2 = propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75, popn = popn1)
 # 
 # # Try it out with changing target!
 # set.seed(85)
-# popn1 = propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.85, popn = popn0)
-# popn2 = propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.95, popn = popn1)
+# popn1 = propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.85, popn = popn0)
+# popn2 = propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.95, popn = popn1)
 # 
 # # Each of the following tests hit the 'if' loop
 # # These tests should return an empty data frame.
 # 
 # # Try it out with an empty data frame.
-# propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75,
+# propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75,
 #                       popn = popn0 %>% sample_n(size = 0))
 # # Good.
 # 
 # # Try it out with only one individual. Should fail.
-# propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75,
+# propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75,
 #                       popn = popn0 %>% sample_n(size = 1))
 # # Good.
 # 
 # # Try it out with two males. Should fail.
-# propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75,
+# propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75,
 #                       popn = popn0[c(1,5),])
 # # Good.
 # 
 # # Try it out with two females. Should fail.
-# propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75,
+# propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75,
 #                       popn = popn0[c(3, 8),])
 # # Good.
 # 
 # # Try feeding in only individuals at age 1 (should still work)
-# propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75,
+# propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75,
 #                       popn = popn0 %>% filter(age < 2))
 # # Good.
 # 
 # # Try feeding in only individuals at age 2 (should also work)
-# propagate.sim.overlap(a = c(-1/2, 1/2), params = pars, theta = 2.75,
+# propagate.sim2(a = c(-1/2, 1/2), params = pars, theta = 2.75,
 #                       popn = popn0 %>% filter(age > 1))
 
 
 
-sim.overlap = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
+sim2 = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
   
   # Helpful global parameters.
   
@@ -324,7 +324,7 @@ sim.overlap = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
              theta = theta_t[1]) %>%
       select(i, g_i, z_i, w_i, r_i, fem, age, gen, theta, all_of(names.array))
   } else {                   
-    pop0 = init.sim.overlap(a, params, theta0 = theta_t[1]) 
+    pop0 = init.sim2(a, params, theta0 = theta_t[1]) 
   }
   
   all.pop = dim.add(df = all.pop, 
@@ -335,7 +335,7 @@ sim.overlap = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
   
   for (time.step in 2:end.time) {
     if(nrow(prev.gen)) {
-      pop = propagate.sim.overlap(
+      pop = propagate.sim2(
         a = a,
         params  = params,
         theta   = theta_t[time.step],
@@ -364,7 +364,7 @@ unroller = function(sim.list) {
 # 
 # set.seed(12121513)
 # 
-# sim.test = sim.overlap(
+# sim.test = sim2(
 #     a = c(-1/2, 1/2),
 #     params = data.frame(end.time = 15,
 #                         init.row = 1e4,
@@ -378,7 +378,7 @@ unroller = function(sim.list) {
 # 
 # sim.test %>% group_by(gen) %>% summarise(n = n(), wbar = mean(w_i), gbar = mean(g_i))
 # 
-# sim.test = sim.overlap(
+# sim.test = sim2(
 #   a = c(-1/2, 1/2),
 #   params = data.frame(end.time = 15,
 #                       init.row = 1e4,
