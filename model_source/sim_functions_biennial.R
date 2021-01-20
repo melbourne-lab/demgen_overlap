@@ -29,6 +29,7 @@ init.sim2 = function(a = c(1/2, -1/2), params, theta0) {
   # each element is a contribution to the genotype
   # in simplest case, this is -1/2, 1/2
   # params - a data frame of parameters
+  # theta0 - an initial theta (phenotypic optimum) value
   
   n.loci = params$n.loci
   # number of loci determining the genotype
@@ -288,6 +289,7 @@ sim2 = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
   # How many loci there are for the allele.
   n.loci = params$n.loci
   
+  # Control loop for handling theta_t
   if (length(theta_t) == end.time) { theta_t = theta_t
   } else if (length(theta_t) == 1) { theta_t = rep(theta_t, end.time)
   } else { stop('theta time sequence is wrong length')}
