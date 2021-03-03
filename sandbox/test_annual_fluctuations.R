@@ -25,7 +25,7 @@ pars = data.frame(
 theta.stat = 2
 # Has mean initial fitness is 0.628
 
-sigma.fluc = 2
+sigma.fluc = 0.5
 # Has mean fitness of 0.843
 
 # (could also us 1 and 1.7)
@@ -44,7 +44,7 @@ for (trial in 1:n.trials) {
   
   an.stat.list[[trial]] = sim1(params = pars, theta_t = theta.stat)
   
-  theta.fluc = rnorm(pars$end.time, 0, sd = sigma.fluc)
+  theta.fluc = rnorm(pars$end.time, theta.stat, sd = sigma.fluc)
   
   an.fluc.list[[trial]] = sim1(params = pars, theta_t = theta.fluc)
   
