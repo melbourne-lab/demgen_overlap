@@ -82,7 +82,7 @@ init.simp = function(a = c(1/2, -1/2), params, theta0) {
            fem = sample(c(TRUE, FALSE), size = n.pop0, replace = TRUE),
            z_i = rnorm(n.pop0, mean = g_i, sd = sig.e),
            w_i = w.max * exp(-(z_i - theta)^2 / (2 * wfitn^2)),
-           r_i = rpois(n = n.pop0, lambda = ifelse(fem, w_i * exp(-alpha * n.pop0) / mxage, 0)),
+           r_i = rpois(n = n.pop0, lambda = ifelse(fem, 2 * w_i * exp(-alpha * n.pop0) / mxage, 0)),
            age = sample(1:mxage, size = n.pop0, replace = TRUE),
            gen = 1,
            theta = theta) %>%
@@ -191,7 +191,7 @@ propagate.simp = function(a = c(1/2, -1/2), params, theta_t, popn) {
                fem = sample(c(TRUE, FALSE), size = nrow(.), replace = TRUE),
                z_i = rnorm(nrow(.), mean = g_i, sd = sig.e),
                w_i = w.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)),
-               r_i = rpois(n = nrow(.), lambda = ifelse(fem, w_i * exp(-alpha * nrow(.)) / mxage, 0)),
+               r_i = rpois(n = nrow(.), lambda = ifelse(fem, 2 * w_i * exp(-alpha * nrow(.)) / mxage, 0)),
                age = 1,
                gen = max(popn$gen) + 1,
                theta = theta_t) %>%
@@ -217,7 +217,7 @@ propagate.simp = function(a = c(1/2, -1/2), params, theta_t, popn) {
                    gen = gen + 1,
                    theta = theta_t) %>%
             mutate(w_i = w.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)),
-                   r_i = rpois(n = nrow(.), lambda = ifelse(fem, w_i * exp(-alpha * nrow(.)) / mxage, 0)))
+                   r_i = rpois(n = nrow(.), lambda = ifelse(fem, 2 * w_i * exp(-alpha * nrow(.)) / mxage, 0)))
         )
       
       return(next.gen)
@@ -321,7 +321,7 @@ simp = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
     pop0 = init.popn %>%
       mutate(z_i = rnorm(nrow(.), mean = g_i, sd = params$sig.e),
              w_i = params$w.max * exp(-(z_i - params$theta_t[1])^2 / (2*params$wfitn^2)),
-             r_i = rpois(n = nrow(.), lambda = ifelse(fem, w_i * exp(-params$alpha * nrow(.)) / mxage, 0)),
+             r_i = rpois(n = nrow(.), lambda = ifelse(fem, 2 * w_i * exp(-params$alpha * nrow(.)) / mxage, 0)),
              i = 1:nrow(.),
              gen = 1,
              theta = theta_t[1]) %>%
