@@ -287,6 +287,8 @@ simp = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
   end.time = params$end.time
   # How many rows the data frame should be initialized with.
   init.row = params$init.row
+  # Maximum age
+  mxage = params$max.age
   # How many loci there are for the allele.
   n.loci = params$n.loci
   
@@ -320,7 +322,7 @@ simp = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
     # determined by information from this environment (the global variables).
     pop0 = init.popn %>%
       mutate(z_i = rnorm(nrow(.), mean = g_i, sd = params$sig.e),
-             w_i = params$w.max * exp(-(z_i - params$theta_t[1])^2 / (2*params$wfitn^2)),
+             w_i = params$w.max * exp(-(z_i - theta_t[1])^2 / (2*params$wfitn^2)),
              r_i = rpois(n = nrow(.), lambda = ifelse(fem, 2 * w_i * exp(-params$alpha * nrow(.)) / mxage, 0)),
              i = 1:nrow(.),
              gen = 1,
