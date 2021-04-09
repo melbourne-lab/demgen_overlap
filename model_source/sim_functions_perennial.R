@@ -104,7 +104,7 @@ init.simp = function(a = c(1/2, -1/2), params, theta0) {
 # popn0 = init.simp(a = c(-1/2, 1/2), params = pars, theta0 = 2.75)
 # popn0
 
-propagate.simp = function(a = c(1/2, -1/2), params, theta, popn) {
+propagate.simp = function(a = c(1/2, -1/2), params, theta_t, popn) {
   
   n.loci = params$n.loci
   # number of loci determining the genotype
@@ -130,70 +130,78 @@ propagate.simp = function(a = c(1/2, -1/2), params, theta, popn) {
   #   - any males? (else, can't mate)
   #   - any offspring?
   #   - any individuals age 1 (to survive to next generation)
-  if (with(popn, any(fem) & any(!fem) & sum(r_i))) {
+  if (with(popn, any(fem) & any(!fem))) {
     
-    offspring = cbind(
-      # Maternal data frame:
-      # Take the female rows
-      # Remove unnecessary columns (don't need to be inherited)
-      # Rename columns to indicate alleles inhereted from mom
-      #   NOTE: r_i also included here because we will need it later
-      popn %>% 
-        filter(fem) %>% 
-        select(-c(i, g_i, w_i, z_i, fem, age, gen, theta)) %>%
-        set.names(paste(ifelse(grepl('^[ab]\\d', names(.)), 'mom', ''),
-                        names(.), 
-                        sep = '_')),
-      # Paternal data frame
-      # Sample these to get mating pairs, i.e.,
-      #   draw from the pool of males once for each female
-      # Select the paternal alleles
-      # Rename columns to indicate alleles inhereited from dad
-      # NOTE: this assumes that each mom mates with only one dad
-      popn %>% 
-        sample_n(size = sum(fem), 
-                 weight = as.numeric(!fem) / sum(as.numeric(!fem)),
-                 replace = TRUE) %>%
-        select(all_of(names.array)) %>%
-        set.names(paste('dad', names(.), sep = '_'))
-    ) %>%
-      # For each mating pair, duplicate by the number of offspring
-      #   as determined by r_i
-      uncount(weight = `_r_i`) %>%
-      # Add a new column for unique ID of each individual
-      #   (note - we'll have to remove this later for silly reasons)
-      mutate(i = max(popn$i) + 1:nrow(.)) %>%
-      # Use some cleverness to segregate alleles:
-      #   create a row for each allele
-      gather(key = alls, value = val, -i) %>%
-      #   par.locus gives the parent from whom the locus will descend
-      mutate(par.locus = gsub('\\_[ab]', '', alls)) %>%
-      #   for each locus on each chromosome, pick exactly one parental allele
-      group_by(i, par.locus) %>%
-      sample_n(size = 1) %>%
-      # Remove the unnecessary "parent" column
-      select(-alls) %>%
-      ungroup() %>%
-      mutate(par.locus = gsub('^mom', 'a', par.locus),
-             par.locus = gsub('^dad', 'b', par.locus)) %>%
-      # Turn this data frame back into "wide" format
-      spread(key = par.locus, value = val) %>%
-      ungroup() %>%
-      # Now, calculate breeding value (genotype?), etc.
-      #   for each offspring
-      #   (note: to do this, we need to first remove the 'i' 
-      #   column in order to calculate g_i)
-      select(-i) %>%
-      mutate(g_i = apply(., 1, sum) / sqrt(n.loci),
-             i = max(popn$i) + 1:nrow(.),
-             fem = sample(c(TRUE, FALSE), size = nrow(.), replace = TRUE),
-             z_i = rnorm(nrow(.), mean = g_i, sd = sig.e),
-             w_i = w.max * exp(-(z_i - theta)^2 / (2*wfitn^2)),
-             r_i = rpois(n = nrow(.), lambda = ifelse(fem, w_i * exp(-alpha * nrow(.)) / mxage, 0)),
-             age = 1,
-             gen = max(popn$gen) + 1,
-             theta = theta) %>%
-      select(i, g_i, z_i, w_i, r_i, fem, age, gen, theta, all_of(names.array)) 
+    if (sum(popn$r_i)) {
+      
+      offspring = cbind(
+        # Maternal data frame:
+        # Take the female rows
+        # Remove unnecessary columns (don't need to be inherited)
+        # Rename columns to indicate alleles inhereted from mom
+        #   NOTE: r_i also included here because we will need it later
+        popn %>% 
+          filter(fem) %>% 
+          select(-c(i, g_i, w_i, z_i, fem, age, gen, theta)) %>%
+          set.names(paste(ifelse(grepl('^[ab]\\d', names(.)), 'mom', ''),
+                          names(.), 
+                          sep = '_')),
+        # Paternal data frame
+        # Sample these to get mating pairs, i.e.,
+        #   draw from the pool of males once for each female
+        # Select the paternal alleles
+        # Rename columns to indicate alleles inhereited from dad
+        # NOTE: this assumes that each mom mates with only one dad
+        popn %>% 
+          sample_n(size = sum(fem), 
+                   weight = as.numeric(!fem) / sum(as.numeric(!fem)),
+                   replace = TRUE) %>%
+          select(all_of(names.array)) %>%
+          set.names(paste('dad', names(.), sep = '_'))
+      ) %>%
+        # For each mating pair, duplicate by the number of offspring
+        #   as determined by r_i
+        uncount(weight = `_r_i`) %>%
+        # Add a new column for unique ID of each individual
+        #   (note - we'll have to remove this later for silly reasons)
+        mutate(i = max(popn$i) + 1:nrow(.)) %>%
+        # Use some cleverness to segregate alleles:
+        #   create a row for each allele
+        gather(key = alls, value = val, -i) %>%
+        #   par.locus gives the parent from whom the locus will descend
+        mutate(par.locus = gsub('\\_[ab]', '', alls)) %>%
+        #   for each locus on each chromosome, pick exactly one parental allele
+        group_by(i, par.locus) %>%
+        sample_n(size = 1) %>%
+        # Remove the unnecessary "parent" column
+        select(-alls) %>%
+        ungroup() %>%
+        mutate(par.locus = gsub('^mom', 'a', par.locus),
+               par.locus = gsub('^dad', 'b', par.locus)) %>%
+        # Turn this data frame back into "wide" format
+        spread(key = par.locus, value = val) %>%
+        ungroup() %>%
+        # Now, calculate breeding value (genotype?), etc.
+        #   for each offspring
+        #   (note: to do this, we need to first remove the 'i' 
+        #   column in order to calculate g_i)
+        select(-i) %>%
+        mutate(g_i = apply(., 1, sum) / sqrt(n.loci),
+               i = max(popn$i) + 1:nrow(.),
+               fem = sample(c(TRUE, FALSE), size = nrow(.), replace = TRUE),
+               z_i = rnorm(nrow(.), mean = g_i, sd = sig.e),
+               w_i = w.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)),
+               r_i = rpois(n = nrow(.), lambda = ifelse(fem, w_i * exp(-alpha * nrow(.)) / mxage, 0)),
+               age = 1,
+               gen = max(popn$gen) + 1,
+               theta = theta_t) %>%
+        select(i, g_i, z_i, w_i, r_i, fem, age, gen, theta, all_of(names.array)) 
+      
+    } else {
+      
+      offspring = popn %>% sample_n(0)
+      
+    }
     
     if (any(popn$age < mxage)) {
       
@@ -207,8 +215,9 @@ propagate.simp = function(a = c(1/2, -1/2), params, theta, popn) {
             filter(age < mxage) %>%
             mutate(age = age + 1,
                    gen = gen + 1,
-                   theta = theta) %>%
-            mutate(r_i = rpois(n = nrow(.), lambda = ifelse(fem, w_i * exp(-alpha * nrow(.)), 0)))
+                   theta = theta_t) %>%
+            mutate(w_i = w.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)),
+                   r_i = rpois(n = nrow(.), lambda = ifelse(fem, w_i * exp(-alpha * nrow(.)) / mxage, 0)))
         )
       
       return(next.gen)
@@ -356,33 +365,34 @@ unroller = function(sim.list) {
 
 # # Full test code below:
 # 
-# set.seed(12121513)
+# set.seed(12121514)
 # 
 # sim.test = simp(
 #     a = c(-1/2, 1/2),
 #     params = data.frame(end.time = 15,
 #                         init.row = 1e4,
+#                         max.age = 5,
 #                         n.loci = 20,
 #                         n.pop0 = 40,
-#                         w.max = 1.2,
+#                         w.max = 2,
 #                         wfitn = sqrt(1 / 0.14),
 #                         sig.e = 0.5),
 #     theta_t = 2 + (0:14) * 0.05
 # )
 # 
-# sim.test %>% group_by(gen) %>% summarise(n = n(), wbar = mean(w_i), gbar = mean(g_i))
+# sim.test %>% group_by(gen) %>% summarise(n = n(), wbar = mean(w_i), gbar = mean(g_i), theta = theta[1])
 # 
 # sim.test = simp(
 #   a = c(-1/2, 1/2),
 #   params = data.frame(end.time = 15,
 #                       init.row = 1e4,
+#                       max.age = 5,
 #                       n.loci = 20,
 #                       n.pop0 = 40,
-#                       w.max = 1.2,
+#                       w.max = 2,
 #                       wfitn = sqrt(1 / 0.14),
 #                       sig.e = 0.5),
 #   theta_t = 2 + rnorm(15, 0, .5)
 # )
 # 
-# sim.test %>% group_by(gen) %>% summarise(n = n(), wbar = mean(w_i), gbar = mean(g_i))
-
+# sim.test %>% group_by(gen) %>% summarise(n = n(), wbar = mean(w_i), gbar = mean(g_i), theta = theta[1])
