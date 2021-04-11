@@ -335,12 +335,6 @@ sim1 = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
   
 }
 
-unroller = function(sim.list) {
-  sim.list %>%
-    do.call(what = rbind) %>%
-    mutate(trial = cumsum(c(1, as.numeric(diff(gen) < 0))))
-}
-
 # # Full test code below:
 # 
 # set.seed(12121513)
