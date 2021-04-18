@@ -32,9 +32,9 @@ pars = data.frame(
 n.trials = 1000
 
 # Define variance of environmental fluctuations
-sig.theta = 1
+sig.theta = 0.0
 # Define mean temporal trend in environment
-delta.tht = 0.0
+delta.tht = 0.1
 
 # Define source populations.
 pop0 = init.simp(params = pars %>% mutate(n.pop0 = pars$n.pop0 * n.trials),
