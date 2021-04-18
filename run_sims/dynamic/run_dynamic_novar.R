@@ -21,7 +21,7 @@ pars = data.frame(
   max.age = 5,
   n.pop0 = 100,
   n.loci = 25,
-  w.max = 1.7,
+  w.max = 2,
   wfitn = sqrt(1 / 0.14 / 2),
   sig.e = sqrt(0.5),
   pos.p = 0.5,
@@ -39,7 +39,7 @@ delta.tht = 0.0
 # Define source populations.
 pop0 = init.simp(params = pars %>% mutate(n.pop0 = pars$n.pop0 * n.trials),
                  theta0 = 0) %>%
-  mutate(trial = ((0:(nrow(.)-1)) %/% 50) + 1)
+  mutate(trial = ((0:(nrow(.)-1)) %/% pars$n.pop0) + 1)
 
 # Initialize objects for storing sim results
 list.age1 = vector('list', n.trials)
@@ -47,7 +47,7 @@ list.age3 = vector('list', n.trials)
 list.age5 = vector('list', n.trials)
 
 # Run simulations
-set.seed(24005)
+set.seed(440089)
 
 for (tr in 1:n.trials) {
   
