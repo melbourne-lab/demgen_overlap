@@ -298,11 +298,11 @@ sim1 = function(a = c(1/2, -1/2), params, theta_t, init.popn = NULL) {
     # determined by information from this environment (the global variables).
     pop0 = init.popn %>%
       mutate(z_i = rnorm(nrow(.), mean = g_i, sd = params$sig.e),
-             w_i = params$w.max * exp(-(z_i - params$theta)^2 / (2*params$wfitn^2)),
+             theta = theta_t[1],
+             w_i = params$w.max * exp(-(z_i - theta)^2 / (2*params$wfitn^2)),
              r_i = rpois(n = nrow(.), lambda = ifelse(fem, 2 * w_i * exp(-params$alpha * nrow(.)), 0)),
              i = 1:nrow(.),
-             gen = 1,
-             theta = theta_t[1]) %>%
+             gen = 1) %>%
       select(i, g_i, z_i, w_i, r_i, fem, gen, theta, all_of(names.array))
   } else {                   
     pop0 = init.sim1(a, params, theta0 = theta_t[1]) 
