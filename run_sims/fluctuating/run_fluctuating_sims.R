@@ -16,17 +16,17 @@ source('model_source/sim_aux_handling_functions.R')
 
 # Define parameters
 pars = data.frame(
-  end.time = 20,
+  end.time = 30,
   init.row = 1e5,
   max.age = 5,
-  n.pop0 = 50,
+  n.pop0 = 100,
   n.loci = 25,
-  w.max = 1.5,
+  w.max = 2,
   theta = 0,
   wfitn = sqrt(1 / 0.14 / 2),
   sig.e = sqrt(0.5),
   pos.p = 0.5,
-  alpha = 0
+  alpha = 0.005
 )
 
 # Define number of trials
@@ -38,7 +38,7 @@ sig.theta = 1.5
 # Define source populations.
 pop0 = init.simp(params = pars %>% mutate(n.pop0 = pars$n.pop0 * n.trials),
                  theta0 = pars$theta) %>%
-  mutate(trial = ((0:(nrow(.)-1)) %/% 50) + 1)
+  mutate(trial = ((0:(nrow(.)-1)) %/% pars$n.pop0) + 1)
 
 # Initialize objects for storing sim results
 list.age1 = vector('list', n.trials)
@@ -46,7 +46,7 @@ list.age3 = vector('list', n.trials)
 list.age5 = vector('list', n.trials)
 
 # Run simulations
-set.seed(1693)
+set.seed(16932)
 
 for (tr in 1:n.trials) {
   
