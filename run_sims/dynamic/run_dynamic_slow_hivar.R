@@ -34,7 +34,7 @@ n.trials = 1000
 # Define variance of environmental fluctuations
 sig.theta = 1
 # Define mean temporal trend in environment
-delta.tht = 0.1
+delta.tht = 0.05
 
 # Define source populations.
 pop0 = init.simp(params = pars %>% mutate(n.pop0 = pars$n.pop0 * n.trials),
@@ -103,5 +103,5 @@ rbind(
   unroll.sums(list.age3) %>% mutate(age = 3),
   unroll.sums(list.age5) %>% mutate(age = 5)
 ) %>%
-  write.csv('run_sims/dynamic/dynamic_hivar_out.csv',
+  write.csv('run_sims/dynamic/dynamic_slow_hivar_out.csv',
             row.names = FALSE)

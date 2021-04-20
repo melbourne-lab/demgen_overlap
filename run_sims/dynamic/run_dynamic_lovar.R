@@ -1,4 +1,4 @@
-### Script comparing sims in a highly varied, slowly moving environmnt
+### Script comparing sims in a slowly moving environmnt with no variation
 ### SN - 14 Apr 2021
 
 library(ggplot2)
@@ -32,7 +32,7 @@ pars = data.frame(
 n.trials = 1000
 
 # Define variance of environmental fluctuations
-sig.theta = 1
+sig.theta = sqrt(0.5)
 # Define mean temporal trend in environment
 delta.tht = 0.1
 
@@ -47,7 +47,7 @@ list.age3 = vector('list', n.trials)
 list.age5 = vector('list', n.trials)
 
 # Run simulations
-set.seed(3527213)
+set.seed(440089)
 
 for (tr in 1:n.trials) {
   
@@ -103,5 +103,5 @@ rbind(
   unroll.sums(list.age3) %>% mutate(age = 3),
   unroll.sums(list.age5) %>% mutate(age = 5)
 ) %>%
-  write.csv('run_sims/dynamic/dynamic_hivar_out.csv',
+  write.csv('run_sims/dynamic/dynamic_lovar_out.csv',
             row.names = FALSE)
