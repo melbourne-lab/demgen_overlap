@@ -1,5 +1,5 @@
-### Script comparing sims in a stationary environment
-### SN - 10 Apr 2021
+### Script comparing sims in a fluctuating environment (mean 3)
+### SN - 15 Apr 2021
 
 library(ggplot2)
 library(dplyr)
@@ -32,6 +32,9 @@ pars = data.frame(
 # Define number of trials
 n.trials = 1000
 
+# Define variance of environmental fluctuations
+sig.theta = sqrt(0.5)
+
 # Define source populations.
 pop0 = init.simp(params = pars %>% mutate(n.pop0 = pars$n.pop0 * n.trials),
                  theta0 = pars$theta) %>%
@@ -43,15 +46,21 @@ list.age3 = vector('list', n.trials)
 list.age5 = vector('list', n.trials)
 
 # Run simulations
-set.seed(40305)
+set.seed(20775)
 
 for (tr in 1:n.trials) {
   
+  # Note: for each trio of life histories,
+  # the initial population (sans age distribution)
+  # and environment are the same
+  
+  # Setup
   pop.init = pop0 %>% filter(trial %in% tr)
+  theta_t  = pars$theta + rnorm(pars$end.time, 0, sig.theta)
   
   ### Run annual trial
   sim.out = sim1(params = pars, 
-                 theta_t = pars$theta,
+                 theta_t = theta_t,
                  init.popn = pop.init %>% select(-trial, age))
   
   list.age1[[tr]] = cbind(
@@ -62,7 +71,7 @@ for (tr in 1:n.trials) {
   ### Run age three trials
   
   sim.out = simp(params = pars %>% mutate(max.age = 3),
-                 theta_t = pars$theta,
+                 theta_t = theta_t,
                  init.popn = pop.init %>% 
                    select(-trial) %>% 
                    mutate(age = sample(3, size = nrow(.), replace = TRUE)))
@@ -75,7 +84,7 @@ for (tr in 1:n.trials) {
   ### Run age five trials
   
   sim.out = simp(params = pars,
-                 theta_t = pars$theta,
+                 theta_t = theta_t,
                  init.popn = pop.init %>% select(-trial))
   
   list.age5[[tr]] = cbind(
@@ -93,6 +102,5 @@ rbind(
   unroll.sums(list.age3) %>% mutate(age = 3),
   unroll.sums(list.age5) %>% mutate(age = 5)
 ) %>%
-  write.csv('run_sims/stationary/stationary_out.csv',
+  write.csv('run_sims/fluctuating/fluctuating_less_harsh_out.csv',
             row.names = FALSE)
-
