@@ -14,100 +14,123 @@ add.zeros = function(n.summary, mxgen, group) {
   # note grouping variables involved
   
   n.summary %>%
-    select(gen, n, trial, age, varn) %>%
-    arrange(trial, desc(gen), age, varn) %>% 
-    distinct(trial, age, varn, .keep_all = TRUE) %>%
+    select(gen, n, trial, age, varn, speed) %>%
+    arrange(trial, desc(gen), age, varn, speed) %>% 
+    distinct(trial, age, varn, speed, .keep_all = TRUE) %>%
     filter(gen < mxgen) %>%
     uncount(weights = mxgen - gen) %>%
     mutate(n = 0) %>%
-    group_by(trial, age, varn) %>%
+    group_by(trial, age, varn, speed) %>%
     mutate(gen = gen + (1:(mxgen - gen[1]))) %>%
     ungroup() %>%
-    rbind(n.summary %>% select(gen, n, trial, age, varn)) %>%
-    arrange(trial, age, gen, varn)
+    rbind(n.summary %>% select(gen, n, trial, age, varn, speed)) %>%
+    arrange(trial, age, gen, varn, speed)
   
 }
 
 # Read in data
-dynamic.fast = rbind(
-  read.csv('run_sims/dynamic/dynamic_novar_out.csv') %>% mutate(varn = 0),
-  read.csv('run_sims/dynamic/dynamic_lovar_out.csv') %>% mutate(varn = 1),
-  read.csv('run_sims/dynamic/dynamic_hivar_out.csv') %>% mutate(varn = 2)
+dynamic = rbind(
+  read.csv('run_sims/dynamic/dynamic_novar_out.csv') %>% mutate(varn = 0, speed = 2),
+  read.csv('run_sims/dynamic/dynamic_lovar_out.csv') %>% mutate(varn = 1, speed = 2),
+  read.csv('run_sims/dynamic/dynamic_hivar_out.csv') %>% mutate(varn = 2, speed = 2),
+  read.csv('run_sims/dynamic/dynamic_slow_novar_out.csv') %>% mutate(varn = 0, speed = 1),
+  read.csv('run_sims/dynamic/dynamic_slow_lovar_out.csv') %>% mutate(varn = 1, speed = 1),
+  read.csv('run_sims/dynamic/dynamic_slow_hivar_out.csv') %>% mutate(varn = 2, speed = 1)
+  
 )
 
 # Check... is the degree of variation actually different?
-dynamic.fast %>%
-  distinct(trial, gen, varn, .keep_all = TRUE) %>%
-  group_by(trial, varn) %>%
+dynamic %>%
+  distinct(trial, gen, varn, speed, .keep_all = TRUE) %>%
+  group_by(trial, varn, speed) %>%
   summarise(env.var = var(theta)) %>%
-  group_by(varn) %>%
+  group_by(varn, speed) %>%
   summarise(sig2.bar = mean(env.var),
             sig2.var = var(env.var)) # k that's weird but w/e there appears to be a noticeable effect
 
 # Summarise population size
 
-dyn.f.n = add.zeros(dynamic.fast, 30)
+dyn.n = add.zeros(dynamic, 30)
 
-dyn.f.n.summ = dyn.f.n %>%
-  group_by(gen, age, varn) %>%
+dyn.n.summ = dyn.n %>%
+  group_by(gen, age, varn, speed) %>%
   summarise(nbar = mean(n),
             nvar = var(n),
             n = n()) %>%
-  mutate(varn = factor(varn))
+  ungroup() %>%
+  mutate(age.fac = factor(age, labels = c('Annual', 'Short-lived perennial', 'Long-lived perennial')),
+         env.var = factor(varn, labels = c('No variance', 'Low variance', 'High variance')),
+         speed.f = factor(speed, labels = c('Slow', 'Fast')))
 
-dyn.f.n.summ %>%
+dyn.n.summ %>%
   ggplot(aes(x = gen)) +
   geom_line(
     aes(
       y = nbar,
-      group = interaction(age, varn),
+      group = interaction(age, varn, speed),
       colour = factor(age),
       linetype = varn
     )
   )
 
-dyn.f.n.summ %>%
+dyn.n.summ %>%
   ggplot(aes(x = gen)) +
   geom_line(
     aes(
       y = nbar,
-      group = interaction(age, varn),
-      colour = factor(age),
-      linetype = varn
+      group = interaction(age, varn, speed),
+      colour = factor(age.fac)
     )
   ) +
   geom_ribbon(
     aes(
       ymin = nbar - 2 * sqrt(nvar / n),
       ymax = nbar + 2 * sqrt(nvar / n),
-      fill = factor(age),
-      group = interaction(age, varn)
+      fill = factor(age.fac),
+      group = interaction(age, varn, speed)
     ),
     alpha = 0.2
   ) +
-  facet_wrap(~ varn, ncol = 1)
+  scale_y_log10() +
+  facet_wrap(speed.f ~ env.var) +
+  guides(colour = guide_legend(''), fill = guide_legend('')) +
+  labs(x = 'Time step', y = 'Population size') +
+  theme(
+    panel.background = element_rect(fill = 'white'),
+    panel.grid = element_line(colour = 'gray88'),
+    legend.position = 'bottom'
+  )
    
+
 # Rate of adaptation
 
 # compare only the populations that we have all trials for
 
-dyn.f.evo = dynamic.fast %>%
-  mutate(d = gbar - theta) %>%
-  group_by(gen, age, varn) %>%
+dyn.f.evo = dynamic %>%
+  mutate(g = gbar) %>%
+  group_by(gen, age, varn, speed) %>%
   filter(n() %in% 1000) %>%
-  summarise(dbar = mean(d),
-            dvar = var(d),
-            n = n())
+  summarise(gbar = mean(g),
+            gvar = var(g),
+            n = n(),
+            theta = mean(theta))
 
 dyn.f.evo %>%
   ggplot(aes(x = gen)) +
   geom_line(
     aes(
-      y = dbar,
-      colour = factor(age),
-      linetype = factor(varn)
+      y = theta
     )
-  )
+  ) +
+  geom_line(
+    aes(
+      y = gbar,
+      group = age,
+      colour = factor(age)
+    )
+  ) +
+  facet_wrap(speed ~ varn) +
+  theme(legend.position = 'none')
 
 # Wow that's neat. The rate of adaptation doesn't seem to matter...
 
