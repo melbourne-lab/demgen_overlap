@@ -51,7 +51,9 @@ fluct.n.summ = fluct.n %>%
             n = n()) %>%
   ungroup() %>%
   mutate(age.fac = factor(age, labels = c('Annual', 'Short-lived perennial', 'Long-lived perennial')),
-         env.var = factor(harsh, labels = c('No variance', 'Low variance', 'High variance')))
+         env.var = factor(harsh, labels = c('No environmental variance', 
+                                            'Low environmental variance', 
+                                            'High environmental variance')))
   
 fluct.n.summ %>%
   ggplot(aes(x = gen)) +
@@ -82,7 +84,8 @@ fluct.n.summ %>%
       y = nbar,
       group = interaction(age, harsh),
       colour = age.fac
-    )
+    ),
+    size = 1.2
   ) +
   scale_y_log10() +
   facet_wrap(~ env.var) +
@@ -92,9 +95,10 @@ fluct.n.summ %>%
     panel.background = element_rect(fill = 'white'),
     panel.grid = element_line(colour = 'gray88'),
     legend.position = 'bottom'
-  )
+  ) +
+  ggsave('analyze_sims/lifehist_spring2021/t1_popsize.pdf',
+         width = 9, height = 7)
 
-# ope... looks like an old and outdated version of the novr script is hres
 
 ### Rate of adaptation
 
@@ -105,7 +109,12 @@ fluct.evo = fluct %>%
   summarise(gbar = mean(g),
             gvar = var(g),
             n = n(),
-            theta = mean(theta))
+            theta = mean(theta)) %>%
+  ungroup() %>%
+  mutate(age.fac = factor(age, labels = c('Annual', 'Short-lived perennial', 'Long-lived perennial')),
+         env.var = factor(harsh, labels = c('No environmental variance', 
+                                            'Low environmental variance', 
+                                            'High environmental variance')))
 
 fluct.evo %>%
   ggplot(aes(x = gen)) +
@@ -114,39 +123,74 @@ fluct.evo %>%
   #     y = theta
   #   )
   # ) +
+  geom_ribbon(
+    aes(
+      ymin = gbar - 2 * sqrt(gvar / n),
+      ymax = gbar + 2 * sqrt(gvar / n),
+      fill = age.fac,
+      group = age
+    ),
+    alpha = 0.2
+  ) +
   geom_line(
     aes(
       y = gbar,
       group = age,
-      colour = factor(age)
+      colour = age.fac
     )
   ) +
-  facet_wrap(~ harsh, ncol = 1)
+  facet_wrap(~ env.var, ncol = 1) +
+  labs(x = 'Time step', y = 'Mean genotype') +
+  guides(colour = guide_legend(title = ''), fill = guide_legend(title = '')) +
+  theme(
+    panel.background = element_rect(fill = 'white'),
+    panel.grid = element_line(colour = 'gray88'),
+    legend.position = 'bottom'
+  ) +
+  ggsave('analyze_sims/lifehist_spring2021/t1_evolvin.pdf',
+         width = 6, height = 8)
+
+# Extinction plot
 
 fluct.ext = fluct.n %>%
   group_by(harsh, age, trial) %>%
   summarise(extinct = any(!n)) %>%
   group_by(harsh, age) %>%
-  summarise(p = mean(extinct))
+  summarise(p = mean(extinct)) %>%
+  ungroup() %>%
+  mutate(age.fac = factor(age, labels = c('Annual', 'Short-lived', 'Long-lived')),
+         env.var = factor(harsh, labels = c('No environmental variance',
+                                            'Low environmental variance', 
+                                            'High environmental variance')))
 
 fluct.ext %>%
   ggplot() +
   geom_point(
     aes(
-      x = factor(age),
+      x = age.fac,
       y = p,
-      colour = factor(age)
+      colour = age.fac
     ),
-    size = 3
+    size = 5
   ) +
   geom_segment(
     aes(
-      x    = factor(age),
-      xend = factor(age),
+      x    = age.fac,
+      xend = age.fac,
       y    = p - 2 * sqrt(p * (1-p) / 1000),
       yend = p + 2 * sqrt(p * (1-p) / 1000),
-      colour = factor(age)
-    )
+      colour = age.fac
+    ),
+    size = 1.5
   ) +
-  facet_wrap(~ harsh) +
-  theme(legend.position = 'none')
+  labs(x = '', y = 'Probability of extinction') +
+  facet_wrap(~ env.var) +
+  theme(
+    legend.position = 'none',
+    panel.background = element_rect(fill = 'white'),
+    panel.grid = element_line(colour = 'gray88'),
+    axis.text.x = element_text(angle = 45)
+  ) +
+  ggsave('analyze_sims/lifehist_spring2021/t1_extinct.pdf',
+         width = 9, height = 7)
+  
