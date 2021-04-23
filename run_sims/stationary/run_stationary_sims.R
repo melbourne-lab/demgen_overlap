@@ -43,7 +43,7 @@ list.age3 = vector('list', n.trials)
 list.age5 = vector('list', n.trials)
 
 # Run simulations
-set.seed(40305)
+set.seed(403100)
 
 for (tr in 1:n.trials) {
   
