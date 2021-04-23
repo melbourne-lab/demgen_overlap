@@ -58,9 +58,13 @@ dyn.n.summ = dyn.n %>%
             nvar = var(n),
             n = n()) %>%
   ungroup() %>%
+  ungroup() %>%
   mutate(age.fac = factor(age, labels = c('Annual', 'Short-lived perennial', 'Long-lived perennial')),
-         env.var = factor(varn, labels = c('No variance', 'Low variance', 'High variance')),
-         speed.f = factor(speed, labels = c('Slow', 'Fast')))
+         env.var = factor(varn, labels = c('No environmental variance',
+                                           'Low environmental variance', 
+                                           'High environmental variance')),
+         speed.f = factor(speed, labels = c('Slow environmental change', 
+                                            'Fast environmental change')))
 
 dyn.n.summ %>%
   ggplot(aes(x = gen)) +
@@ -80,7 +84,8 @@ dyn.n.summ %>%
       y = nbar,
       group = interaction(age, varn, speed),
       colour = factor(age.fac)
-    )
+    ),
+    size = 1.2
   ) +
   geom_ribbon(
     aes(
@@ -98,8 +103,10 @@ dyn.n.summ %>%
   theme(
     panel.background = element_rect(fill = 'white'),
     panel.grid = element_line(colour = 'gray88'),
-    legend.position = 'bottom'
-  )
+    legend.position = 'none'
+  ) +
+  ggsave('analyze_sims/lifehist_spring2021/t2_popsize.pdf',
+         width = 9, height = 7)
    
 
 # Rate of adaptation
@@ -113,24 +120,40 @@ dyn.f.evo = dynamic %>%
   summarise(gbar = mean(g),
             gvar = var(g),
             n = n(),
-            theta = mean(theta))
+            theta = mean(theta)) %>%
+  ungroup() %>%
+  mutate(age.fac = factor(age, labels = c('Annual', 'Short-lived perennial', 'Long-lived perennial')),
+         env.var = factor(varn, labels = c('No environmental variance',
+                                           'Low environmental variance', 
+                                           'High environmental variance')),
+         speed.f = factor(speed, labels = c('Slow environmental change', 
+                                            'Fast environmental change')))
 
 dyn.f.evo %>%
   ggplot(aes(x = gen)) +
   geom_line(
     aes(
       y = theta
-    )
+    ),
+    size = 2
   ) +
   geom_line(
     aes(
       y = gbar,
       group = age,
-      colour = factor(age)
-    )
+      colour = age.fac
+    ),
+    size = 1.5
   ) +
-  facet_wrap(speed ~ varn) +
-  theme(legend.position = 'none')
+  labs(x = 'Generation', y = '') +
+  facet_wrap(speed.f ~ env.var) +
+  theme(
+    legend.position = 'none',
+    panel.background = element_rect(fill = 'white'),
+    panel.grid = element_line(colour = 'gray88')
+  ) +
+  ggsave('analyze_sims/lifehist_spring2021/t2_evolvin.pdf',
+         width = 9, height = 7)  
 
 # Wow that's neat. The rate of adaptation doesn't seem to matter...
 
@@ -175,22 +198,48 @@ dyn.f.fit %>%
 
 # Extinction probabilities, times to extinction.
 
-dyn.f.extinct = dynamic.fast %>%
-  group_by(trial, age, varn) %>%
-  filter(max(gen) < 30) %>%
-  summarise(ext.gen = max(gen))
+dyn.f.extinct = dyn.n %>% 
+  group_by(varn, speed, age, trial) %>%
+  summarise(extinct = any(!n)) %>%
+  group_by(varn, speed, age) %>%
+  summarise(p = mean(extinct)) %>%
+  ungroup() %>%
+  mutate(age.fac = factor(age, labels = c('Annual', 'Short-lived perennial', 'Long-lived perennial')),
+         env.var = factor(varn, labels = c('No environmental variance',
+                                           'Low environmental variance', 
+                                           'High environmental variance')),
+         speed.f = factor(speed, labels = c('Slow environmental change', 
+                                            'Fast environmental change')))
 
 dyn.f.extinct %>%
   ggplot() +
-  geom_histogram(
+  geom_point(
     aes(
-      x = ext.gen,
-      fill = factor(age)
+      x = age.fac,
+      y = p,
+      colour = factor(age)
     ),
-    position = 'identity',
-    alpha = 0.4,
-    binwidth = 1
+    size = 3
   ) +
-  facet_wrap(~ varn, ncol = 1)
-
-# Histogram too...
+  geom_segment(
+    aes(
+      x    = age.fac,
+      xend = age.fac,
+      y    = p - 2 * sqrt(p * (1-p) / 1000),
+      yend = p + 2 * sqrt(p * (1-p) / 1000),
+      colour = factor(age)
+    ),
+    size = 1.2
+  ) +
+  facet_wrap(speed.f ~ env.var) +
+  labs(x = '', y = 'Probability of extinction') +
+  facet_wrap(speed.f ~ env.var) +
+  theme(
+    legend.position = 'none',
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    panel.background = element_rect(fill = 'white'),
+    panel.grid = element_line(colour = 'gray88')
+  ) +
+  ggsave('analyze_sims/lifehist_spring2021/t2_extinct.pdf',
+         width = 9, height = 7)
