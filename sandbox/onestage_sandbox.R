@@ -1,3 +1,4 @@
+library(ggplot2)
 library(dplyr)
 library(tidyr)
 
@@ -89,53 +90,61 @@ sum(pop0$r_i)
 
 propagate.sim = function(popn, theta) {
   
-  cur.gen = max(popn$gen)
-  
-  if (sum(popn$r_i)) {
-  
-  offspring = cbind(
-    # Mom info
-    popn %>%
-      filter(fem) %>%
-      select(-c(i, gen, age, fem, z_i, s_i, theta_t)) %>%
-      rename(mom_b_i = b_i),
-    # Dad info
-    popn %>%
-      sample_n(size = sum(fem),
-               weight = as.numeric(!fem) / sum(as.numeric(!fem)),
-               replace = TRUE) %>%
-      select(b_i) %>%
-      rename(dad_b_i = b_i)
-  ) %>%
-    mutate(midp_b_i = (mom_b_i + dad_b_i) / 2) %>%
-    uncount(r_i) %>%
-    mutate(i = max(popn$i) + 1:nrow(.),
-           gen = cur.gen + 1,
-           age = 1,
-           fem = as.logical(sample(0:1, nrow(.), replace = TRUE)),
-           b_i = rnorm(nrow(.), midp_b_i, sig.a),
-           z_i = rnorm(nrow(.), b_i, sig.e),
-           s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)),
-           r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0)),
-           theta_t = theta) %>%
-    select(i, gen, age, fem, b_i, z_i, s_i, r_i, theta_t)
-  
-  } else {
-    offspring = popn %>% sample_n(size = 0)
-  }
-  
-  # Survival (of all? or just of those alive previously?)
-  
-  popn.out = rbind(
+  # Only iterate if there are both male and females available for mating
+  if (sum(popn$fem) & sum(!popn$fem)) {
+    
+    cur.gen = max(popn$gen)
+    
+    if (sum(popn$r_i) & sum(popn$fem) & sum(!popn$fem)) {
+      
+      offspring = cbind(
+        # Mom info
+        popn %>%
+          filter(fem) %>%
+          select(-c(i, gen, age, fem, z_i, s_i, theta_t)) %>%
+          rename(mom_b_i = b_i),
+        # Dad info
+        popn %>%
+          sample_n(size = sum(fem),
+                   weight = as.numeric(!fem) / sum(as.numeric(!fem)),
+                   replace = TRUE) %>%
+          select(b_i) %>%
+          rename(dad_b_i = b_i)
+      ) %>%
+        mutate(midp_b_i = (mom_b_i + dad_b_i) / 2) %>%
+        uncount(r_i) %>%
+        mutate(i = max(popn$i) + 1:nrow(.),
+               gen = cur.gen + 1,
+               age = 1,
+               fem = as.logical(sample(0:1, nrow(.), replace = TRUE)),
+               b_i = rnorm(nrow(.), midp_b_i, sig.a),
+               z_i = rnorm(nrow(.), b_i, sig.e),
+               s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)),
+               r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0)),
+               theta_t = theta) %>%
+        select(i, gen, age, fem, b_i, z_i, s_i, r_i, theta_t)
+      
+    } else {
+      offspring = popn %>% sample_n(size = 0)
+    }
+    
+    # Survival (of all? or just of those alive previously?)
+    
+    popn.out = rbind(
       popn %>% mutate(age = age + 1, gen = cur.gen + 1), 
       offspring
     ) %>%
-    # recalculate s_i based on current theta value
-    mutate(theta_t = theta) %>%
-    mutate(s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2))) %>%
-    mutate(surv = as.logical(rbinom(n = nrow(.), size = 1, prob = s_i))) %>%
-    filter(surv) %>%
-    select(-surv)
+      # get new number of offspring
+      mutate(r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0))) %>%
+      # recalculate s_i based on current theta value
+      mutate(theta_t = theta) %>%
+      mutate(s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2))) %>%
+      filter(as.logical(rbinom(n = nrow(.), size = 1, prob = s_i)))
+    
+
+  } else {
+    popn.out = popn %>% sample_n(size = 0)
+  }
   
   return(popn.out)
   
@@ -205,7 +214,7 @@ pars = data.frame(
   # standard dev. of environmental phenoytpic noise
   p.pos = 0.5,
   # Initial frequency of the positive allele
-  alpha = 0,
+  alpha = 0
   # optimal genotype
 )
 
@@ -315,6 +324,7 @@ sim = function(params, theta_t, init.rows, init.popn = NULL) {
   all.data = data.frame(
     i   = rep(NA, init.rows),
     gen = rep(NA, init.rows),
+    age = rep(NA, init.rows),
     fem = rep(NA, init.rows),
     b_i = rep(NA, init.rows),
     z_i = rep(NA, init.rows),
@@ -324,7 +334,7 @@ sim = function(params, theta_t, init.rows, init.popn = NULL) {
   )
   
   ### Check lengths of theta parameter
-  if (!length(theta_t) %in% c(timesteps + 1, 1)) {
+  if (!length(theta_t) %in% c(timesteps, 1)) {
     stop("Length of theta vector does not match other inputs")
   } else if (length(theta_t) == 1) {
     theta_t = rep(theta_t, timesteps)
@@ -344,12 +354,12 @@ sim = function(params, theta_t, init.rows, init.popn = NULL) {
   
   ### Iterate simulation
   
-  prev.gen = init.popn
+  prev.gen = init.popn %>% filter(!is.na(i))
   
   for (tt in 1:timesteps) {
     if (nrow(prev.gen)) {
       # Propagate sim (one time step)
-      popn = propagate.sim(popn = prev.gen, theta = theta[tt + 1])
+      popn = propagate.sim(popn = prev.gen, theta = theta_t[tt])
       # Add to data frame
       all.data = dim.add(df = all.data, rows = init.rows, addition = popn)
       # Update "previous generation"
@@ -364,4 +374,117 @@ sim = function(params, theta_t, init.rows, init.popn = NULL) {
   
 }
 
-### HAS NOT YET BEEN TESTED
+set.seed(29)
+
+lik = sim(params = pars, theta_t = 3, init.rows = 1000)
+
+li = vector('list', length = 20)
+
+for (k in 1:length(li)) {
+  li[[k]] = sim(params = pars, theta_t = 3, init.rows = 1e5) %>% mutate(trial = k)
+  print(k)
+}
+
+sik = li %>% do.call(what = rbind)
+
+nrow(sik)
+
+# Explore
+
+sik %>%
+  group_by(trial, gen) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(x = gen, y = n, group = trial)) +
+  geom_line() +
+  scale_y_log10()
+
+sik %>%
+  group_by(trial, gen) %>%
+  summarise(bbar = mean(b_i)) %>%
+  ggplot(aes(x = gen, y = bbar, group = trial)) +
+  geom_line()
+
+# wow!!! how does adaptation happen so quickly?
+
+sik %>%
+  filter(trial %in% 1) %>%
+  ggplot(aes(x = gen, y = age, group = i, colour = b_i)) +
+  #geom_line() +
+  geom_point(position = position_jitter(height = 0.1), size = 3) +
+  scale_color_viridis_c()
+
+# ah... rate of geometric should be a function of z...
+
+
+# try some longer sims that start out with larger populations...
+
+list(504111)
+
+li = vector('list', length = 5)
+
+for (k in 1:length(li)) {
+  li[[k]] = sim(params = pars %>%
+                  mutate(n.pop0 = 1000, timesteps = 100), 
+                theta_t = 3, 
+                init.rows = 1e6) %>% 
+    mutate(trial = k)
+  print(k)
+}
+
+# tortuously slow...
+
+sik = li %>% do.call(what = rbind)
+
+nrow(sik)
+
+sik %>%
+  group_by(trial, gen) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(x = gen, y = n, group = trial)) +
+  geom_line() +
+  scale_y_log10()
+# whoa... 
+
+sik %>%
+  group_by(trial, gen) %>%
+  summarise(bbar = mean(b_i)) %>%
+  ggplot(aes(x = gen, y = bbar, group = trial)) +
+  geom_line()
+
+sik %>%
+  group_by(trial, gen) %>%
+  summarise(bbar = mean(b_i - theta_t)) %>%
+  ggplot(aes(x = gen, y = bbar, group = trial)) +
+  geom_line()
+
+# Maybe try with a moving target...
+
+set.seed(292001)
+
+li = vector('list', length = 15)
+
+for (k in 1:length(li)) {
+  li[[k]] = sim(params = pars %>%
+                  mutate(n.pop0 = 500, timesteps = 100), 
+                theta_t = (0.075)*(0:99), 
+                init.rows = 1e6) %>% 
+    mutate(trial = k)
+  print(k)
+}
+
+### Probably should read Lynch & Berger and such papers
+
+set.seed(15)
+
+# lower survival time to see what happens eh
+
+li = vector('list', length = 15)
+
+for (k in 1:length(li)) {
+  li[[k]] = sim(params = pars %>%
+                  mutate(n.pop0 = 500, timesteps = 100, s.max = 0.8), 
+                theta_t = (0.075)*(0:99), 
+                init.rows = 1e6) %>% 
+    mutate(trial = k)
+  print(k)
+}
