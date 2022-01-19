@@ -38,9 +38,9 @@ init.sim = function(params, theta0) {
   # standard dev. of environmental phenoytpic noise
   sig.e = params$sig.e
   # initial genotype
-  gbar0 = ifelse(grepl('gbar0', names(params)), params$gbar0, 0)
+  gbar0 = ifelse(any(grepl('gbar0', names(params))), params$gbar0, 0)
   # density dependence strength
-  alpha = ifelse(grepl('alpha', names(params)), params$alpha, 0)
+  alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0)
   
   popn = data.frame(
     # Unique identifier
@@ -85,7 +85,7 @@ propagate.sim = function(popn, params, theta) {
   # standard dev. of environmental phenoytpic noise
   sig.e = params$sig.e
   # Strength of density dependence
-  alpha = ifelse(grepl('alpha', names(params)), params$alpha, 0) 
+  alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0) 
   
   # Only iterate if there are both male and females available for mating
   if (sum(popn$fem) & sum(!popn$fem)) {
@@ -158,7 +158,7 @@ propagate.sim = function(popn, params, theta) {
 
 ### Wrapper function for simulating a population
 
-sim = function(params, theta_t, init.rows, init.popn = NULL) {
+sim = function(params, theta.t, init.rows, init.popn = NULL) {
   
   ### Declaring variables
   # (must this be done here?)
@@ -178,9 +178,9 @@ sim = function(params, theta_t, init.rows, init.popn = NULL) {
   # standard dev. of environmental phenoytpic noise
   sig.e = params$sig.e
   # initial genotype
-  gbar0 = ifelse(grepl('gbar0', names(params)), params$gbar0, 0)
+  gbar0 = ifelse(any(grepl('gbar0', names(params))), params$gbar0, 0)
   # density dependence strength
-  alpha = ifelse(grepl('alpha', names(params)), params$alpha, 0)
+  alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0)
   
   ### Initialize data frame
   all.data = data.frame(
@@ -196,19 +196,19 @@ sim = function(params, theta_t, init.rows, init.popn = NULL) {
   )
   
   ### Check lengths of theta parameter
-  if (!length(theta_t) %in% c(timesteps, 1)) {
+  if (!length(theta.t) %in% c(timesteps, 1)) {
     stop("Length of theta vector does not match other inputs")
-  } else if (length(theta_t) == 1) {
-    theta_t = rep(theta_t, timesteps)
+  } else if (length(theta.t) == 1) {
+    theta.t = rep(theta.t, timesteps)
   }
   
   ### Initialize population
   if (!is.null(init.popn)) {
     init.popn = init.popn %>%
-      mutate(theta_t = theta_t[1]) %>%
+      mutate(theta_t = theta.t[1]) %>%
       mutate(s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)) * exp(-alpha * nrow(.)))
   } else {
-    init.popn = init.sim(params = params, theta0 = theta_t[1])
+    init.popn = init.sim(params = params, theta0 = theta.t[1])
   }
   
   ### Add initial population to data frame
@@ -220,7 +220,7 @@ sim = function(params, theta_t, init.rows, init.popn = NULL) {
   for (tt in 1:timesteps) {
     if (nrow(prev.gen)) {
       # Propagate sim (one time step)
-      popn = propagate.sim(popn = prev.gen, params = params, theta = theta_t[tt])
+      popn = propagate.sim(popn = prev.gen, params = params, theta = theta.t[tt])
       # Add to data frame
       all.data = dim.add(df = all.data, rows = init.rows, addition = popn)
       # Update "previous generation"
