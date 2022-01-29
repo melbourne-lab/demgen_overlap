@@ -70,6 +70,8 @@ init.sim = function(params, theta0) {
 }
 
 ### Function for porpagating one generation of simulated populations forward
+# NOTE: here, survival (and selection) are first
+# under this model, replacement rate of individual i should be s_i (1 + r_i)
 propagate.sim = function(popn, params, theta) {
   
   # Pull out parameters of interest
@@ -93,8 +95,22 @@ propagate.sim = function(popn, params, theta) {
     # Current time step (useful for adding time information to finished data frame)
     cur.gen = max(popn$gen)
     
+    # Survival (of all individuals)
+    
+    popn.surv = popn %>% 
+      # recalculate s_i based on current theta value
+      mutate(theta_t = theta) %>%
+      mutate(s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)) * exp(-alpha * nrow(.))) %>%
+      # simulate survival step using Bernoulli draw for each individual
+      filter(as.logical(rbinom(n = nrow(.), size = 1, prob = s_i))) %>%
+      # Handle parents - iterating forward age, current generation
+      mutate(age = age + 1, gen = cur.gen + 1)  %>%
+      # get new number of offspring per parent
+      mutate(r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0)))
+      
+    
     # Perform mating to get offspring (if there are fecund females)
-    if (sum(popn$r_i)) {
+    if (sum(popn.surv$r_i)) {
       
       offspring = cbind(
         # Mom info
@@ -127,24 +143,10 @@ propagate.sim = function(popn, params, theta) {
       
     } else {
       # If sum(r_i) is zero, there are zero offspring from mating this generation
-      offspring = popn %>% sample_n(size = 0)
+      offspring = popn.surv %>% sample_n(size = 0)
     }
     
-    # Survival (of all individuals - includes those just born)
-    
-    popn.out = popn %>% 
-      # Handle parents - iterating forward age, current generation
-      mutate(age = age + 1, gen = cur.gen + 1)  %>%
-      # get new number of offspring per parent
-      mutate(r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0))) %>%
-      # recalculate s_i based on current theta value
-      mutate(theta_t = theta) %>%
-      mutate(s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)) * exp(-alpha * nrow(.))) %>%
-      # combine with offspring
-      rbind(offspring) %>%
-      # simulate survival step using Bernoulli draw for each individual
-      filter(as.logical(rbinom(n = nrow(.), size = 1, prob = s_i)))
-    
+    popn.out = popn.surv %>% rbind(offspring)
     
   } else {
     # If the population passed in doesn't have individuals of both sex, return and empty DF
@@ -232,5 +234,94 @@ sim = function(params, theta.t, init.rows, init.popn = NULL) {
   all.data = all.data %>% filter(!is.na(i))
   
   return(all.data)
+  
+}
+
+### Function for porpagating one generation of simulated populations forward
+# NOTE: this one has reproduction (r) first, then survival
+# this may affect model behavior slightly, including analytical solutions
+propagate.sim.r.first = function(popn, params, theta) {
+  
+  # Pull out parameters of interest
+  
+  # Maximum survival
+  s.max = params$s.max
+  # mean fecundity per individual
+  r     = params$r
+  # selection strength (this seems like a good value to use)
+  wfitn = params$wfitn
+  # genetic variance (should be approx. static)
+  sig.a = params$sig.a
+  # standard dev. of environmental phenoytpic noise
+  sig.e = params$sig.e
+  # Strength of density dependence
+  alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0) 
+  
+  # Only iterate if there are both male and females available for mating
+  if (sum(popn$fem) & sum(!popn$fem)) {
+    
+    # Current time step (useful for adding time information to finished data frame)
+    cur.gen = max(popn$gen)
+    
+    # Perform mating to get offspring (if there are fecund females)
+    if (sum(popn$r_i)) {
+      
+      offspring = cbind(
+        # Mom info
+        popn %>%
+          filter(fem) %>%
+          select(-c(i, gen, age, fem, z_i, s_i, theta_t)) %>%
+          rename(mom_b_i = b_i),
+        # Dad info
+        popn %>%
+          sample_n(size = sum(fem),
+                   weight = as.numeric(!fem) / sum(as.numeric(!fem)),
+                   replace = TRUE) %>%
+          select(b_i) %>%
+          rename(dad_b_i = b_i)
+      ) %>%
+        # Get midparent value for each mating pair
+        mutate(midp_b_i = (mom_b_i + dad_b_i) / 2) %>%
+        # Duplicate midparent value according to r_i, number of offspring per pair
+        uncount(r_i) %>%
+        mutate(i = max(popn$i) + 1:nrow(.),           # assign ID number
+               gen = cur.gen + 1,                     # add generation number
+               age = 1,                               # all offspring are age 1
+               fem = as.logical(sample(0:1, nrow(.), replace = TRUE)), # assign sex
+               b_i = rnorm(nrow(.), midp_b_i, sig.a), # assign breeding value (mean is midparent, sd is sqrt(additive var))
+               z_i = rnorm(nrow(.), b_i, sig.e),      # assign phenotype (mean is breding value, sd is sd of env. variance)
+               s_i = s.max * exp(-(z_i - theta)^2 / (2*wfitn^2)) * exp(-alpha * nrow(.)), # determine survival probability
+               r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0)), # re-draw number of offspring per mother
+               theta_t = theta) %>%                   # phenotypic optimum in this time step
+        select(i, gen, age, fem, b_i, z_i, s_i, r_i, theta_t)
+      
+    } else {
+      # If sum(r_i) is zero, there are zero offspring from mating this generation
+      offspring = popn %>% sample_n(size = 0)
+    }
+    
+    # Survival (of all individuals - includes those just born)
+    
+    popn.out = popn %>% 
+      # Handle parents - iterating forward age, current generation
+      mutate(age = age + 1, gen = cur.gen + 1)  %>%
+      # get new number of offspring per parent
+      mutate(r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0))) %>%
+      # recalculate s_i based on current theta value
+      mutate(theta_t = theta) %>%
+      mutate(s_i = s.max * exp(-(z_i - theta_t)^2 / (2*wfitn^2)) * exp(-alpha * nrow(.))) %>%
+      # combine with offspring
+      rbind(offspring) %>%
+      # simulate survival step using Bernoulli draw for each individual
+      filter(as.logical(rbinom(n = nrow(.), size = 1, prob = s_i)))
+    
+    
+  } else {
+    # If the population passed in doesn't have individuals of both sex, return and empty DF
+    popn.out = popn %>% sample_n(size = 0)
+  }
+  
+  # Return
+  return(popn.out)
   
 }
