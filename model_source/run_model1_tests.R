@@ -31,15 +31,15 @@ test.sim %>%
 ## Look at variance in r_i to see if it's actually updating
 test.sim %>%
   group_by(i) %>%
-  filter(n() > 1) %>%
+  filter(n() > 1, fem) %>%
   summarise(var.r = var(r_i))
 # Okay - some variance. But I suppose a lot of reproductive failure.
 ## Check sex ratios
 test.sim %>%
   group_by(gen) %>%
   summarise(p.fem = mean(fem))
-# interestingly biased low... possibly due to high survival that makes uneven
-# sex ratios persistent?
+# interestingly biased high... possibly due to high survival that makes uneven
+# sex ratios persistent? this would be interesting.
 ## Check reproductive output in each generation
 test.sim %>%
   group_by(gen) %>%
@@ -63,7 +63,7 @@ pars = data.frame(
 )
 
 # Here: theta fluctuates randomly, no autocorrelation
-theta.t = 2 + rnorm(10, 0, 0.4)
+theta.t = 2 + rnorm(11, 0, 0.4)
 
 set.seed(970200)
 
@@ -85,6 +85,7 @@ test.sim %>%
   group_by(gen) %>%
   summarise(b.bar = mean(b_i),
             d.bar = mean(b_i - theta_t))
+# yes - adaptation still occurring although in fits and starts
 ## What is happening to survival?
 test.sim %>% filter(i %in% 51)
 # does appear to be changing - cool!
@@ -123,3 +124,4 @@ test.sim %>%
 test.sim %>%
   group_by(gen) %>%
   summarise(r = mean(s_i * r_i * 2))
+
