@@ -25,8 +25,8 @@ print(paste('Plain simulation run for', pars$timesteps, 'generations and',
 table(test.sim$gen)
 ## Look at one longer-lived individual
 test.sim %>%
-  filter(i %in% 37)
-# hmm... r_i is 0 for all of these (oh... is it male? lmao)
+  filter(i %in% 9)
+# yes - fecundity changes in each time step! nice.
 # s_i changes because of changing population size
 ## Look at variance in r_i to see if it's actually updating
 test.sim %>%
@@ -38,12 +38,14 @@ test.sim %>%
 test.sim %>%
   group_by(gen) %>%
   summarise(p.fem = mean(fem))
+# interestingly biased low... possibly due to high survival that makes uneven
+# sex ratios persistent?
 ## Check reproductive output in each generation
 test.sim %>%
   group_by(gen) %>%
   summarise(offspr = sum(r_i),
             mean.r = mean(r_i))
-# not sure why it's higher in the first generation - sampling error?
+# not sure why it's higher in the first generation - sampling error? sex ratio?
 ## Look at mean genotype over time
 test.sim %>%
   group_by(gen) %>%
@@ -77,7 +79,7 @@ table(test.sim$gen)
 ## Is theta updating over time?
 test.sim %>%
   distinct(gen, theta_t)
-# it is - good
+# it is good
 ## What's happening to the rate of adaptation
 test.sim %>%
   group_by(gen) %>%
@@ -86,7 +88,6 @@ test.sim %>%
 ## What is happening to survival?
 test.sim %>% filter(i %in% 51)
 # does appear to be changing - cool!
-# and this individual does reproduce a lot - very cool
 
 ##### Try very strong density dependence on survival
 
@@ -122,4 +123,3 @@ test.sim %>%
 test.sim %>%
   group_by(gen) %>%
   summarise(r = mean(s_i * r_i * 2))
-# interesting - this is still decline yes?
