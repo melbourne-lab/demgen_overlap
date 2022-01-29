@@ -50,7 +50,7 @@ merge(test.sim.lambda, test.sim.sr, all.y = FALSE) %>%
   geom_point() +
   geom_segment(aes(x = 0.5, xend = 1.3, y = 0.5, yend = 1.3),
                size = 0.1)
-# maybe a little biased low?
+# maybe a little biased high...
 
 # (n.b. is nonlinear averaging occurring here?)
 
@@ -86,15 +86,25 @@ test.growth.rates = mi %>%
 
 test.growth.rates %>%
   ggplot(aes(x = elam, y = lambda)) +
-  geom_point() +
+  geom_point(aes(colour = log(n)), size = 2) +
   geom_segment(aes(x = 0.5, xend = 1.5, y = 0.5, yend = 1.5),
-               size = 0.1)
+               size = 0.1) +
+  scale_color_viridis_c()
 
 test.growth.rates %>%
   ggplot(aes(x = elam, y = elam - lambda)) +
-  geom_point()
+  geom_point(aes(colour = log(n)))
 
-# Looks fine to me. Think this is a reliable unbiased analytical mean
+# Hmm... there is a weird-looking pattern in residuals...
+# Not sure if this is an artifact or not.
+# I think it's mostly due to sampling variation at small population size.
+
+test.growth.rates %>%
+  ggplot(aes(x = n, y = elam - lambda)) +
+  geom_point(aes(colour = log(n))) +
+  scale_x_log10()
+# Yes. Possibly biased low at small size but this is probably also just sampling
+# variance
 
 ### Next up would probably be to look at variance in growth rate?
 
