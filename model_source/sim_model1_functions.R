@@ -114,12 +114,12 @@ propagate.sim = function(popn, params, theta) {
       
       offspring = cbind(
         # Mom info
-        popn %>%
+        popn.surv %>%
           filter(fem) %>%
           select(-c(i, gen, age, fem, z_i, s_i, theta_t)) %>%
           rename(mom_b_i = b_i),
         # Dad info
-        popn %>%
+        popn.surv %>%
           sample_n(size = sum(fem),
                    weight = as.numeric(!fem) / sum(as.numeric(!fem)),
                    replace = TRUE) %>%
@@ -198,10 +198,10 @@ sim = function(params, theta.t, init.rows, init.popn = NULL) {
   )
   
   ### Check lengths of theta parameter
-  if (!length(theta.t) %in% c(timesteps, 1)) {
+  if (!length(theta.t) %in% c(timesteps+1, 1)) {
     stop("Length of theta vector does not match other inputs")
   } else if (length(theta.t) == 1) {
-    theta.t = rep(theta.t, timesteps)
+    theta.t = rep(theta.t, timesteps+1)
   }
   
   ### Initialize population
@@ -222,7 +222,7 @@ sim = function(params, theta.t, init.rows, init.popn = NULL) {
   for (tt in 1:timesteps) {
     if (nrow(prev.gen)) {
       # Propagate sim (one time step)
-      popn = propagate.sim(popn = prev.gen, params = params, theta = theta.t[tt])
+      popn = propagate.sim(popn = prev.gen, params = params, theta = theta.t[tt+1])
       # Add to data frame
       all.data = dim.add(df = all.data, rows = init.rows, addition = popn)
       # Update "previous generation"
