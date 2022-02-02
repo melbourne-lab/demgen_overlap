@@ -108,3 +108,91 @@ test.growth.rates %>%
 
 ### Next up would probably be to look at variance in growth rate?
 
+# Run some simulations with _zero_ genotypic variance
+
+li = vector('list', 20)
+
+set.seed(53528535)
+
+pars = pars %>% mutate(sig.a = 0, sig.e = 0, alpha = 0)
+
+for (k in 1:length(li)) li[[k]] = sim(pars, 0, 2 * 1e4) %>% mutate(trial = k)
+
+mi = do.call(rbind, li)
+
+test.growth.rates = mi %>%
+  group_by(trial, gen) %>%
+  summarise(n = n(),
+            f = sum(fem),
+            elam   = mean(s_i * (1 + r_i))) %>%
+  mutate(lambda = exp(c(diff(log(n)), NA))) %>%
+  filter(!is.na(lambda))
+
+test.growth.rates %>% ggplot(aes(x = gen, y = n, group = trial)) + geom_line() + scale_y_log10()
+
+# hmm... that's not right... is it?
+
+li[[1]]
+# good
+
+head(test.growth.rates)
+
+test.growth.rates %>%
+  ggplot(aes(x = elam, y = lambda)) +
+  geom_point(aes(colour = log(n)), size = 2) +
+  geom_segment(aes(x = 1.0, xend = 1.5, y = 1.0, yend = 1.5),
+               size = 0.1) +
+  scale_color_viridis_c()
+
+### Look at variance in growth rates
+
+set.seed(116127)
+
+init.known.f = init.sim(pars, theta0 = 0)
+
+n    = nrow(init.known.f)
+sbar = mean(init.known.f$s_i)
+rbar = mean(init.known.f$r_i)
+nf   = sum(init.known.f$fem)
+
+# # one test to look at
+# n.tp1.known.f = propagate.sim(init.known.f, params = pars, theta = 0)
+
+# n.known.f = vector(mode = 'double', length = 900)
+trials.known.f = vector(mode = 'list', length = 900)
+
+for (k in 1:900) trials.known.f[[k]] = propagate.sim(init.known.f, params = pars, theta = 0)
+
+n.known.f = sapply(trials.known.f, nrow)
+
+mean(n.known.f)
+# compare with
+n * sbar + nf * sbar * 2 * rbar
+# fine once accounting for the 2
+
+var(n.known.f)
+n * sbar * (1 - sbar) + nf * (2 * rbar) * sbar * (1 - (2 * rbar) * (1 - sbar))
+# 2 in the first term would help maybe...
+
+# What is variance in number of offspring?
+kids.known.f = sapply(trials.known.f, function(x) nrow(x %>% filter(gen > 0, age < 2)))
+
+var(kids.known.f)
+nf * (2 * rbar) * sbar * (1 - (2 * rbar) * (1 - sbar))
+# this is actually pretty good
+
+# So the issue may be with the survival?
+ents.known.f = sapply(trials.known.f, function(x) nrow(x %>% filter(gen > 0, age > 1)))
+ents.known.f
+var(ents.known.f)
+# no...
+
+# erm, is there covariation? more surviving parents means more kids...
+cov(kids.known.f, ents.known.f)
+# uh oh
+plot(kids.known.f, ents.known.f)
+
+var(kids.known.f) + var(ents.known.f) + 2 * cov(kids.known.f, ents.known.f)
+# shoot
+# okay kiss our nice analytical solutions goodbye
+
