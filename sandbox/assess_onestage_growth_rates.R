@@ -196,3 +196,73 @@ var(kids.known.f) + var(ents.known.f) + 2 * cov(kids.known.f, ents.known.f)
 # shoot
 # okay kiss our nice analytical solutions goodbye
 
+# covariance estimate:
+2 * nf * rbar * sbar * (1 - sbar)
+# simulated covariance
+cov(kids.known.f, ents.known.f)
+# not that far off?
+
+# analytical estimate incl. covariance
+n * sbar * (1 - sbar) +
+  nf * (2 * rbar) * sbar * (1 - (2 * rbar) * (1 - sbar)) +
+  2 * nf * (2 * rbar) * sbar * (1 - sbar)
+# that's actually pretty good.
+
+### Try with varying $N_f$ just to see if conditioning on N_f works
+
+n.trials = 4900
+
+liszt = vector('list', n.trials)
+
+pars = pars %>% mutate(timesteps = 1)
+
+set.seed(20093)
+
+for (k in 1:n.trials) liszt[[k]] = sim(params = pars, theta = 0, init.rows = 600) %>% mutate(trial = k)
+
+all.trials = do.call(rbind, liszt)
+
+head(all.trials)
+tail(all.trials)
+
+all.sum = all.trials %>%
+  group_by(trial) %>%
+  summarise(f0 = sum(fem[gen < 1]),
+            n0 = 100,
+            n1 = sum(gen > 0)) %>%
+  ungroup()
+
+table(all.sum$f0)
+
+# let's try variances...
+
+r = 2 * pars$r
+s = pars$s.max
+
+var.f = all.sum %>%
+  group_by(f0) %>%
+  summarise(expvar = n0*s*(1-s) + f0*s*r*(1+r*(1-s)) + 2 * f0*s*r*(1-s),
+            obsvar = var(n1),
+            n = n()) %>%
+  distinct(f0, .keep_all = TRUE)
+
+# am I a fucking idiot? why is it duping rows...
+# anyway
+
+var.f %>%
+  ggplot(aes(x = f0)) +
+  geom_line(aes(y = expvar), colour = 'blue') +
+  geom_point(aes(y = obsvar, alpha = log(n)), colour = 'black')
+# erm... kinda looks right...
+
+# hmm... kinda looks right?
+
+var.f %>%
+  ggplot(aes(x = f0)) +
+  geom_line(aes(y = 0), colour = 'blue') +
+  geom_point(aes(y = obsvar - expvar, alpha = log(n)), colour = 'black')
+
+# looks good to me!
+
+# very cool... of course there will be variation around rbar, etc.
+
