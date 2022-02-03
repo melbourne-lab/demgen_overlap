@@ -241,6 +241,7 @@ s = pars$s.max
 
 var.f = all.sum %>%
   group_by(f0) %>%
+  filter(n() > 1) %>%
   summarise(expvar = n0*s*(1-s) + f0*s*r*(1+r*(1-s)) + 2 * f0*s*r*(1-s),
             obsvar = var(n1),
             n = n()) %>%
@@ -252,7 +253,7 @@ var.f = all.sum %>%
 var.f %>%
   ggplot(aes(x = f0)) +
   geom_line(aes(y = expvar), colour = 'blue') +
-  geom_point(aes(y = obsvar, alpha = log(n)), colour = 'black')
+  geom_point(aes(y = obsvar, alpha = n), colour = 'black')
 # erm... kinda looks right...
 
 # hmm... kinda looks right?
@@ -260,9 +261,142 @@ var.f %>%
 var.f %>%
   ggplot(aes(x = f0)) +
   geom_line(aes(y = 0), colour = 'blue') +
-  geom_point(aes(y = obsvar - expvar, alpha = log(n)), colour = 'black')
+  geom_point(aes(y = obsvar - expvar, alpha = n), colour = 'black')
 
 # looks good to me!
 
 # very cool... of course there will be variation around rbar, etc.
+
+# What is the *expected* variance? given N_f? isn't it just the above weighted by probability?
+
+# here is total variance (compare to what is in the plot)
+all.sum %>% summarise(vn1 = var(n1))
+
+# the other term here - variance of uncertain means - is analytically very tough
+# but can be done numerically
+
+term.sum1 = sum((100 * s + (0:100) * r * s)^2 * dbinom(0:100, 100, 0.5) * (1 - dbinom(0:100, 100, 0.5)))
+# very big number... this seems wrong...
+
+term.sum2 = 0
+for (nf in 1:100) {
+  for (mf in 0:(nf-1)) {
+    term.sum2 = term.sum2 + 
+      (100*s + nf*r*s) * dbinom(nf, 100, 0.5) * 
+      (100*s + mf*r*s) * dbinom(mf, 100, 0.5)
+  }
+}
+
+term.sum1 - 2 * term.sum2
+# lmao what the fuck
+
+100*s*(1-s) + 50*s*r*(1+r*(1-s)) + 2 * 50*s*r*(1-s) + term.sum1 - 2*term.sum2
+# this matches the observed growth rate very well...
+
+# what the absolute fuck lmao how is this so nice and neat
+
+### Quadruple the population size
+
+liszt = vector('list', n.trials)
+pars = pars %>% mutate(n.pop0 = 400)
+
+set.seed(394)
+
+for (k in 1:n.trials) liszt[[k]] = sim(params = pars, theta = 0, init.rows = 2000) %>% mutate(trial = k)
+
+all.trials = do.call(rbind, liszt)
+
+tail(all.trials)
+
+all.sum = all.trials %>%
+  group_by(trial) %>%
+  summarise(f0 = sum(fem[gen < 1]),
+            n0 = sum(!gen),
+            n1 = sum(gen > 0)) %>%
+  ungroup()
+
+var.f = all.sum %>%
+  group_by(f0) %>%
+  filter(n() > 1) %>%
+  summarise(expvar = n0*s*(1-s) + f0*s*r*(1+r*(1-s)) + 2 * f0*s*r*(1-s),
+            obsvar = var(n1),
+            n = n()) %>%
+  distinct(f0, .keep_all = TRUE)
+
+# am I a fucking idiot? why is it duping rows...
+# anyway
+
+var.f %>%
+  filter(n > 2) %>%
+  ggplot(aes(x = f0)) +
+  geom_line(aes(y = 0), colour = 'blue') +
+  geom_point(aes(y = expvar - obsvar, alpha = n), colour = 'black')
+# looks plausible...
+
+n0 = 400
+
+term.sum1 = sum((n0 * s + (0:n0) * r * s)^2 * dbinom(0:n0, n0, 0.5) * (1 - dbinom(0:n0, n0, 0.5)))
+
+term.sum2 = 0
+for (nf in 1:n0) {
+  for (mf in 0:(nf-1)) {
+    term.sum2 = term.sum2 + 
+      (n0*s + nf*r*s) * dbinom(nf, n0, 0.5) * 
+      (n0*s + mf*r*s) * dbinom(mf, n0, 0.5)
+  }
+}
+
+term.sum1 - 2 * term.sum2
+# lmao what the fuck
+
+n0*s*(1-s) + (n0/2)*s*r*(1+r*(1-s)) + 2 * (n0/2)*s*r*(1-s) + term.sum1 - 2*term.sum2
+
+var(all.sum$n1)
+# about right too
+
+### Look at variation in expected number of outcome as a function of s
+### (and lambda, r, N0 fixed)
+
+# wrapper function
+var.unkn.mean = function(s, r, n0) {
+  # not vectorized (how to vectorize?)s
+  running.sum = 0
+  for (nf in 1:n0) {
+    for (mf in 0:(nf-1)) {
+      running.sum = running.sum + 
+        (n0*s + nf*r*s) * dbinom(nf, n0, 0.5) * 
+        (n0*s + mf*r*s) * dbinom(mf, n0, 0.5)
+    }
+  }
+  return(running.sum)
+}
+
+s = (40:90)/100
+
+n0 = 100
+lm = 1.2
+r  = 2 * ((lm / s) - 1)
+
+process.vars =  n0*s*(1-s) + (n0/2)*s*r*(1+r*(1-s)) + 2 * (n0/2)*s*r*(1-s)
+
+unkn.mean.vs = vector(mode = 'numeric', length(s))
+
+for (sind in 1:length(s)) {
+  
+  si = s[sind]
+  ri = r[sind]
+  
+  v1 = sum((n0 * si + (0:n0) * ri * si)^2 * dbinom(0:n0, n0, 0.5) * (1 - dbinom(0:n0, n0, 0.5)))
+  v2 = var.unkn.mean(si, ri, n0)
+  
+  unkn.mean.vs[sind] = v1 - 2 * v2
+  
+}
+
+plot(process.vars + unkn.mean.vs, type = 'l')
+
+data.frame(s = s, prcv = process.vars, unmv = unkn.mean.vs) %>%
+  ggplot(aes(x = s)) +
+  geom_line(aes(y = prcv), colour = 'red') +
+  geom_line(aes(y = unmv), colour = 'blue')
 
