@@ -27,3 +27,12 @@ Annoyingly, the rate of genotypic change increases for all parameter groups (wit
 I have some thoughts about this at the end of the script but I don't have a definitive answer. Weighted sums of variance of (surviving) parents and offspring may help? 
 
 This confirms the genotypic variance is important... population size grows/shrinks with phenotypic variance and stabilizes after ~20 generations. Fast populations have a lower equilibrium size (due to larger pheno variance) and faster populaitons have a greater one.
+
+(update, February 16 2022: I think I may have been modelling breeding value-assignment incorrectly
+I will re-run some of these scripts soon)
+
+### `evolving_geno_pheno_vars.R` (February 16 2022)
+
+Script for visualizing and analyzing changes in phenotypic and genotypic variances over time in a couple of different contexts.
+
+Originally run with an old, possibly wrong way of assigning breeding value variances.
