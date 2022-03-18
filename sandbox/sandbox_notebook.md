@@ -36,3 +36,35 @@ I will re-run some of these scripts soon)
 Script for visualizing and analyzing changes in phenotypic and genotypic variances over time in a couple of different contexts.
 
 Originally run with an old, possibly wrong way of assigning breeding value variances.
+
+### `assess_pheno_geno_gap.R` (March 16 2022)
+
+At some point in the last several weeks I noticed that with increasing survival, in adults mean genotypes diverged from mean phenotypes.
+
+Here I explore that a little bit. I ran simulations across longevity and phenotypic noise combinations, tracking the gap between phenotypes and genotypes (breeding values).
+
+There is no gap with no phenotypic noise (perfect heritability), which makes sense.
+Increasing both the phenotypic noise and/or the longevity increases this gap.
+It does not appear to alter population growth rates though (although it is hard to disentangle this from the still-unresolved issue with phenotypic variance).
+
+A hypothesis for what is happening here is that selection is acting on *phenotypes* and not genotypes.
+And, with age, individuals may be selected for with middling/maladapted genotypes, but very good phenotypes.
+I ran a trial to visualize this, looking at ``residual'' phenotypic variance to see if it is biased with age.
+And yes, it looks like it is! (although the type of environmental change may influence this).
+Older individuals remaining in the population tend to have a mean phenotype closer to the phenotypic optimum than their breeding value is.
+(Aaron W. noted a simple binomial test for the sign of this ``residual'' variation could also demonstrate the point).
+
+This seems related to but not necessarily the same as the idea of inertia that motivated this project.
+The maladapted individuals do contribute lagging breeding values.
+But is there an *extra* lag behind the phenotype? Or is the phenotypic variance masking some of this effect?
+Brett noted that this may be similar to an extinction debt... e.g., a selection/phenotypic debt.
+
+I did run multiple trials to look at the shape of a ``luck'' curve as a function of age,
+i.e., the mean ``residual'' phenotypic variance as a function of age.
+It does exist; there is still a strong age effect in the faster LH groups though.
+The shape of this luck curve may not actually vary by longevity class
+(it depends on the way you calculate means... needs more thought).
+
+I would like to test to see how this luck affects the rate of adaptation... but I'm not sure how to do this.
+Return to the problem later.
+
