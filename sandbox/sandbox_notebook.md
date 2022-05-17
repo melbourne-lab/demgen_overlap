@@ -31,13 +31,13 @@ This confirms the genotypic variance is important... population size grows/shrin
 (update, February 16 2022: I think I may have been modelling breeding value-assignment incorrectly
 I will re-run some of these scripts soon)
 
-### `evolving_geno_pheno_vars.R` (February 16 2022)
+##### `evolving_geno_pheno_vars.R` (February 16 2022)
 
 Script for visualizing and analyzing changes in phenotypic and genotypic variances over time in a couple of different contexts.
 
 Originally run with an old, possibly wrong way of assigning breeding value variances.
 
-### `assess_pheno_geno_gap.R` (March 16 2022)
+##### `assess_pheno_geno_gap.R` (March 16 2022)
 
 At some point in the last several weeks I noticed that with increasing survival, in adults mean genotypes diverged from mean phenotypes.
 
@@ -68,3 +68,30 @@ The shape of this luck curve may not actually vary by longevity class
 I would like to test to see how this luck affects the rate of adaptation... but I'm not sure how to do this.
 Return to the problem later.
 
+##### `assess_var_under_selection.R` (May 9 2022)
+
+A quick and dirty script for looking at what happens under iterative selection on normally distributed phenotypes.
+(Assuming that the phenotypic distribution is centered approximately at zero over time)
+
+The idea here is that (at pre-environmental change steady state), a cohort of individuals will be subject to iterative rounds of selection that (should) reduce the phenotypic variance. 
+Here I am looking around for an easy way to characterize this variance after an arbitrary number of rounds of selection. 
+If there is a way to do this, then perhaps there is a way to get the variance among adults analytically.
+
+Thanks to some luck in selecting fixed values (multiples of 5!) it turns out there is a way to get this.
+There's a recursion relationship that I was able to describe using some pen and paper (described on overleaf).
+
+### `no_selection_variance_gaps.R` (May 17 2022)
+
+Talking with Dan D. (5/13) made me wonder to what degree the changing phenotypic variance is due to selection (instead of some error in code).
+Does the assumption of breeding value variance and additive genetic variance being equal rely on no selection?
+Here, I run some simulations to see if parent/adult phenotypic/breeding value variance (after selection) and offspring variance are the same.
+
+It looks like they are! At least no consistent gap in breeding values.
+What does this mean? Well...
+Mating and segregation of gametes is occurring indpendently of selection (selection acts on survival).
+So, we could do segregational variance just using the parental breeding value variance in that timestep.
+(Note - some variance should be restored using mutations)
+
+A potential problem is what to do about small popuplation effects... I will think about this.
+
+This also doesn't really address the issue of what to do for breeding value initialization, but Dan did provide some ideas here.
