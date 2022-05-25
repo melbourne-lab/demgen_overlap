@@ -80,7 +80,7 @@ If there is a way to do this, then perhaps there is a way to get the variance am
 Thanks to some luck in selecting fixed values (multiples of 5!) it turns out there is a way to get this.
 There's a recursion relationship that I was able to describe using some pen and paper (described on overleaf).
 
-### `no_selection_variance_gaps.R` (May 17 2022)
+##### `no_selection_variance_gaps.R` (May 17 2022)
 
 Talking with Dan D. (5/13) made me wonder to what degree the changing phenotypic variance is due to selection (instead of some error in code).
 Does the assumption of breeding value variance and additive genetic variance being equal rely on no selection?
@@ -95,3 +95,22 @@ So, we could do segregational variance just using the parental breeding value va
 A potential problem is what to do about small popuplation effects... I will think about this.
 
 This also doesn't really address the issue of what to do for breeding value initialization, but Dan did provide some ideas here.
+
+##### `test_equilibrium_variance.R` (May 24 2022)
+
+I (thought that I) figured out an analytical expression for the equilibrium variance of an age-structured population. Here, I tested if it was correct (and looked at a few other things).
+I did this by looking at simulations with initially large populations (2000 individuals) with a mean growth rate of approximately 1 for ~25 generations.
+
+It turns out my expressions were not correct (even after correcting for some silly things).
+
+It looks like the age distribution is geometric, with rate approximately `s.max` (which is interesting, because with selection the mean survival is not `s.max` but instead something below it - I suppose in a large population this is not an issue.) There was some correction needed for the fact that ages begin at one instead of zero, though - this needs to be included in subsequent steps.
+
+Likewise, it does look like the expression for variance after successive rounds of selection holds, although for the very old cohorts there is a ton of noise as would be expected from the small sample sizes.
+
+So what is different? I think it's the covariances among all of the groups. This I would need to play around with by hand.
+
+An intersting pattern I saw surprisingly often was a sort of periodicity to the phenotypes going from cohort to cohort. That is, looking in one generation at the variance from cohort to cohort, there would be an up-down-up-down pattern around the mean. What is this?
+
+Oh yeah, and what about non-genetic phenotypic variance? Most of what I was looking at was a small number of simulations with perfect heritability. But of course the phenotypic variance is what determines the growth rate, and the rate of adaptation... ugh. Perhaps it's worth only looking at perfect heritability in these simulations? But then there is the geno-pheno gap... 
+
+There are some cool visualizations in this script by the way! Looking at variance across cohorts, generations, ages...
