@@ -219,3 +219,58 @@ Interesting study although a little bit limited. Here, for a long-lived species,
 
 What does this mean for this project? Just that survival of longer-lived individuals is in fact very important for their long-term persistence. Growth as well. Other than that not incredibly much.
 
+### Compagnoni, A., et al. 2021. Herbaceous perennial plants with short generation time have stronger responses to climate anomalies than those with longer generation time. Nature communications.
+
+- Climate change: influencing mean and variance in temperatures and precip
+	- who will be most vulnerable? well, plants (sessile) that can't demographically buffer...
+- Water availability influences NPP, a proxy for population growth
+	- important for seed germination, tissue growth, floral induction, seed set
+	- temperature modulates water availability
+	- more pronounced effects in arid and cold biomes than wet and temperate ones?
+		- aridity means more water limitation
+		- cold means more frequent extreme cold spells (too cold for tissue growth)
+		- confounding here looking across biomes - could it just be different plant functional types in different environments?
+- Generation time: how quickly individuals in a population are "substituted"
+	- longer-lived species should have less response (in growth rate) to fluctuations
+- Here:
+	- is population growth rate more strongly associated with precipitation than temperature?
+	- is population growth in water-limited biomes more responsive to precip anomalies?
+	- is population growth in cold biomes more responsive to temperature anomalies (than pops in warmer biomes)
+	- are longer-lived species less responsive to anomalies?
+##### Results
+- precipitation anomalies had larger effects on population growth rates than temperature anomalies did (and interactive effects were weak/ns)
+	- precipitation with one s.d. over mean increased lambda by ~3%
+- no effects (from meta-regression) suggesting that colder or water-limited biomes had stronger respective responses to relevant stressors
+- response to both types of climate anomalies was negatively correlated with longevity
+- results held when removing graminoids (which, according to Tukey HSD, may have different patterns than herbaceous species)
+##### Discussion
+- Importance of water on plant performance: forecasts involving precipitation are more uncertain than those of temperature, meaning population projections may also be uncertain
+- Results here complement Morris et al. (2008)'s results that longevity can buffer populations from variation in survival and reproduction
+- The fact that responses do not change based on biome suggests that populations are (demographically) adapted to cope with climate variation in their respecrtive biomes
+	- (what does it mean to be demographically adapted... or rather, not demographically adapted?)
+	- maybe, e.g., biomass accumulation is decoupled from demographic processes?
+- (of course, possible taxonomic and geographic/biome biases in dataset)
+- Mechanistic models featuring microclimate information... (Lembrechts and Lenoir 2020?)
+- Pumping the breaks on the generation times and climate sensitivity result
+	- this study does not look at density dependence, trophic interactions, anthropogenic drivers, etc. so hard to tell if effects are due to climate or something else
+	- also, these results are more relevant to changes in climatic variability than means, and with changing means extrapolation may fail
+	- cons bio lit suggests that shorter-lived species may be less (rather than more) subject to climate variability (lower extinction risk?)
+##### Methods
+- Compadre and Padrino databases, looking for density-independent models with at least six transition matrices
+	- 48 species, 144 populations
+	- plus some other sp with relationships to climatic drivers? total of 62 sp, 162 populations
+	- get lambda for each transition (>3700 matrices, 52 IPMs)
+- Climate: 1km2 gridded estimates of monthly min/max temp, total precip from some online dataset (CHELSA?), 1901 - 2016
+	- standardized z-scores in 12 months preceding census give strength of anomalies (x - E(x)) / sig(x); abs(z) > 1 is an anomaly
+	- skew present in only a small number of populations...
+- Autocorrelation modeled in meta-regressions by having an autoregressive error term (ooh)
+
+This is different than I thought... for some reason I assumed this was about evolutionary response?
+
+Validates (on a large, although possibly biased, set of species/populations) the theoretical finding that longer-lived populations will have less response in their population growth rates relative to shorter-lived populations. This is still useful for thinking about population fate in the face of increasing population variability! But not for rates of evolution, at least I don't think so.
+
+Also some interesting stuff here (H1-3!) about specific drivers in specific environments. Namely, that preciptation anomalies matter more than temperature anomalies? Useful for thinking about fates under climate change. Relevant to Thermopsis projects, maybe?
+
+The Cotto paper may be a good read next... I think there was some stuff in there about the rate of adaptation.
+
+
