@@ -273,4 +273,27 @@ Also some interesting stuff here (H1-3!) about specific drivers in specific envi
 
 The Cotto paper may be a good read next... I think there was some stuff in there about the rate of adaptation.
 
+### Lanfear, R., Kokko, H., and Eyre-Walker, A. 2014. Population size and the rate of evolution. TREE.
 
+- "Substitution" is new mutation that spreads to fixation, so depends on both mutation rate and fixation rate
+	- DNA sequence data allows easy observation of substitution
+##### Neutral and nearly neutral mutations
+- Some cases where fitness effects are close to zero (s approx 0, Ne|s|<<1) in which case fate of mutation is due to drift
+	- weaker drift as Ne increases
+	- more neutral/neutral-ish mutations in larger populations is balanced by decreased probability of fixation through drift
+	- therefore the substitution rate is just the mutation rate independent of Ne
+- N.b. Balloux and Lehmann (2012) showed that size fluctuations and overlapping generations will modify the equality relationship between neutral substitution rate and mutation rates (likely due to changes in mutation rate (?))
+	- note also that Ne can be associated with factors like generation time or size fluctuations (larger Ne associated with shorter generation time... wait but wouldn't this also mean that there would be more fluctuations in size?)
+##### Non-neutral mutations
+- With increasing Ne, natural selection becomres more efficient for producing advantageous mutations
+	- theory suggests that the "power" of selection with Ne increases faster than the production of new mutations (i.e., selection gets better at operating at higher Ne, removing mutations, more than it produces more mutations) - Akashi et al. 2012 review on this
+		- fewer deleterious substitutions with Ne, more advangateous rates with Ne so long as simplifying assumptions are met
+- If mutation rates are high or Ne is large, then whether or not Ne increases or reduces rates of evolution depends on how adaptation influences 	
+- [some stuff on selective sweeps etc. that I did not read]
+##### Across mutations
+- Mutations of different fitness effects have different relationships with Ne
+	- "we expect [NeRR - relationship between Ne and rate of adaptaiton] to have a U shape" - large and decreasing for small Ne and increasing when Ne is large?
+
+[did not finish]
+
+I'm not sure this is so relevant because we don't really have Ne (other than N I guess?)... I just want a distribution of fitness effects for mutations.
