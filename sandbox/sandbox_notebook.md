@@ -114,3 +114,28 @@ An intersting pattern I saw surprisingly often was a sort of periodicity to the 
 Oh yeah, and what about non-genetic phenotypic variance? Most of what I was looking at was a small number of simulations with perfect heritability. But of course the phenotypic variance is what determines the growth rate, and the rate of adaptation... ugh. Perhaps it's worth only looking at perfect heritability in these simulations? But then there is the geno-pheno gap... 
 
 There are some cool visualizations in this script by the way! Looking at variance across cohorts, generations, ages...
+
+##### `test_phenotypic_change.R` (June 2022)
+
+Here I was looking to see if my expressions for phenotypic changes over time were accurate.
+They were not quite but they were in the right ballpark.
+
+This also includes looking at phenotypic and genotypic change in adults/newborns.
+It turns out there is a pheno-geno gap in adults but not in offspring.
+There are some cool visualizations of this in ehre.
+
+Also, here I ran a couple of scripts looking at rate of (pheno/geno) change with high/lower survival.
+The gap widens with greater survival (because selection acts on adult phenotypes).
+Very cool visualizations in here (I think at least) to demonstrate this.
+Seems like the phenotypic advantage to longevity is larger than the genotypic downside.
+
+But yes it does seem like there is a disadvantage in *genotypic* change to survival - does it matter though?
+Can we quantify it?
+
+##### `visualize_advantages.R` (July 6 2022)
+
+Silly little script looking at ratios of rate of adaptation and fitness with iteroparity compared to survival.
+
+Results are about as expected, with larger effects of survival for strong selection and low heritability.
+Maybe the biggest surprise was how the effects seemed so much incredibly larger for only such low h, low w.
+
