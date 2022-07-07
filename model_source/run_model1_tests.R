@@ -9,6 +9,7 @@ source('model_source/sim_model1_functions.R')
 pars = data.frame(
   n.pop0 = 100, s.max = 0.9, r = (1.2 / (0.9)) - 1, wfitn = 2,
   sig.a = sqrt(0.5), sig.e = sqrt(0.5), alpha = 0.0001,
+  mu    = 0.2, sig.m = sqrt(0.2),
   timesteps = 10
 )
 

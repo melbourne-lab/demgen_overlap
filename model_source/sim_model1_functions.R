@@ -86,6 +86,10 @@ propagate.sim = function(popn, params, theta) {
   sig.a = params$sig.a
   # standard dev. of environmental phenoytpic noise
   sig.e = params$sig.e
+  # mutation rate per capita
+  mu    = ifelse(any(grepl('mu', names(params))), params$mu, 0)
+  # standard dev. of mutations
+  sig.m = ifelse(any(grepl('sig.m', names(params))), params$sig.m, 0)
   # Strength of density dependence
   alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0) 
   
@@ -130,7 +134,9 @@ propagate.sim = function(popn, params, theta) {
              gen = cur.gen + 1,                     # add generation number
              age = 1,                               # all offspring are age 1
              fem = as.logical(sample(0:1, nrow(.), replace = TRUE)), # assign sex
-             b_i = rnorm(nrow(.), midp_b_i, sd(popn.surv$b_i)/sqrt(2)), # assign breeding value (mean is midparent, sd is sqrt(additive var))
+             b_i = rnorm(nrow(.), midp_b_i, sd(popn.surv$b_i)/sqrt(2)) +
+                    rbinom(nrow(.), 1, mu) * rnorm(nrow(.), 0, sig.m),
+                                                    # assign breeding value (mean is midparent, sd is sqrt(additive var))
              z_i = rnorm(nrow(.), b_i, sig.e),      # assign phenotype (mean is breding value, sd is sd of env. variance)
              s_i = s.max * exp(-(z_i - theta)^2 / (2*wfitn^2)) * exp(-alpha * nrow(.)), # determine survival probability
              r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0)), # re-draw number of offspring per mother
@@ -279,7 +285,9 @@ propagate.sim.r.first = function(popn, params, theta) {
                gen = cur.gen + 1,                     # add generation number
                age = 1,                               # all offspring are age 1
                fem = as.logical(sample(0:1, nrow(.), replace = TRUE)), # assign sex
-               b_i = rnorm(nrow(.), midp_b_i, sig.a), # assign breeding value (mean is midparent, sd is sqrt(additive var))
+               b_i = rnorm(nrow(.), midp_b_i, sig.a) +
+                      as.numeric(rbinom(nrow(.), 1, mu) * rnorm(nrow(.), 0, sig.m)),
+                                                      # assign breeding value (mean is midparent, sd is sqrt(additive var))
                z_i = rnorm(nrow(.), b_i, sig.e),      # assign phenotype (mean is breding value, sd is sd of env. variance)
                s_i = s.max * exp(-(z_i - theta)^2 / (2*wfitn^2)) * exp(-alpha * nrow(.)), # determine survival probability
                r_i = rpois(nrow(.), lambda = ifelse(fem, 2 * r, 0)), # re-draw number of offspring per mother
