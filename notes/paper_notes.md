@@ -297,3 +297,96 @@ The Cotto paper may be a good read next... I think there was some stuff in there
 [did not finish]
 
 I'm not sure this is so relevant because we don't really have Ne (other than N I guess?)... I just want a distribution of fitness effects for mutations.
+
+### Burger, R., and Lynch, M. 1995. Evolution and extinction in a changing environment: a quantitative-genetic analysis. Evolution.
+
+- Some previous models looking at critical rate of long-term environmental change beyond which extinction is certain: Lynch et al. 1991, Lynch and Lande 1993
+	- demonstrate that extinction is certain if environmental change is faster than the maximum sustainable rate of evolution
+	- Lynch and Lande 1993: small, sexually reproducing populations, but deterministic analysis suggests that rates of environmental change below the "critical rate" means no extinction (ofc. can't be correct)
+	- note that finite populations experience drift from which many generations may be needed to recover
+		- these instances of drift may cause large temporary lags behind the environmental change
+##### Model
+- Randomly mating finite population, discrete generations, density dependent population growth
+	- gaussian selection with optimum phenotype theta_t = kt + eps_th (eps_th ~ N(0, sig^_th)
+	- intrinsic growth rate is R_t = B \bar{W}_t (for mean fitness \bar{W}_t)
+	- ceiling-type density dependence with carrying capacity K
+- Lynch and Lande (1993): critical rate of change is k_C is value of k beyond which extinction is certain (because \bar{W}_t eventually falls below 1/B)
+##### Analytical work:
+- assume that k and sig^2_th are sufficiently small, \bar{W}_t sufficiently large to have approx. constant N_e
+- def. s = sig^2_g / (sig^2_g + sig^2_e + w^2) (a measure of strength of selection)
+- def. a recursion for the phenotypic distribution Phi(g_{t+1}) in terms of Phi(g_t) and \bar{g}_t
+- then:
+	- E(g_{t+1}) = E(g_t) + s(kt - E(g_t)) 
+		- (i.e., mean genotype is the previous generation's genotype, plus heritable portion of the gap created by environmental shift) (but why is it kt and not k?)
+	- V(g_{t+1}) = (\sig^2_g / N_e) + (1 - s)^2V(g_t) + s^2 \sigma^2_theta
+		- (i.e., weighted variance of environmental trend-variance (weighted by sq. of selection strength) and prev. generation's variance (sq. of reverse of sel. strength...) plus some amount of drift?)
+		- (think about this!)
+- Recursion relationships for E(g_t) and V(g_t)..
+	- influence of initial genotype wanes as t grows large s/t
+		- E(g(t)) -> kt - k/s
+		- V(g(t)) -> (w^2 + sig^2_e) / (2N_e) + (sig^2_g \sigma^2_th) / (2(w^2 + sig^2_e))
+		- so, mean population genotype does track the change (kt term) but lags behind by amount k/s
+			- lag is larger with faster change, less selection ((w^2 + sig^2_e + sig^2_g) / sig^2_g is large)
+			- under weak selection rel. to genetic variance, t reaches ~95% of its asymptotic value at around 3/s (why?)
+- lambda_t  = (B w) / (sqrt(V_{lambda,t}) * exp(- (E(g_t) - kt)^2 / (2 V_{lambda,t})
+	- for V_lambda,t = sig^2_g + sig^2_e + w^2 + V(g_t) + sig^2_th
+	- (note that B w / sqrt(V_{lambda,t}) is growth rate if population perfectlyt tracks environment)
+	- from this, the critical rate is
+		- k_C = s sqrt(2 V_lambda ln(B w / sqrt(V_lambda))
+		- that is, increases with selection strength and the log of the growth rate under ideal circumstances?, decreases with sqrt of variances...
+##### Extinction times
+- two phases of "guaranteed" extinction process: one is time until lambda_t = 1 (population stabilizes) then time when population is decreasing
+- assume that V_lambda is approx constant (occurs if genetic variance and variance in mean breeding value is small relative to sig^2_theta, sig^2_e, w^2)
+	- let k = kappa * k_C (kappa > 1)
+	- lambda_t = (B w / sqrt(V_lambda)) ^ ((1 - kappa^2) * (1 - (1 - s)^t)^2
+	- from this it can be demonstrated that the time until lambda_t = 1 is independent of population sie and genetic variance (!)
+	- phase 2 is shorter (because of increasingly negative growth rates?)
+- time to extinction will increase when including fluctuations in R_t, demographic stochasticity, autocorrelation)
+##### Simulations
+- Random sampling by pairing of parental breeding values
+- No differences or stochasticity in fertility/fecundity (each breeding pair produces 2B offspring)
+	- mutations occur at rate n \mu
+		- (could be useful... see Lande 1976, Lynch 1988)
+- Viability selection before reproduction where survivors of viability are next gen's parents (stochastic process)
+###### Sim results
+- With large w (weak selection), large lag, and additive variance operates nearly independently of selection strength
+	- but with strong selection additive variance declines quickly
+	- so, when the rate of env. change is slow, intermediate selection sgrengths are favored? (because with strong selection, variance is quickly lost, but with weak selection, there is a strong lag?)
+		- but with a more rapidly changing environment, it's monotonic (strong selection means rapid extinction)
+- Larger population size (K) has *weak* effect on risk of extinction
+	- with sufficiently rapid environmental change, time to extinction is not so different between large and small populations
+	- seems like this is because additive genetic variance does not grow indefinitely with increasing K, k_C asympotically approaches a constant with increasing K
+	- with slow environmental change, for sufficiently large populations extinction is rare? little stochasticity?
+- Extinction times: distribution is tight for very fast change (sd much smaller than mean) but broad with slower change particularly if below critical density (more variation in extinction times - because extinction relies on stochasticity?)
+	- so we can only have confident conclusions in time to extinction for very rapid env. change
+	- extinction occurs "deterministically" with rapid change, as populations very quickly have growth rates fall below replacement
+	- but for slower k (near or below critical value), mutations allow populations to maintain genetic variation and populations have a small lag
+- Additive genetic variance increases for small k and then decreases with increasing k (with larger effects for larger populations)
+	- high correlation between genetic variance and extinction time (within param combo) so more genetic variance means longer time to extinction
+- With fluctuating environmental optima (k = 0, sig^2_e > 0)
+	- monomorphic populations (mu = 0, sigma^2_g = 0, E(g) = V(g) = 0) perform better in these situations than genetically variable populations
+		- this is due to the lag in responding to the direction of the environment (no autocorrelation means 50% of moving the wrong way) and variance load
+	- with sig^2_e approaching w^2, any population can go extinct suddenly regardless of genetic makeup
+##### Discussion
+- "if the rate of environmental change is sufficiently slow and the amount of genetic variance for the trait is sufficiently high, the population mean phenotype settles into a quasi-steady state lag behind the environmental optimum"
+	- magnitude of the lag influences fitness, influencing population growth
+		- lag is influenced by genetic variance, and drift/stochasticity can produce temporary periods of even longer lag
+	- with sufficiently high lag, extinction is guaranteed due to fitness below replacement
+	- there is a critical value of environmental change that populations can track - typically according to these results as ~10% of one phenotypic standard deviation per generation
+		- but factoring in other things, e.g., a more kurtotic distribution of mutational effects, could mean the critical rates could be ~1% of a phenotypic sd
+- Results here are similar to those of Huey and Kingsolver (1993) who found that there is an intermediate width of fitness function for which persistence odds are higher
+	- here, similar result: with too wide a fitness function, too large of a lag, but with too narrow a fitness function, large load due to slow adaptation
+	- "This suggests that in a slowly, but steadily, changing environment, braod generalists and narrow specialists will be most vulnerable to extinction"
+- Barrier: theory does not (yet) have good descriptions of extinction times for rates of change near the critical point (mean let alone entire distribution)
+	
+Super interesting paper - glad I read it. Will need re-reads.
+
+Gist: there's a critical rate of change (k_C) determined by heritability, selection strength, and variance (in environment, phenotype, etc.) above which deterministic population extinction is guaranteed. Below (or at) this critical value, populations will still go extinct due to stochasticity but on longer timescales (more variance).
+
+Populations will (with large t) have a lag proportional to k/s (why?) - higher additive genetic variance rel. to non-genetic phenotypic variance and width of fitness function means less lag
+
+Some cool analytical approximations in here although there are some cases (ignoring various types of stochasticity) where they fail.
+
+As far as previous simulations go - this does explain previous simulation results where populations initially increase (carrying capacity or something) then decrease - an inverse of ghe G&H U. Extinction dynamics here have two parts - first decline to lambda = 1, then lambda below 1. This creates that shape. Also the guidance at the end about speed of change rel. to phenotypic variance is useful. Needs to be very small! E.g., for sigma^2_z = 3, a critical rate of change between 0.03 anmd 0.3?
+
+
