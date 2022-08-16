@@ -389,4 +389,68 @@ Some cool analytical approximations in here although there are some cases (ignor
 
 As far as previous simulations go - this does explain previous simulation results where populations initially increase (carrying capacity or something) then decrease - an inverse of ghe G&H U. Extinction dynamics here have two parts - first decline to lambda = 1, then lambda below 1. This creates that shape. Also the guidance at the end about speed of change rel. to phenotypic variance is useful. Needs to be very small! E.g., for sigma^2_z = 3, a critical rate of change between 0.03 anmd 0.3?
 
+### Helantera, H., and Uller, T. 2020. Different prospectives on non-genetic inheritance illustrate the versatile utility of the Price equation in evolutionary biology. Phil Trans R Soc B.
+
+- Price equation gives average of a trait between generations
+	- (change in mean trait) x (mean fitness) = cov(fitness, trait) + (fitness-weighted change in phenotype between parents and offspring)
+	- (change in mean trait) x (mean fitness) = cov(parent fitness, offspring phenotype) + (expected change in trait between generations)
+		- first term is selection, second term is transmission
+	- (change in mean trait) = (slope of parent-offspring regression) x (selection differntial) + cov(fitness-weighted offspring phenotype, parent phenotype) + (expected change in trait between generations)
+		- selection pressure is Cov(rel. fitness of parent, phenotype)
+		- breeder's equation is special case of this where cov = 0 and expected change in trait between generations is zero
+- Phenothypic change between generations - not trivial! (with multi-cellularity at least)
+	- e.g., natal environment, early development environment
+	- non-genetic (or "extra-genetic") aspects of inheritance - often beyond parental control, very complex
+		- this can vary over time and/or take many forms
+		- this complexity means typically it is modeled or conceptualized in only ideal terms
+- Here: fitting these non-genetic aspects of inheritance into an evo framework using the Price equation
+##### Transmission model of inheritance
+- Conceptually similar to how we think about genetic forms of inheritance - some generalizations and transferability of intuition and concepts from, e.g., pop gen
+	- but these may get strained or become overly-complex when modeling multiple loci
+- Day and Bonduriansky's generalization:
+	- 2+ separate channels of inheritance, at least one of which is genetic
+	- Variants (that which varies? idk) could be alleles, epi-alleles, quantitative phenotypes, breeding values, maternal resources, etc.
+	- modified the Price equation to get change in population mean values of genetic (g) and non-genetic (h - lol!) components
+	- (change in mean g (h)) x (mean fitness) = cov(fitness, g (h)) + fecundity-weighted mean transmitted change in g (h) + survival-weighted mean within-lifetime change in g (h)
+		- this allows for overlapping generations and within-generation change
+	- this can be re-written to say change in g (h) also depends on variance in g (h) and also covariances between the two, multiplied resp. by the selection gradient at present values
+		- selection may act on the non-genetic value h both directly and indirectly
+	- framework here can explain why covariance arises and how it influences evolutionary trajectories
+		- also (of less interest to my model) conditional fitness effects, e.g., fitness effects of g depend on value of h
+- Transmission perspective on inheritance (e.g., Day and Bonduriansky) - consequences of any form of inheritance rely on:
+	- how the variant affects fitness
+	- how the transmission occurs
+	- how the phenotype (not the variant?) changes over the lifetime
+- Another view - transmission of information between generations
+	- e.g., DNA of parents contains some info about the state of the environment that offspring may encounter
+##### Phenotypic covariance models
+- More in line with the quantitative genetic approach
+	- don't track individual variants
+	- instead consider how much covariance between phenotypes of parents and offspring is determined by shared genes (with additive effects)
+- Assumptions: many loci of small additive effect, joint multivariate normal
+	- commonly assumed that the mean phenotype doesn't change between generations unless there is selection or drift
+	- these assumptions give the following form of the Price equation:
+		- change in mean trait = (regression slope of offspring phenotype on parent phenotype) x (selection differential)
+			- selection differential is the covariance between phenotype and fitness
+	- heritability here can also be defined as ratio of additive genetic variance to total phenotypic variance
+- Note that genes are not the only thing that influence the slope of offspring phenotypes onto genotypes
+	- this is one reason why additive genetic variance may be preferred for quantifying heritability
+	- in facto total phenotypic variance can be partitioned into the sum of additive genetic variance, the dominance variance, epistatic variance, and environmental variance
+		- typically this approach labels non-genetic effects of the parental phenotype as maternal effects (although sometimes maternal effects genotype has an influence as well causing interesting dynamics)
+	- the variance partitioning could instead be rewritten as all genetic components fall under Vg (additive genetic, dominance, epistatic), then transmitted non-genetic variation (e.g., epigenetic), and non-transmitted
+		- this approach would be useful for, e.g., seeing how non-genetic inheritance affects ability of populations to track environmental change
+		- a para in here with possible ways to quantify these (empirically challenging)
+##### Developmental models of heredity
+- Inheritance does not necessarily need to be conceptualized as transmission and does not *a priori* necessitate more relevance of certain parent-offspring relations (all are equally important? not quite sure what to make of this)
+- See models by Rice (multiple) where fitness and offspring phenotypes are random variables (not known at time of reproduction)
+	- considers the full distribution of offspring-parent distribution rather than the mean (?) (is this distribution bivariate?)
+	- the regression slope or additive genetic variance approaches rely on very specific circumstances, often not met
+		- Rice approach takes more information about the adult-offspring relationship (distribution) into account (moments)	
+		- (although despite the many published studies and datasets no systematic review of how common non-linearities are)
+- Need more work looking at which developmental processes do/don't change the parent-offspring phenotype distribution esp. with a complex genotype-phenotype map
+
+Hmm... okay interesting. Non-genetic inheritance I suppose is more about maternal effects, epigenetics, etc. I guess what I was thinking about is non-inherited traits! I think this is worth revisiting at some point - the quant gen perspective was maybe interesting. Is my quant gen model really modeling additive genetic variance, or really only the sum of inherited components? Is this the difference between broad- and narrow-sense heritability?
+
+The information part also seemed tantalizing. 
+
 
