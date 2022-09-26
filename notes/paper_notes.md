@@ -453,4 +453,101 @@ Hmm... okay interesting. Non-genetic inheritance I suppose is more about materna
 
 The information part also seemed tantalizing. 
 
+### Vander Wal, E., et al. 2013. Evolutionary rescue in vertebrates: evidence, applicaitons, and uncertainty.
+
+- Conservation biology typically preserves neutral genetic variation, not adaptive potential linked to demography (which makes evolutionary rescue possible)
+	- is evolutionary rescue prevalent in nature? lab and theory yes
+- Documenting rescue: requires evidence of decline, evidence of phenotypic change *through standing variation or mutation* and subsequent population recovery
+	- "ecological rescues" may occur through plasticity or other factors
+	- obtaining both demographic *and* genetic/evolutionary data is difficult
+- Rats and anti-vitamin K resistance
+	- anti-vitamin K pesticides used for rodent control (mortality and lethal breeding)
+	- individuals from populations exposed to the pesticide fared better than individuals from unexposed populations
+	- some combination of standing variation and up to six new mutations
+- Australian rabbits exposed to the myxoma virus
+	- killed 99% of animals infected and caused population decline across the continent
+	- selection:
+		- (1) for a less virulent myxoma strain which slowed mortality
+		- (2) evolution of resistance to myxoma
+	- lab experiments show individuals from exposed populations recover while those in unexposed populations did not
+	- the co-evolutionary angle complicates things
+- Adaptive tracking: recorded in long-term studies of Galapagos finches, great tits, red squirrels
+	- these evidence don't include evidence, though, that failure to track the environment means extinction
+- Genetic rescue studies as good examples of fitness-linked traits and their importance for population rescue
+- Bell & Gonzalez estimate ~25 generations needed for ER to take place
+	- similar or longer times observed in insects in lab settings
+	- but 25 generations can be a long time for long-lived organisms
+	- more gradual environmental change (relative to the generation time of the species) may alleviate extinction odds
+
+Some stuff here I only skimmed (the phenotype-demography map stuff seems interesting!). I was mainly interested in the claims about generation time, which I have seen cited a few times from this paper.
+
+This actually seems like a hand-waivy argument! It comes from Bell and Gonzalez and their estimation that rescue would take ~25 generations. But Bell and Gonzalez were probably working with a semelparous population, where generation and timestep are conflated. This doesn't seem to be considered here, and instead the relationship between longevity and time to rescue is really just multiplying generation time by generations to rescue. Room for improvement here!
+
+### Lande, R. 2009. Adaptation to an extraordinary environment by evolution of phenotypic plasticity and genetic assimilation. Journal of Evolutionary Biology.
+
+- The "Baldwin effect" (1890s!): plasticity of development can produce a partially-adaptive phenotype following environmental change; natural selection furthers the adaptiveness of the phenotype
+	- [from skimming some Wiki articles though perhaps we are more interested in "genetic assimilation" - Waddington - than the Baldwin effect?]
+- In evolutionary time, rare anomalies in the environment might necessitate the capacity to accelerate phenotypic adaptation through "transient" evolution of plasticity
+	- might be further needed for persistence under widespread global environmental change that is currently occurring
+##### Conceptual background
+- Reaction norm of a benotype: breeding value as a function of the environment in which offspring develop
+	- (with purely additive genetic variance, breeding value and total additive effect on offspring are the same)
+	- "elevation" (intercept?) of reaction norm is breeding value
+	- environment on x-axis, phenotype on y-axis
+	- consider WLOG the initial average environment 0
+		- reaction norms are likely to converge around intercepts (elevations) of a certain value, call this phenotype A, for environment 0 (canalization)
+		- this canaliation means reduced phenotypic and genotypic variation
+		- however, even with a canalization occurring in the normal environment, there may still be considerable variation (among individuals) in the *slopes* of their norms
+	- if environment shifts suddenly to state delta, with optimum genotype A+B*delta (such that B is the optimal slope for the norm), adaptation will proceed in two stages: mean population slope approaches B, then intercept/elevation move correspondingly
+		- this is because with canalization on the phenotype, there will be more (genetic) variation in the reaction norm slope B compared to the elevation A
+- Waddington's "genetic assimilation" as another mechanism for evolution of plasticity
+	- Waddington's experiments feature a new phenotype expressed as a plastic response, maintained by selection to the point that it occurs frquently even in the original environment
+	- "Waddington apparently misinterpreted his selection experiments on threshold characters, which do not necessarily involve the evolution of plasticity" - not really sure what this means... or at least the second half of the sentence - threshold characters are not subject to plasticity?
+	- "Here I define genetic assimilation in an altered environment as the reduction in plasticity and its replacement by genetic evolution, while maintaining the phenotype initially produced by plasticity in the altered environment"
+	- reduction in plasticity attributable to the cost of maintaining it
+- Models of evolution of plasticity require environmental predictability over time spans relevant to individual development
+	- with heterogeneity (in time/space) the environment of development is often different from the environment individuals are selected for
+	- this means the slope of the population norm is a fraction of the optimum phenotype's slope
+		- (the fraction?) is reduced by correlations between environments of development and selection... [so more correlation means lower slope... I think this makes sense...]
+##### Model
+- z_t = a + (b eps_{t-tau}) + e
+	- phenotype is elevation (a, the breeding value in the ref environment where eps = 0)
+	- b is the slope
+	- juveniles in generation t are exposed to environment eps_{t - tau}
+	- tau is a fraction of a generation before the adult phenotype is expressed and subject to selection
+	- e is N(o, sigma_e) noise
+	- a, b are bivariate normal with additive variances G_aa, G_bb, covariance G_ab remaining constant
+	- as such sigma^2_z = G_aa + 2G_ab eps_{t-tau} + Gbb (eps_{t-tau})^2 + sig^2_e
+		- variances will be minimized for eps = -G_ab / G_bb
+		- if a population evolves (evolutionary history) at eps = 0, G_ab = 0 must be true to satisfy the above, i.e., slopes and elevations must be uncorrelated
+	- change in \bar{a}, \bar{b} is equal to G matrix times selection and selection gradient beta
+- evolution of the mean reaction norm (\bar{a}, \bar{b}) in a fluctuating environment with mean of eps = 0, variance sigma^2_eps, autocorrelation rho
+	- gaussian selection with width much greater than the phenotypic standard deviation (i.e. gamma >> E[sigma^2_z])
+	- upon/before the environmental shift the expectation b_0 is rho_tau B due to adaptation to background stochasticity
+		- because for \bar{eps} = 0, E[eps_t | eps_{t - tau}] = rho eps_{t-tau}, and relatedly E[theta_t | epsilon_{t-Tau}] = A + rho B eps_{t-tau} (for optimum theta)
+- Environmental change: e_t = U_t delta + xi_t, where U_t = 1 for t > 0 and xi_t is environmental stochasticity
+	- expectation after adaptation is completed is E[\bar{a}] = A + (1-rho_tau)B delta, E[\bar{b}] = rho_tau B
+	- in this case, expectation E[\bar{b}] = A + B delta as expected
+	- for sigma^2_xi << delta^2 (i.e., a very large environmental shift relative to strength of environmental fluctuations), sigma^2_z << omega^2, and G_bb delta^2 approx. equal to G_aa + G_bb delta^2 i.e., G_bb delta^2 >> G_aa (much more additive genetic variance in plasticity than breeding values and/or very large environmental change), 
+		- analysis demonstratesthat "phase 2" of genetic assimilation occurs much more slowly than "phase 1" of shift in mean plasticity
+##### Discussion
+- the phi parameter being close to 1 (i.e., G_bb delta^2 >> G_aa) appears to be important for all of this
+	- initial mean plasticity (upon environmental change) is partially adaptive, below the optimum by some fraction rho
+	- the adaptive plasticity here (and increased additive genetic variance... hmm...) mean that in the first generation under the new environment, mean fitness decreases but there is transient evolution of increased plasticity
+	- "The time scale for the mean phenotype to closely approach the optimum in the new average environment is 1 - phi times shorter than by Darwinian evolution alone (with no plasticity) or by the Baldwin effect (with constant plasticity)"
+		- so phi tells us the rate... must be connected somehow to this increase in additive genetic variance (for the trait?)
+	- during phase 1 only slight evolution in breeding values
+- Phase 2 (genetic assimilation) means reduced plasticity nearly compensated by a changing breeding value as the "small fraction" of adaptive change in mean phenotype is completed
+- "Accelerated phenotypic adaptation during phase 1 can alternatively be interpreted as resulting from increased genetic variance in the new environment"
+	- also implies an increased genetic correlation between slope and elevation which slows the assimilation (breeding value change)
+	- stabilizing selection in the new environment(s) should reduce genetic variance and diminish the correlation eventually
+- This might produce the effect of allowing population persistence without rapid phenotypic adaptation allowed by the transient evolution of plasticity
+
+DANG this is cool and a gold mine. I think I can borrow from some of these approaches.
+
+This will require more reading to solidify but so far I think what is going on is: canalization (stabilizing selection) reduces additive genetic variance in breeding values but not necessarily in "slope" of the response (which requires environmental autocorrelations?) (analogous to non-genetic phenotypic variation in our model). I think upon environmental change, this additive variance in plasticity increases and allows rapid change of the phenotype relative to the breeding value (where genetic variation is still low). So there is rapid adaptation of the phenotype followed by a slow catching-up of the breeding value. 
+
+Math approaches here might be useful. There is a variance/covariance matrix involved and I think this can be applied to my model (pheno-geno correlation). The phi parameter I think might relate more to the survival parameter in my model than the heritability but I am not quite sure. I do feel like these models have to be analogous in some way though (although in my model rho of the environment is zero... what maintains the phenotypic variance?) The standing variance in plasticity in the pre-shift environment is a fraction of its optimum, and immediately following the shift it appears that this plasticity can quickly move from the fraction towards its optimum... B in this model clearly seems analogous to e in mine.
+
+Fun fun! Re-read at some point. Not even sure how much additional knowledge there is to be gained by reading Chevin and Lande 2010.
 
