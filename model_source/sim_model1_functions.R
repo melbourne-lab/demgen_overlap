@@ -134,7 +134,7 @@ propagate.sim = function(popn, params, theta) {
              gen = cur.gen + 1,                     # add generation number
              age = 1,                               # all offspring are age 1
              fem = as.logical(sample(0:1, nrow(.), replace = TRUE)), # assign sex
-             b_i = rnorm(nrow(.), midp_b_i, sd(popn.surv$b_i)/sqrt(2)) +
+             b_i = rnorm(nrow(.), midp_b_i, sqrt( (1 - (1/nrow(popn.surv))) * var(popn.surv$b_i) / 2)) +
                     rbinom(nrow(.), 1, mu) * rnorm(nrow(.), 0, sig.m),
                                                     # assign breeding value (mean is midparent, sd is sqrt(additive var))
              z_i = rnorm(nrow(.), b_i, sig.e),      # assign phenotype (mean is breding value, sd is sd of env. variance)
