@@ -4,6 +4,9 @@
 library(dplyr)
 library(tidyr)
 
+### Suppress output from summarise()
+options(dplyr.summarise.inform = FALSE)
+
 ##### Aux functions
 
 ### Wrapper for adding data to data frame
