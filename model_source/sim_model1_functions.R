@@ -41,6 +41,8 @@ init.sim = function(params, theta0) {
   gbar0 = ifelse(any(grepl('gbar0', names(params))), params$gbar0, 0)
   # density dependence strength
   alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0)
+  # ceiling-like carrying capacity term
+  kceil = ifelse(any(grepl('ceil' , names(params))), params$kceil, Inf)
   
   popn = data.frame(
     # Unique identifier
@@ -64,6 +66,14 @@ init.sim = function(params, theta0) {
       # Phenotypic optimum in this time step
       theta_t = theta0
     )
+  
+  # If initial size is above the specified ceiling, truncate
+  if (nrow(popn) > kceil) { 
+    popn = popn %>% 
+      slice_sample(kceil, replace = FALSE) 
+    # Sort rows to order individuals by index
+      arrange(i)
+  }
   
   return(popn)
   
@@ -92,6 +102,8 @@ propagate.sim = function(popn, params, theta) {
   sig.m = ifelse(any(grepl('sig.m', names(params))), params$sig.m, 0)
   # Strength of density dependence
   alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0) 
+  # ceiling-like carrying capacity term
+  kceil = ifelse(any(grepl('ceil' , names(params))), params$kceil, Inf)
   
   # Current time step (useful for adding time information to finished data frame)
   cur.gen = max(popn$gen)
@@ -148,7 +160,17 @@ propagate.sim = function(popn, params, theta) {
     offspring = popn.surv %>% sample_n(size = 0)
   }
   
-  popn.out = popn.surv %>% rbind(offspring)
+  # Combine offspring and parents
+  popn.out = rbind(popn.surv, offspring) 
+  
+  # If offspring + parents is above the ceiling carrying capacity, truncate
+  if (nrow(popn.out) > kceil) {
+    popn.out = popn.out %>% 
+      # If population is above the ceiling, sample just the ceiling
+      slice_sample(n = kceil, replace = FALSE) %>%
+      # Sort rows to order individuals by index
+      arrange(i)
+  }
   
   # Return
   return(popn.out)
@@ -180,6 +202,8 @@ sim = function(params, theta.t, init.rows, init.popn = NULL) {
   gbar0 = ifelse(any(grepl('gbar0', names(params))), params$gbar0, 0)
   # density dependence strength
   alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0)
+  # ceiling-like carrying capacity term
+  kceil = ifelse(any(grepl('ceil' , names(params))), params$kceil, Inf)
   
   ### Initialize data frame
   all.data = data.frame(
