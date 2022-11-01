@@ -147,7 +147,7 @@ propagate.sim = function(popn, params, theta) {
       uncount(r_i) %>%
       mutate(i = max(popn$i) + 1:nrow(.),           # assign ID number
              gen = cur.gen + 1,                     # add generation number
-             age = 1,                               # all offspring are age 1
+             age = 0,                               # all offspring are age 0
              fem = as.logical(sample(0:1, nrow(.), replace = TRUE)), # assign sex
              b_i = rnorm(nrow(.), midp_b_i, sqrt( (1 - (1/nrow(popn.surv))) * var(popn.surv$b_i) / 2)) +
                     rbinom(nrow(.), 1, mu) * rnorm(nrow(.), 0, sig.m),
