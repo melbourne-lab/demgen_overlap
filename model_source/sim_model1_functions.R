@@ -53,15 +53,15 @@ init.sim = function(params, theta0) {
     # Generation
     gen = 0,
     # Age (age distibution for bernoulli survival is geometric)
-    age = 1,
+    age = rgeom(size0, prob = r / (1 + r)),
     # Sex (TRUE = female)
-    fem = as.logical(sample(0:1, size0, replace = TRUE)),
-    # Breeding value (sig.a is additive genetic variance, according to Lynch & Walsh)
-    b_i = rnorm(size0, 0, sig.a)
+    fem = as.logical(sample(0:1, size0, replace = TRUE))
   ) %>%
     mutate(
+      # Breeding value (sig.a is additive genetic variance, according to Lynch & Walsh)
+      b_i = rnorm(size0, 0,   sqrt(sig.a^2 * (wfitn^2 + age*sig.e^2) / (wfitn^2 + age * (sig.a^2 + sig.e^2)))),
       # Phenotype
-      z_i = rnorm(size0, b_i, sig.e),
+      z_i = rnorm(size0, b_i, sqrt(sig.e^2 * (wfitn^2 + age*sig.a^2) / (wfitn^2 + age * (sig.a^2 + sig.e^2)))),
       # Survival
       s_i = s.max * exp(-(z_i - theta0)^2 / (2*wfitn^2)) * exp(-alpha * size0),
       # Offspring (0 for males, Poisson draw for females)
