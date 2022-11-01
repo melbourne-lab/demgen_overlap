@@ -271,10 +271,14 @@ try.loss.expr = function(w2, s2, r) {
 
 testy = data.frame(age = 0:30) %>%
   mutate(sig.a = with(pars.list[[1]], sqrt(sig.a^2 * wfitn^2 / (wfitn^2 + age*sig.a^2)))) %>%
-  mutate(propn = with(pars.list[[1]], (r / 1+r)^age / (1+r))) %>%
-  mutate(propsiga = propn^2 * sig.a^2)
+  mutate(propn = with(pars.list[[1]], (r / (1+r))^age / (1+r)),
+         propo = with(pars.list[[1]], (1 / (1+r))^age / (1 + (1/r)))) %>%
+  mutate(propsiga = propn^2 * sig.a^2,
+         proosiga = propo^2 * sig.a^2)
 
 sum(testy$propsiga)
+sum(testy$proosiga) # AHHH WHAT IS GOING ON... the proportions is right but weighted sum is dogshit
+
 # why is this not what I observed.... as bvar_0??
 # feel like I'm going crazy!!!!!
 
@@ -385,14 +389,168 @@ nrow(simto)
 
 simto %>% filter(!(!age & gen %in% 1))
 
+# just looking at cohort 0...
+cohort0.agevars = simto %>%
+  filter(!(!age & gen %in% 1)) %>%
+  group_by(gen, age.cohort = age - gen) %>%
+  summarise(bvar = var(b_i)) 
+
+cohort0.agevars %>%
+  filter(!is.na(bvar)) %>%
+  ggplot(aes(x = age.cohort, y = bvar)) +
+  geom_point(aes(colour = gen))
+
+cohort0.agevars %>%
+  filter(!is.na(bvar)) %>%
+  pivot_wider(names_from = gen, values_from = bvar) %>%
+  ggplot(aes(x = `0`, y = `1`)) +
+  geom_segment(aes(x = 0, xend = 0.9, y = 0, yend = 0.9),
+               inherit.aes = FALSE) +
+  geom_point(aes(fill = age.cohort), shape = 21, size = 4) +
+  scale_fill_viridis_c()
+
+# is the sum(p^2 sig.a^2) formula just the wrong way to do variance??
+
+cohort0.agevars = simto %>%
+  # Isolate cohort 0
+  filter(!(!age & gen %in% 1)) %>%
+  # Get prob(age) for each age in cohort in each time step
+  group_by(gen) %>%
+  mutate(n.coh.gen = n()) %>%
+  group_by(gen, age.cohort = age - gen) %>%
+  summarise(
+    n.age = n(),
+    p.age = n.age / n.coh.gen,
+    bvar = var(b_i)
+  ) %>%
+  # idk why this is needed lmao
+  distinct(gen, age.cohort, .keep_all = TRUE)
+
+cohort0.agevars %>%
+  ungroup() %>%
+  filter(!gen) %>%
+  summarise(should.be.1 = sum(p.age))
+# thank god
+
+cohort0.agevars %>%
+  filter(!gen) %>%
+  mutate(exp.p = with(pars.list[[1]], ((1 / (1 + r))^age.cohort) / (1 + (1/r)))) %>%
+  ggplot(aes(x = age.cohort)) +
+  geom_line(aes(y = p.age)) +
+  geom_line(aes(y = exp.p), colour = 'blue')
+# ohhhh lmao I've been calculating the var wrong LMAO LMAO LMAO
+# TPROB OF BEING IN AGE IS PROPORTIONAL TO 1/(1+r), NOT r/(1+r)
+
+cohort0.agevars %>%
+  filter(!gen) %>%
+  ungroup() %>%
+  mutate(xxx = p.age^2 * bvar) %>%
+  summarise(xxy = sum(xxx, na.rm = TRUE))
+# okay yeah... yeah... fuck this is fucked
+# not even on the same order of magnitude
+# what the fuck...
+
+# wait... 
+cohort0.agevars %>%
+  filter(!gen) %>%
+  ungroup() %>%
+  mutate(xxx = p.age * bvar) %>%
+  summarise(xxy = sum(xxx, na.rm = TRUE))
+# this looks right...? just using p as weight instead of p^2?
+# HAVE I BEEN MISUNDERSTANDING VARIANCE THIS WHOLE TIME???
+
 simto %>%
-  filter()
+  slice(1:pars.list[[1]]$n.pop0) %>%
+  summarise(varby = var(b_i))
+# mother of christ
+
+try.loss.expr = function(w2, s2, r) {
+  sumo = 0
+  for (k in 0:100) { 
+    sumo = sumo +
+      (1/(1+r))^k * ((w2 + k*s2)^(-1) - (w2 + (k+1)*s2)^(-1))
+  }
+  sumo = sumo * s2 * w2 * r / (1 + r)
+}
+
+(with(pars.list[[1]], try.loss.expr(wfitn^2, sig.a^2, r)))
+# hmm...
+# WAIT THIS IS VERY CLOSE TO WHAT WE SAW ABOVE???
+
+######--------
+
+# TRY ONE MORE TIME BUT WITH THE LOSS EXPRESSION CORRECTED
+# (for the actual age stuff)
+
+try.loss.expr = function(w2, s2, r) {
+  sumo = 0
+  for (k in 0:100) { 
+    sumo = sumo +
+      (1/(1+r))^k * ((w2 + k*s2)^(-1) - (w2 + (k+1)*s2)^(-1))
+  }
+  sumo = sumo * s2 * w2 * r / (1 + r)
+}
+
+n.trials = 100
+
+pars.list = data.frame(
+  n.pop0 = 1000, s.max = 0.9, r = (1.1 / (0.9)) - 1, wfitn = sqrt(10),
+  sig.a = 1, sig.e = 0, alpha = 0.0000,
+  kceil = 10000,
+  timesteps = 20
+) %>%
+  mutate(
+    mu = 1, 
+    sig.m = sqrt(try.loss.expr(wfitn^2, sig.a^2, r))
+  ) %>%
+  uncount(n.trials) %>%
+  mutate(trial.no = 1:n.trials) %>%
+  split(f = 1:nrow(.))
+
+set.seed(409)
+
+out1 = mclapply(pars.list,
+                function(pars) {
+                  sim.output = sim(params = pars, theta.t = 0, init.rows = 5 * 1e5) %>%
+                    group_by(gen) %>%
+                    summarise(bvar = var(b_i) * (1 - 1/n())) %>%
+                    mutate(trialno = pars$trial.no)
+                }
+) %>%
+  do.call(rbind, .)
+
+out1 %>%
+  ggplot(aes(x = gen, y = bvar, group = trialno)) +
+  geom_line(size = 0.1)
+
+out1 %>%
+  group_by(gen) %>%
+  summarise(
+    bvarbar = mean(bvar),
+    bvarvar = var(bvar),
+    n = n()
+  ) %>%
+  ggplot(aes(x = gen)) + 
+  geom_line(aes(y = bvarbar)) +
+  geom_ribbon(
+    aes(
+      ymin = bvarbar - 2 * sqrt(bvarvar / n),
+      ymax = bvarbar + 2 * sqrt(bvarvar / n)
+    ),
+    alpha = 0.1
+  )
+
+# shit... thought that would really work
+
+###### ----------
+# NEXT CHECKS
+# - is my fixed try.var.loss() or whatever fun actually correct? looks closer at least
+# - if it is, is there an implementation error? (error 2 instead of error 1, above)
 
 #######--------------
 
-# okay... I think I'm initializing correctly, but getting overall variances
-# that are different than what I'm expecting????
-# why is this?????
-# in cohort 0, the age-variance breakdown w/in the cohort *looks* right
-# but when I try to convert it to an overall variance for that cohort, 
-# it's pretty wrong and I have no idea why
+# well... thought I figured something out but maybe I didn't
+# at least it looks like I learned corrected these previously-wrong misunderstandings:
+#   - variance really is sum over p*sig^2, not p^2*sig^2
+#   - probability of being in class k is proportional to 1/(1+r)^k, not (r/(1+r))^k
+
