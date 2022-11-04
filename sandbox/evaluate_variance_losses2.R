@@ -314,7 +314,7 @@ out3 = mclapply(pars.list,
                     init.rows = 5 * 1e5
                   ) %>%
                     group_by(i) %>%
-                    mutate(cohort = ifelse(!min(gen), 0, gen - age + 1)) %>%
+                    mutate(cohort = ifelse(!min(gen), 0, gen - age)) %>%
                     group_by(gen, cohort, age) %>%
                     summarise(bvar = var(b_i)) %>%
                     mutate(trialno = pars$trial.no)
@@ -335,7 +335,7 @@ testy %>% mutate(bvarexp = round(sig.a^2, 3)) %>% slice(1:10)
 
 merge(
   out3 %>%
-    filter(!cohort, gen < 1) %>%
+    filter(!cohort, !gen) %>%
     group_by(age) %>%
     summarise(bvarbar = mean(bvar), n = n()),
   testy %>%
@@ -362,19 +362,49 @@ out3 %>%
 # compare expot (expectation based on `0`) to `1` (i.e. t = 0 to t = 1)
 # they look... pretty close?
 
-out3 %>%
+# out3 %>%
+#   filter(!cohort, gen < 2) %>%
+#   group_by(age, gen) %>%
+#   summarise(bvarbar = mean(bvar), n = n()) %>%
+#   pivot_wider(names_from = gen, values_from = bvarbar) %>%
+#   ungroup() %>%
+#   mutate(expo  = `0` * with(pars.list[[1]], wfitn^2 / (wfitn^2 + sig.a^2)),
+#          expot = c(NA, expo[-nrow(.)])) %>%
+#   ggplot(aes(x = expot, y = `1`, colour = age)) +
+#   geom_point() +
+#   geom_segment(aes(x = 0.2, xend = 0.9, y = 0.2, yend = 0.9),
+#                inherit.aes = FALSE) +
+#   scale_colour_viridis_c()
+
+set.seed(409)
+
+out4 = mclapply(pars.list,
+                function(pars) {
+                  sim.output = sim(
+                    params = pars, 
+                    theta.t = 0, 
+                    init.rows = 5 * 1e5
+                  ) %>%
+                    group_by(i) %>%
+                    mutate(cohort = ifelse(!min(gen), 0, gen - age)) %>%
+                    group_by(gen, cohort) %>%
+                    summarise(bvar = var(b_i)) %>%
+                    mutate(trialno = pars$trial.no)
+                }
+) %>%
+  do.call(rbind, .)
+
+out4 %>%
   filter(!cohort, gen < 2) %>%
-  group_by(age, gen) %>%
-  summarise(bvarbar = mean(bvar), n = n()) %>%
-  pivot_wider(names_from = gen, values_from = bvarbar) %>%
-  ungroup() %>%
-  mutate(expo  = `0` * with(pars.list[[1]], wfitn^2 / (wfitn^2 + sig.a^2)),
-         expot = c(NA, expo[-nrow(.)])) %>%
-  ggplot(aes(x = expot, y = `1`, colour = age)) +
-  geom_point() +
-  geom_segment(aes(x = 0.2, xend = 0.9, y = 0.2, yend = 0.9),
-               inherit.aes = FALSE) +
-  scale_colour_viridis_c()
+  group_by(gen) %>%
+  summarise(bvarbar = mean(bvar), n = n())
+
+# 0.752 - with(pars.list[[1]], try.loss.expr(wfitn^2, sig.a^2, r))
+# IT WORKS
+# VAR LOSS EXPRESSION WORKS
+
+
+
 
 # okay so I think I'm getting this right? mostly??
 # hmm... very slightly off for middle range but good at the poles??? why? does that matter??
@@ -542,10 +572,273 @@ out1 %>%
 
 # shit... thought that would really work
 
+
+
 ###### ----------
 # NEXT CHECKS
 # - is my fixed try.var.loss() or whatever fun actually correct? looks closer at least
 # - if it is, is there an implementation error? (error 2 instead of error 1, above)
+
+
+# var.loss expression works!
+# trying one mutation rate...
+
+muto.fun = function(w2, s2, r) {
+  sumo = 0
+  for (k in 0:1000) {
+    sumo = sumo +
+      (1 / (1+r))^k * ( (w2 + k*s2)^(-1) - (w2 + (k+1)*s2)^(-1) )
+  }
+  sumo = sumo * s2 * w2
+  return(sumo)
+}
+
+pars.list = data.frame(
+  n.pop0 = 1000, s.max = 0.9, r = (1.1 / (0.9)) - 1, wfitn = sqrt(10),
+  sig.a = 1, sig.e = 0, alpha = 0.0000,
+  kceil = 10000,
+  timesteps = 20
+) %>%
+  mutate(
+    mu = 1, 
+    sig.m = sqrt(muto.fun(wfitn^2, sig.a^2, r))
+  ) %>%
+  uncount(n.trials) %>%
+  mutate(trial.no = 1:n.trials) %>%
+  split(f = 1:nrow(.))
+
+set.seed(409)
+
+simmy = sim(pars.list[[1]], theta.t = 0, init.rows = 5 * 1e5)
+
+cohort.vars = simmy %>%
+  group_by(i) %>%
+  mutate(cohort = ifelse(!min(gen), 0, gen - age)) %>%
+  group_by(gen, cohort) %>%
+  summarise(bvar = var(b_i))
+
+cohort.vars %>%
+  ggplot(aes(x = gen, y = bvar)) +
+  geom_line(aes(group = cohort, colour = cohort)) +
+  geom_point(aes(colour = cohort)) +
+  scale_colour_viridis_c()
+
+cohort.vars %>%
+  ggplot(aes(x = gen - cohort, y = bvar)) +
+  geom_line(aes(group = cohort, colour = cohort)) +
+  geom_point(aes(colour = cohort)) +
+  scale_colour_viridis_c()
+
+simmy %>%
+  group_by(gen) %>%
+  summarise(bvar = var(b_i)) %>%
+  ggplot(aes(x = gen, y = bvar)) + 
+  geom_line()
+
+simmy %>%
+  group_by(gen) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(x = gen, y = n)) +
+  geom_line() +
+  scale_y_log10()
+
+# hmmm... still losing some ahhhh
+
+out5 = mclapply(pars.list,
+                function(pars) {
+                  sim.output = sim(params = pars, theta.t = 0, init.rows = 5 * 1e5) %>%
+                    group_by(gen) %>%
+                    summarise(bvar = var(b_i) * (1 - 1/n())) %>%
+                    mutate(trialno = pars$trial.no)
+                }
+) %>%
+  do.call(rbind, .)
+
+out5 %>%
+  group_by(gen) %>%
+  summarise(
+    bvarbar = mean(bvar),
+    bvarvar = var(bvar),
+    n = n()
+  ) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(aes(y = bvarbar)) +
+  geom_ribbon(
+    aes(
+      ymin = bvarbar - 2 * sqrt(bvarvar / n),
+      ymax = bvarbar + 2 * sqrt(bvarvar / n)
+    ),
+    alpha = 0.1
+  )
+# noooooooooooooooooo
+# really thought I had it...
+
+cohort.vars %>%
+  # mutate(r = pars.list[[1]]$r) %>%
+  # mutate(cohr.weighted.bv = (r+1)/r * (bvar * (1/(1+r)))^(gen-cohort)) %>%
+  # group_by(gen) %>%
+  # mutate(mean.weighted.bv = sum(cohr.weighted.bv)) %>%
+  ggplot(aes(x = gen, y = bvar)) +
+  geom_line(aes(group = cohort, colour = cohort)) +
+  # geom_line(aes(y = cohr.weighted.bv), size = 2,
+  #           data = . %>% distinct(gen, .keep_all = TRUE)) +
+  geom_point(aes(colour = cohort)) +
+  geom_line(
+    data = simmy %>% group_by(gen) %>% summarise(bvar = var(b_i)),
+    size = 2
+  ) +
+  scale_colour_viridis_c()
+# hmm......... the decline is really not that big... but it's still there...
+
+### Newton's method to solve for initial?
+
+# f we are solving
+f_fun = function(x, w, s, r) {
+  sumo = 0
+  for (k in 0:1000) {
+    sumo = sumo + 
+      (1/(1+r))^k * (w^2 * x^2) / (w^2 + k * x^2)
+  }
+  sumo = sumo * (r / (1 + r))
+  return(sumo - s^2)
+  # NOTE sumo aka x is sigma, NOT sigma^2
+}
+
+# derivative of f wrt x
+f_prm = function(x, w, r) {
+  sumo = 0
+  for (k in 0:1000) {
+    nasty.quot = (2*x*w^2 * (w^2 + k*x^2) - (x^2 * w^2) * (2*k*x)) / (w^2 + k*x^2)^2
+    sumo = sumo + ((1/(1+r))^k * nasty.quot)
+  }
+  sumo = sumo * (r / (1 + r))
+  return(sumo)
+}
+
+newt.tol = function(x0, tol, w, s, r) {
+  # xold = x0
+  # xnew = xold - (f_fun(xold, w2, s2, r) / f_prm(xold, w2, r))
+  # while (abs(xnew - xold) > tol) {
+  #   xold = xnew
+  #   xnew = xold - (f_fun(xold, w2, s2, r) / f_prm(xold, w2, r))
+  # }
+  # return(xnew)
+  
+  xold = x0
+  
+  while(abs(f_fun(xold, w, s, r)) > tol) xold = xold - (f_fun(xold, w, s, r) / f_prm(xold, w, r))
+  
+  return(xold)
+  
+}
+
+(lala = newt.tol(1, 0.000001, pars.list[[1]]$wfitn, 1, pars.list[[1]]$r))
+
+f_fun(lala, pars.list[[1]]$wfitn, 1, pars.list[[1]]$r) + 1
+
+# Mutation rate again
+muto.fun = function(w, s, r) {
+  sumo = 0
+  for (k in 0:1000) {
+    sumo = sumo +
+      (1 / (1+r))^k * ( (w^2 + k*s^2)^(-1) - (w^2 + (k+1)*s^2)^(-1) )
+  }
+  sumo = sumo * s^2 * w^2
+  return(sumo)
+  # sumo is sigma_m^2, not sigma_m
+}
+
+###### --------------
+
+n.trials = 400
+
+pars.list = data.frame(
+  n.pop0 = 1000, s.max = 0.9, r = (1.1 / (0.9)) - 1, wfitn = sqrt(10),
+  sig.a = 1,
+  sig.e = 0, alpha = 0.0000,
+  kceil = 10000,
+  timesteps = 20
+) %>%
+  mutate(
+    sig.a = newt.tol(1, 1e-6, wfitn, sig.a, r)
+  ) %>%
+  mutate(
+    mu = 1, 
+    sig.m = sqrt(muto.fun(wfitn, sig.a, r))
+  ) %>%
+  uncount(n.trials) %>%
+  mutate(trial.no = 1:n.trials) %>%
+  split(f = 1:nrow(.))
+
+set.seed(909202)
+
+out5 = mclapply(pars.list,
+                function(pars) {
+                  sim.output = sim(params = pars, theta.t = 0, init.rows = 5 * 1e5) %>%
+                    group_by(gen) %>%
+                    summarise(bvar = var(b_i) * (1 - 1/n())) %>%
+                    mutate(trialno = pars$trial.no)
+                }
+) %>%
+  do.call(rbind, .)
+
+set.seed(409)
+
+simmy = sim(pars.list[[1]], theta.t = 0, init.rows = 5 * 1e5)
+
+cohort.vars = simmy %>%
+  group_by(i) %>%
+  mutate(cohort = ifelse(!min(gen), 0, gen - age)) %>%
+  group_by(gen, cohort) %>%
+  summarise(bvar = var(b_i))
+
+cohort.vars %>%
+  ggplot(aes(x = gen, y = bvar)) +
+  geom_line(aes(group = cohort, colour = cohort)) +
+  geom_line(data = simmy %>% group_by(gen) %>% summarise(bvar = var(b_i)),
+            aes(x = gen, y = bvar),
+            linetype = 2) +
+  geom_point(aes(colour = cohort)) +
+  scale_colour_viridis_c()
+
+cohort.vars %>%
+  ggplot(aes(x = gen - cohort, y = bvar)) +
+  geom_line(aes(group = cohort, colour = cohort)) +
+  geom_point(aes(colour = cohort)) +
+  scale_colour_viridis_c()
+
+simmy %>%
+  filter(gen < 16) %>%
+  group_by(i) %>%
+  mutate(cohort = ifelse(!min(gen), 0, gen - age)) %>%
+  ggplot(aes(x = age)) +
+  geom_density(aes(colour = gen, group = gen),
+               size = 0.5) +
+  scale_colour_viridis_c() +
+  facet_wrap(~ cohort)
+# wait... what??
+# age distribution... is geometric but only past age 0?
+# I guess age structure/fitness structure influences # offspring...
+# wait... no? number of offspring should be the same throughout?
+
+out5 %>%
+  group_by(gen) %>%
+  summarise(
+    bvarbar = mean(bvar),
+    bvarvar = var(bvar),
+    n = n()
+  ) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(aes(y = bvarbar)) +
+  geom_ribbon(
+    aes(
+      ymin = bvarbar - 2 * sqrt(bvarvar / n),
+      ymax = bvarbar + 2 * sqrt(bvarvar / n)
+    ),
+    alpha = 0.1
+  )
+# this is very, very close... like so unbelievably close!
+
 
 #######--------------
 
@@ -553,4 +846,8 @@ out1 %>%
 # at least it looks like I learned corrected these previously-wrong misunderstandings:
 #   - variance really is sum over p*sig^2, not p^2*sig^2
 #   - probability of being in class k is proportional to 1/(1+r)^k, not (r/(1+r))^k
+
+# update 11/3/22 - I think it's working now???
+# or at least much much closer than ever before (in this simple case)
+# 
 
