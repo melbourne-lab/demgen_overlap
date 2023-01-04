@@ -139,3 +139,18 @@ Silly little script looking at ratios of rate of adaptation and fitness with ite
 Results are about as expected, with larger effects of survival for strong selection and low heritability.
 Maybe the biggest surprise was how the effects seemed so much incredibly larger for only such low h, low w.
 
+##### `examine_h1_equilibrium_populations.R` (January 3 2023)
+
+Obviously haven't added to this script in a while. Oops!
+
+Issue consuming this project for the last ~three months is figuring out steady state conditions.
+The way I've been thinking about this, the age distribution is determined by the p0 (proportion of the poopulation that is newborn), lambda max, and the phenotypic variance of each *new* cohort.
+
+Problem is that (as I've begrudgingly found) this doesn't produce the same population-wide variance across treatment groups. Ugh. This kinda sucks.
+
+This is testing equilibrium conditions I think I've found. This does appear to h9ld populations at equilibrium! This is cool!
+
+There are differences between the treatment groups (fast and slow); this is with perfect heritability. Interesting result but I'm not sure if this is due directly to the differences in phenotypic variance or not. This is still kinda due to the effects of longevity per se though... hmm...
+
+But, a different issue (or at least apparently an issue - haven't digested this a ton yet) is that populations don't return to original size upon reaching the original population size. This is probably because of the genetic variance load (ugh fuck!). I think it might have to do with the mutations being independent of population size... Need to think about better or the best ways to do this.
+
