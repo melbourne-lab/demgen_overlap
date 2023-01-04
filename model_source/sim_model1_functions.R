@@ -24,6 +24,40 @@ dim.add = function(df, rows, addition) {
   return(df)
 }
 
+### Functions for getting gamma^2_0 for a given s, r
+# that define the stage distribution
+
+g1.fun = function(g2_0, s, r) {
+  # g2_0 is gamma^2_0 = sigma^2_0 / w^2
+  # s and r are max survival and fecundity
+  sumo = 0
+  for (k in 0:1e5) sumo = sumo + (s^k / sqrt(1 + k*g2_0))
+  return((r / (r+1)) * sumo - 1)
+}
+
+g1.prm = function(g2_0, s, r) {
+  # derivative of g1 with respect go gamma^2_0
+  # (note: not with respect to gamma)
+  sumo = 0
+  for (k in 0:1e5) sumo = sumo - (s^k * (k/2) / sqrt(1 + k*g2_0)^3)
+  return(r / (r+1) * sumo)
+}
+
+newt.method.g1 = function(x0, tol, s, r) {
+  # Wrapper for Newton's method
+  xold = x0
+  while (abs(g1.fun(xold, s, r)) > tol) xold = xold - (g1.fun(xold, s, r) / g1.prm(xold, s, r))
+  return(xold)
+}
+
+gamma.calc = function(g2_0, s, r) {
+  # function for getting overall population phenotypic variance
+  # (in terms of gamma)
+  sumo = 0
+  for (k in 0:1e5) sumo = sumo + ((s^k / sqrt(1 + k*g2_0)) * (g2_0 / (1 + k*g2_0)))
+  return(r / (r+1) * sumo)
+}
+
 ### Wrapper for initializing sim
 
 init.sim = function(params, theta0) {
@@ -47,13 +81,16 @@ init.sim = function(params, theta0) {
   # ceiling-like carrying capacity term
   kceil = ifelse(any(grepl('ceil' , names(params))), params$kceil, Inf)
   
+  p.age = data.frame(age = 0:5000) %>%
+    mutate(p.age = s.max^age * sqrt(wfitn^2 / (wfitn^2 + age*sig.a^2)))
+  
   popn = data.frame(
     # Unique identifier
     i   = 1:size0,
     # Generation
     gen = 0,
-    # Age (age distibution for bernoulli survival is geometric)
-    age = rgeom(size0, prob = r / (1 + r)),
+    # Age
+    age = sample(size = size0, x = p.age$age, prob = p.age$p.age, replace = TRUE),
     # Sex (TRUE = female)
     fem = as.logical(sample(0:1, size0, replace = TRUE))
   ) %>%
