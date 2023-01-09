@@ -80,9 +80,12 @@ init.sim = function(params, theta0) {
   alpha = ifelse(any(grepl('alpha', names(params))), params$alpha, 0)
   # ceiling-like carrying capacity term
   kceil = ifelse(any(grepl('ceil' , names(params))), params$kceil, Inf)
+  # equilibrium population growth rate 
+  lstar = ifelse(any(grepl('lstar', names(params))), params$lstar, 1)
+  
   
   p.age = data.frame(age = 0:5000) %>%
-    mutate(p.age = s.max^age * sqrt(wfitn^2 / (wfitn^2 + age*sig.a^2)))
+    mutate(p.age = (r / (1 + r)) * (s.max / lstar)^age * sqrt(wfitn^2 / (wfitn^2 + age*sig.a^2)))
   
   popn = data.frame(
     # Unique identifier
