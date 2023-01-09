@@ -154,3 +154,33 @@ There are differences between the treatment groups (fast and slow); this is with
 
 But, a different issue (or at least apparently an issue - haven't digested this a ton yet) is that populations don't return to original size upon reaching the original population size. This is probably because of the genetic variance load (ugh fuck!). I think it might have to do with the mutations being independent of population size... Need to think about better or the best ways to do this.
 
+##### `test_steady_states.R` (January 9 2023)
+
+Here I was just checking to see if, in the new model with lambda-star, the following conditions would be met:
+
+* Age distribution staying constant
+* Population-wide variance remaining constant
+* Age-variance distribution staying constant
+
+I did this for both an adapted (theta/w = 0) and a shifted (theta/w = 1.17, fitness = ~50% environment).
+
+Findings:
+* Adapted environments (theta = 0) - yes, this all works!
+  + One issue to be weary of though; be careful about naming variables in the params list 
+  + (remember that sig.a is sig_a,0, not sig_a; probably should change this before final sims)
+* Maladapted environments (theta > 0) - this also seems to mostly work!
+  + For "fast" populations, it did seem to work.
+  + For "slow" populations, there was a transient increase in phenotypic variance (not sure why)
+  + For "slow" populations, there also was a "travelling bum" in the age distribution, but this seemed to equilibrate by the end of the ~15 generation simulations (probably related to the variance distribution above...)
+* One more thing about the stable environment: there was only a very small difference in population size by the end of the sims between fast and slow. Interesting!
+  
+Super cool!
+
+Some stuff this makes me curious about to look at next:
+* Well of course design a simulated experiment
+* Do dynamics depend on theta at all?
+* It's tempting to add a third treatment so p0 can be 0.25, 0.5, 0.75
+* Analytical stuff - can analytic solutions be derived here even with the transient dynamics?
+  + Can we analytically predict the rise and fall of the transient wave?
+* Related analytical stuff - is there a way to unify this model with G&H?
+  + (G&H should be a special case where p0 = 1)
