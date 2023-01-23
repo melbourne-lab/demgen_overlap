@@ -550,4 +550,70 @@ This will require more reading to solidify but so far I think what is going on i
 Math approaches here might be useful. There is a variance/covariance matrix involved and I think this can be applied to my model (pheno-geno correlation). The phi parameter I think might relate more to the survival parameter in my model than the heritability but I am not quite sure. I do feel like these models have to be analogous in some way though (although in my model rho of the environment is zero... what maintains the phenotypic variance?) The standing variance in plasticity in the pre-shift environment is a fraction of its optimum, and immediately following the shift it appears that this plasticity can quickly move from the fraction towards its optimum... B in this model clearly seems analogous to e in mine.
 
 Fun fun! Re-read at some point. Not even sure how much additional knowledge there is to be gained by reading Chevin and Lande 2010.
+ 
+### Chapin, F.S., et al. 1993. Evolution of suites of traits in response to environmental stress. Am Nat
+
+- "Stress resistance syndrome" - a suite of traits forming an adaptive strategy for tolerating stressful environments
+	- could be linkages of physiological and developmental linkages among traits
+	- Contemporary (and older) debate about "large evolutionary changes" (?) and whether they are due to small mutational events or few mutations with a lot of pleiotropy
+	- are these stress-related traits (esp. in plants) the result of a small number of genetic changes with large pleiotropy, or the accumulation of many independent evolutionary effects operating in parallel?
+- All plants show traits in a low relative growth rate (RGR), low resource acquisition, slow tissue turnover, etc. in low-resource environments
+	- some but not all plants are specifically adapted to low resource environments
+	- plants adapted to high-resource environments will show plasticity in these traits ("broader" reaction norm) than plants in low-resource environments
+- Genetic change in an underlying trait (e.g., a hormone) can turn on the SRS allowing it to be expressed in a broader range of environmental circumstances
+	- (turn a gene on to enable a bunch of stress response stuff...)
+	- ecological sorting or natural selection for the change could then match genes with habitats
+	- in plants, a lot of regulatory hormones are caused by a small number of genes with high heritability
+	- for quantitative traits, a few major genes of large effect at low frequency have a larger selection response under *strong* selection than a large number of genes of small effect at intermediate frequency
+		- but under a small-to-moderate environmental change, changes in many genes of small effect will have a larger response
+	- so, this makes it plausible that there would be a small number of genes of large effect responding to selection
+- Connection growth to stress resistance:
+	- Slow growth typically means slow leaf turnover (conserving carbon and nutrients lost during senescence)
+	- Slow growth also minimizes respiration associated with producing new tissues
+	- All-in-all slow growth minimizes dependence on the environment for uptake of new resources
+		- this also allows relatively more allocation to other processes which might be helpful under stress resistance (e.g., storage)
+- Plant stress response systems are centralized and rely on hormones
+	- environmental stresses can trigger changes in hormonal balances
+	- this is an preventative, early-acting system that reduces growth and changes allocation before there are severe imbalances (?)
+- Seed size influences seedling size and produces a variety of size-related traits in young plants which have cascading effects throughout life
+	- large seeds produce seedlings with large leaves, producing self-shading (?) and an overall low photosynthetic rate and high tissue maintenance might produce
+		- large seeds are typically associated with low RGR and perhaps this is why
+	- experimental reduction of seed size is associated with reduced size and increased RGR, but also decreased reproductive effort
+	- likewise removing leaf tissue (experimentally) increases whole-plant RGR and photosynthetic rate in remaining leaves
+	- large seeds are adaptive for germination in dry or shaded habitats
+- Likewise, tissue nitrogen, photosynthesis, stomatal conductance, and transpiration are related to each other
+	- simple genetic changes altering tissue N concentrations could alter a bunch of related traits as well
+- Trade-offs often account for (negative?) correlations among traits
+	- RGR and defense are typically inversely correlated (low RGR associated with higher defense - makes sense...)
+	- (...)
+- "Implications for global change" section hypothesizes that shorter-lived species will show faster change due to more turnover
+	- cite Antonoics papers and a paper by Corinne's dad (lmao) about intensive selection for high abscissic acid
+
+lmao... another citation for a hypothesis instead of a test/result. Well let's test it! The rest of this stuff was not supre relevant although there was some good stuff about pleiotropy vs. alleles of large effect...
+
+### Chevin, L.-M., and Lande, R. 2010. When do adaptive plasticity and genetic evolution prevent extinction of a density-regulated population? Evolution.
+
+(reading again... this time though I'm focusing on the plasticity part)
+
+- Hendry et al. 2008 suggests that much observed phenotypic change following environmental change is phenotypic plasticity, not evolution
+	- Lande (2009) showed that with variance in plasticity (slope of norm), after a change (beyond "background" fluctuations in magnitude), phenotypic adaptation involves rapid increase in plasticity and then slow genetic assimilation of the phenotype
+- Model: z is *not* a major component of fitness???
+	- z = a + b*eps + e
+		- a = breeding value, b = plasticity, eps is environmental state, e ~ N(0, sig^2_e)
+		- a and b are bivariate normal, sig_a, sig_b, assumed uncorrelated
+		- before selection, given eps:
+			- zbar = abar + bbar * eps
+			- sig2z = sig2a + sig2b eps^2 + sig2e
+		- assume sig_a, sig_b are *constant* across generations (*ooo)
+	- z subject to Gaussian selection, exp(-(z-B(eps)^2 / (2*omega^2))
+		- B*eps is environmental optimum
+	- z also subject to cost of plasticity, C(b) = exp(-b^2 / (2*omega_b^2))
+	- selection acts first on b (plasticity costs evaluated) then on z (phenotypic load cost)
+	- prior state of environment: eps = 0, abar_0 = 0, bbar_0 = alpha * B
+		- alpha is "initial relative plasticity" (there is a similar term in Lande 2009)
+	- as with Lande (2009): phase I (given sufficient variance in plasticity) means substantial increase in plasticity that accelerates approach to new optimum, phase II plasticity decreases due to cost and is compensated by increase of "elevation" (bvs) of reaction norms
+		- equation for maladaptation during any time step t of phase I
+		- "If the initial relative plasticity is moderate to low (if alpha^* < 1/2 [...]), consistent with a cost of plasticity, then most of the evolutionary recovery occurs during phase I of phenotypic evolution"
+
+(return... was not ready to think about the math here as seriously as I think I need to)
 
