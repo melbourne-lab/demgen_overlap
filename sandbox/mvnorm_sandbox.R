@@ -156,7 +156,10 @@ init.sim = function(params, theta0) {
   
   # Get age distribution
   p.age = data.frame(age = 0:500) %>%
-    mutate(p.age = (r / (1 + r)) * (s.max / lstar)^age * sqrt(wfitn^2 / (wfitn^2 + age*(sig.a^2 + sig.e^2))))
+    mutate(p.age = (r / (1 + r)) * 
+             (s.max / lstar)^age * 
+             sqrt(wfitn^2 / (wfitn^2 + age*(sig.a^2 + sig.e^2)))
+           )
   
   # Get phenotpyic age variance/covariance matrices
   vcv.a = vector('list', length = nrow(p.age))
@@ -211,7 +214,7 @@ init.sim = function(params, theta0) {
 # ooh,... need to figure out mutational variance...
 
 # Trials per parameter combo
-trys.per = 5
+trys.per = 100
 # 
 pars = expand.grid(
   p0    = c(.55, .75),
@@ -239,10 +242,15 @@ pars = expand.grid(
   group_by(p0, lstar, s.max, h2) %>%
   mutate(
     # Gamma-parameterization
+    # wfitn = 1 in gamma parameterization
     wfitn = 1,
+    # Phenotypic standard deviation in new cohorts
     sig.0 = sqrt(newt.method.g1(.1, 1e-8, s.max / lstar, r)),
-    sig.a = sqrt(h2 * sig.0),
-    sig.e = sqrt((1-h2) * sig.0),
+    # Breeding value standard deviation in new cohorts
+    sig.a = sqrt(h2 * sig.0^2),
+    # Non-inherited standard dxeviation in new cohorts
+    sig.e = sqrt((1-h2) * sig.0^2),
+    # Population-wide breeding value standard deviation
     sig.p = sqrt(gamma.calc(sig.a^2, s.max / lstar, r)),
     mu    = 1,
     sig.m = sqrt(wfitn^2 * (sig.a^2 - (sig.p^2 - p0*sig.a^2)/(1-p0)))
@@ -258,7 +266,7 @@ pars = expand.grid(
 set.seed(4523)
 
 sim.out2 = mclapply(
-  pars %>% uncount(40) %>% mutate(try.no = 1:(nrow(.))) %>% split(.$try.no),
+  pars %>% uncount(trys.per) %>% mutate(try.no = 1:(nrow(.))) %>% split(.$try.no),
   function(pars) {
     sim(pars, theta.t = 0, init.rows = 5 * 1e5) %>%
       group_by(gen) %>%
@@ -283,20 +291,20 @@ sim.out2 = mclapply(
 
 sim.out2 %>%
   ggplot(aes(x = gen, y = n, group = interaction(trial, lstar, h2))) +
-  geom_line(aes(colour = h2), linewidth = 0.5) +
+  geom_line(aes(colour = h2), linewidth = 0.25) +
   facet_wrap(paste('p0', p0) ~ paste('lstar', lstar), nrow = 2) +
   scale_y_log10()
 # nope... something's wrong
 
 sim.out2 %>%
   ggplot(aes(x = gen, y = zbar, group = interaction(trial, lstar, h2))) +
-  geom_line(aes(colour = h2), linewidth = 0.5) +
+  geom_line(aes(colour = h2), linewidth = 0.25) +
   facet_wrap(paste('p0', p0) ~ paste('lstar', lstar), nrow = 2) 
 # ooks okay actually
 
 sim.out2 %>%
   ggplot(aes(x = gen, y = zvar, group = interaction(trial, lstar, h2))) +
-  geom_line(aes(colour = h2), linewidth = 0.5) +
+  geom_line(aes(colour = h2), linewidth = 0.15) +
   facet_wrap(paste('p0', p0) ~ paste('lstar', lstar), nrow = 2) 
 # looks fine actually!
 
@@ -327,6 +335,7 @@ sim.out2 %>%
   ) +
   facet_wrap(paste('p0', p0) ~ paste('lstar', lstar), nrow = 2) 
 # hmm... some very slight changes...
+# does look like breeding value variance increases over time too
 
 sim.out2 %>%
   group_by(gen, h2, lstar, p0) %>%
@@ -354,12 +363,11 @@ sim.out2 %>%
     alpha = 0.2
   ) +
   facet_wrap(paste('p0', p0) ~ paste('lstar', lstar), nrow = 2) 
-# hmm... phenotypic variance does change
-
+# hmm... phenotypic variance changes as well
 
 sim.out2 %>%
   ggplot(aes(x = gen, y = bvar, group = interaction(trial, lstar, h2))) +
-  geom_line(aes(colour = h2), linewidth = 0.5) +
+  geom_line(aes(colour = h2), linewidth = 0.15) +
   facet_wrap(paste('p0', p0) ~ paste('lstar', lstar), nrow = 2) 
 # also looks fine...
 
@@ -379,3 +387,54 @@ test.sim %>%
   ggplot(aes(x = gen, y = zbar)) +
   geom_line()
 # hmm... randomness or no?
+
+#######---------------------------------------
+# Working parameter combo
+
+# Trials per parameter combo
+trys.per = 100
+# 
+pars = expand.grid(
+  p0    = c(.55, .75),
+  l.rat = c(.9, .95, .975),
+  h2    = c(.25, .5, 1)
+) %>%
+  # Demographic rates
+  mutate(
+    l.max = 2,
+    # Steady state size of newborn cohort
+    s.max = l.max * (1 - p0),
+    # Equilibrium growth rate
+    lstar = l.rat * l.max,
+    # Mean fecundity
+    r     = p0 / (1-p0),
+    # Initial population size
+    n.pop0 = 1000,
+    # PStrength of density dependence
+    alpha = log(lstar) / n.pop0,
+    # Ceciling-type carrying capacity just in case
+    kceil = 1200
+  ) %>%
+  filter(s.max <= 1) %>%
+  # Genetic info
+  group_by(p0, lstar, s.max, h2) %>%
+  mutate(
+    # Gamma-parameterization
+    # wfitn = 1 in gamma parameterization
+    wfitn = 1,
+    # Phenotypic standard deviation in new cohorts
+    sig.0 = sqrt(newt.method.g1(.1, 1e-8, s.max / lstar, r)),
+    # Breeding value standard deviation in new cohorts
+    sig.a = sqrt(h2 * sig.0^2),
+    # Non-inherited standard dxeviation in new cohorts
+    sig.e = sqrt((1-h2) * sig.0^2),
+    # Population-wide breeding value standard deviation
+    sig.p = sqrt(gamma.a.calc(sig.a^2, s.max / lstar, r, sig.e^2)),
+    mu    = 1,
+    sig.m = sqrt(wfitn^2 * (sig.a^2 - (sig.p^2 - p0*sig.a^2)/(1-p0)))
+  ) %>%
+  ungroup() %>%
+  # Other junk
+  mutate(
+    timesteps = 10
+  )
