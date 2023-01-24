@@ -36,7 +36,7 @@ pars = expand.grid(
     r     = p0 / (1-p0),
     # Initial population size
     n.pop0 = 5000,
-    # PStrength of density dependence
+    # Strength of density dependence
     alpha = log(lstar) / n.pop0,
     # Ceciling-type carrying capacity just in case
     kceil = 5500
@@ -122,105 +122,21 @@ sim.out2 %>%
 sim.out2 %>%
   ggplot(aes(x = gen, y = n, group = interaction(trial, lstar, h2))) +
   geom_line(aes(colour = p0), linewidth = 0.25) +
-  scale_colour_gradient2(low = 'red', mid = 'yellow', midpoint = .5, high = 'blue') +
+  scale_colour_gradient2(low = 'red', mid = 'yellow', midpoint = .75, high = 'blue') +
   facet_wrap(paste('h2', h2) ~ paste('lstar', lstar), nrow = 3) +
   scale_y_log10()
 
 sim.out2 %>%
   ggplot(aes(x = gen, y = bbar, group = interaction(trial, lstar, h2))) +
   geom_line(aes(colour = p0), linewidth = 0.25) +
-  scale_colour_gradient2(low = 'red', mid = 'yellow', midpoint = .5, high = 'blue') +
+  scale_colour_gradient2(low = 'red', mid = 'yellow', midpoint = .75, high = 'blue') +
   facet_wrap(paste('h2', h2) ~ paste('lstar', lstar), nrow = 3) 
 
 sim.out2 %>%
   ggplot(aes(x = gen, y = zbar, group = interaction(trial, lstar, h2))) +
   geom_line(aes(colour = p0), linewidth = 0.25) +
-  scale_colour_gradient2(low = 'red', mid = 'yellow', midpoint = .5, high = 'blue') +
+  scale_colour_gradient2(low = 'red', mid = 'yellow', midpoint = .75, high = 'blue') +
   facet_wrap(paste('h2', h2) ~ paste('lstar', lstar), nrow = 3) 
-
-# Look at some individual output.
-
-sim.out3 = mclapply(
-  pars %>% uncount(5) %>% mutate(try.no = 1:(nrow(.))) %>% split(.$try.no),
-  function(pars) {
-    sim(pars, theta.t = 1.75, init.rows = 5 * 1e6) %>%
-      mutate(
-        trial = pars$try.no, 
-        p0    = pars$p0,
-        lstar = pars$lstar,
-        h2    = pars$h2
-      )
-  },
-  mc.cores = 4
-) %>%
-  do.call(rbind, .)
-
-head(sim.out3)
-nrow(sim.out3)
-
-t1 = sim.out3 %>% filter(trial %in% 1)
-
-s1 = t1 %>%
-  filter(gen < 10) %>%
-  mutate(e_i = z_i - b_i, b_i = theta_t - b_i, z_i = theta_t - z_i) %>%
-  group_by(gen, age) %>%
-  summarise(
-    n = n(),
-    bbar = mean(b_i),
-    bvar = var(b_i),
-    zbar = mean(e_i),
-    zvar = var(e_i),
-    zbar = mean(z_i),
-    zvar = var(z_i)
-  )
-
-s1 %>%
-  ggplot(aes(x = age, y = bbar)) +
-  geom_point(aes(colour = gen)) +
-  geom_line(aes(colour = gen, group = gen)) +
-  scale_colour_viridis_c()
-
-s1 %>%
-  ggplot(aes(x = gen, y = bbar)) +
-  geom_point(aes(colour = age)) +
-  geom_line(aes(colour = age, group = age)) +
-  scale_colour_viridis_c()
-
-c1 = t1 %>%
-  filter(gen < 10) %>%
-  mutate(e_i = z_i - b_i, b_i = theta_t - b_i, z_i = theta_t - z_i) %>%
-  group_by(gen, cohort = gen - age) %>%
-  summarise(
-    n = n(),
-    bbar = mean(b_i),
-    bvar = var(b_i),
-    ebar = mean(e_i),
-    evar = var(e_i),
-    zbar = mean(z_i),
-    zvar = var(z_i)
-  )
-
-c1 %>%
-  mutate(age = gen - cohort) %>%
-  ggplot(aes(x = gen, y = bbar)) +
-  geom_line(aes(colour = cohort, group = cohort)) +
-  geom_point(aes(fill = age), shape = 21, size = 3) +
-  scale_colour_viridis_c() +
-  scale_fill_gradient(low = 'black', high = 'white')
-
-c1long = c1 %>%
-  select(-contains("var")) %>%
-  select(-n) %>%
-  pivot_longer(cols = contains("bar"), names_to = "vartype", values_to = "varval") %>%
-  mutate(age = gen - cohort)
-
-c1long %>%
-  ggplot(aes(x = gen, y = varval)) +
-  geom_line(aes(colour = cohort, group = cohort)) +
-  geom_point(aes(fill = age), shape = 21, size = 3.5) +
-  scale_colour_viridis_c() +
-  scale_fill_gradient(low = 'black', high = 'white') +
-  facet_wrap(~ vartype, nrow = 1)
 
 ##### Try a big batch now, get some averages
 
@@ -244,8 +160,8 @@ sim.out4 = mclapply(
         kbar = mean(age),
         bbar = mean(b_i),
         bvar = var(b_i),
-        zbar = mean(e_i),
-        zvar = var(e_i),
+        ebar = mean(e_i),
+        evar = var(e_i),
         zbar = mean(z_i),
         zvar = var(z_i)
       )  %>%
@@ -259,3 +175,167 @@ sim.out4 = mclapply(
   mc.cores = 4
 ) %>%
   do.call(rbind, .)
+
+sim.out4 %>%
+  ggplot(aes(x = gen, y = n, group = interaction(trial, lstar, h2))) +
+  geom_line(aes(colour = h2), linewidth = 0.05) +
+  scale_colour_gradient2(low = 'red', mid = 'yellow', midpoint = .5, high = 'blue') +
+  facet_wrap(paste('p0', p0) ~ paste('lstar', lstar), nrow = 3) +
+  scale_y_log10()
+
+sim.sum = 
+  rbind(
+    expand.grid(gen = 1:pars$timesteps[1], trial = unique(sim.out4$trial)) %>%
+      merge(sim.out4 %>% distinct(trial, p0, lstar, h2)) %>%
+      mutate(n = 0, kbar = NA, bbar = NA, bvar = NA, zbar = NA, zvar = NA) %>%
+      select(names(sim.out4)),
+    sim.out4
+  ) %>%
+  group_by(gen, trial, h2, p0, lstar) %>%
+  summarise(across(c(n, kbar, bbar, bvar, zbar, zvar), function(x) sum(x, na.rm = TRUE))) %>%
+  group_by(gen, h2, p0, lstar) %>%
+  summarise(
+    across(
+      c(n, kbar, bbar, bvar, zbar, zvar), 
+      list(bar = function(x) mean(x, na.rm = TRUE), var = function(x) var(x, na.rm = TRUE)),
+      .names = "{.col}{.fn}"
+    ),
+    nn = sum(n > 0)
+  )
+
+head(sim.sum)
+tail(sim.sum)
+
+sim.sum %>%
+  mutate(p0 = factor(p0)) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(
+    aes(
+      y = nbar, 
+      group = p0, 
+      colour = p0
+    )
+  ) +
+  geom_ribbon(
+    aes(
+      ymin = nbar - sqrt(nvar / trys.per),
+      ymax = nbar + sqrt(nvar / trys.per),
+      fill = p0,
+      group = p0
+    ),
+    alpha = 0.25
+  ) +
+  scale_y_log10() +
+  facet_wrap(h2 ~ lstar)
+
+sim.sum %>%
+  mutate(p0 = factor(p0), ext = factor(nn < trys.per)) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(
+    aes(
+      y = bbarbar, 
+      group = interaction(p0, ext), 
+      colour = p0,
+      linetype = ext
+    )
+  ) +
+  geom_ribbon(
+    aes(
+      ymin = bbarbar - sqrt(bbarvar / nn),
+      ymax = bbarbar + sqrt(bbarvar / nn),
+      fill = p0,
+      group = interaction(p0, ext),
+      alpha = ext
+    ),
+  ) +
+  scale_alpha_manual(values = c(.1, .5)) +
+  facet_wrap(h2 ~ lstar)
+
+sim.sum %>%
+  filter(nn %in% trys.per) %>%
+  mutate(p0 = factor(p0)) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(
+    aes(
+      y = bbarbar, 
+      group = p0, 
+      colour = p0
+    )
+  ) +
+  geom_ribbon(
+    aes(
+      ymin = bbarbar - sqrt(bbarvar / nn),
+      ymax = bbarbar + sqrt(bbarvar / nn),
+      fill = p0,
+      group = p0,
+    ),
+    alpha = 0.5
+  ) +
+  facet_wrap(h2 ~ lstar)
+
+sim.sum %>%
+  filter(nn %in% trys.per) %>%
+  mutate(p0 = factor(p0)) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(
+    aes(
+      y = zbarbar, 
+      group = p0, 
+      colour = p0
+    )
+  ) +
+  geom_ribbon(
+    aes(
+      ymin = zbarbar - sqrt(zbarvar / nn),
+      ymax = zbarbar + sqrt(zbarvar / nn),
+      fill = p0,
+      group = p0,
+    ),
+    alpha = 0.5
+  ) +
+  facet_wrap(h2 ~ lstar)
+
+sim.sum %>%
+  filter(nn %in% trys.per) %>%
+  mutate(p0 = factor(p0)) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(
+    aes(
+      y = zvarbar, 
+      group = p0, 
+      colour = p0
+    )
+  ) +
+  geom_ribbon(
+    aes(
+      ymin = zvarbar - sqrt(zvarvar / nn),
+      ymax = zvarbar + sqrt(zvarvar / nn),
+      fill = p0,
+      group = p0,
+    ),
+    alpha = 0.5
+  ) +
+  facet_wrap(h2 ~ lstar)
+
+sim.sum %>%
+  filter(nn %in% trys.per) %>%
+  
+  mutate(p0 = factor(p0)) %>%
+  ggplot(aes(x = gen)) +
+  geom_line(
+    aes(
+      y = zvarbar, 
+      group = p0, 
+      colour = p0
+    )
+  ) +
+  geom_ribbon(
+    aes(
+      ymin = zvarbar - sqrt(zvarvar / nn),
+      ymax = zvarbar + sqrt(zvarvar / nn),
+      fill = p0,
+      group = p0,
+    ),
+    alpha = 0.5
+  ) +
+  facet_wrap(h2 ~ lstar)
