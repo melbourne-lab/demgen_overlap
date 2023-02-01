@@ -3,6 +3,7 @@
 ##### Load packages
 library(dplyr)
 library(tidyr)
+library(mc2d)
 
 ### Suppress output from summarise()
 options(dplyr.summarise.inform = FALSE)
@@ -94,9 +95,24 @@ init.sim = function(params, theta0) {
   # equilibrium population growth rate 
   lstar = ifelse(any(grepl('lstar', names(params))), params$lstar, 1)
   
+  # Get age distribution
+  p.age = data.frame(age = 0:500) %>%
+    mutate(p.age = (r / (1 + r)) * 
+             (s.max / lstar)^age * 
+             sqrt(wfitn^2 / (wfitn^2 + age*(sig.a^2 + sig.e^2)))
+    )
   
-  p.age = data.frame(age = 0:5000) %>%
-    mutate(p.age = (r / (1 + r)) * (s.max / lstar)^age * sqrt(wfitn^2 / (wfitn^2 + age*sig.a^2)))
+  # Get phenotpyic age variance/covariance matrices
+  vcv.a = vector('list', length = nrow(p.age))
+  
+  for (k in 1:length(vcv.a)) {
+    vcvk = c(sig.a^2 * (1 + (k-1)*sig.e^2) / (1 + (k-1)*(sig.a^2 + sig.e^2)),
+             -(k-1) * sig.a^2 * sig.e^2    / (1 + (k-1)*(sig.a^2 + sig.e^2)),
+             -(k-1) * sig.a^2 * sig.e^2    / (1 + (k-1)*(sig.a^2 + sig.e^2)),
+             sig.e^2 * (1 + (k-1)*sig.a^2) / (1 + (k-1)*(sig.a^2 + sig.e^2))
+    )
+    vcv.a[[k]] = matrix(vcvk, nrow = 1)
+  }
   
   popn = data.frame(
     # Unique identifier
@@ -108,25 +124,28 @@ init.sim = function(params, theta0) {
     # Sex (TRUE = female)
     fem = as.logical(sample(0:1, size0, replace = TRUE))
   ) %>%
+    cbind(
+      rmultinormal(size0, mean = c(gbar0, 0), sigma = do.call(rbind, vcv.a[.$age + 1]))
+    ) %>%
+    rename(b_i = `1`, e_i = `2`) %>%
     mutate(
-      # Breeding value (sig.a is additive genetic variance, according to Lynch & Walsh)
-      b_i = rnorm(size0, 0,   sqrt(sig.a^2 * (wfitn^2 + age*sig.e^2) / (wfitn^2 + age * (sig.a^2 + sig.e^2)))),
       # Phenotype
-      z_i = rnorm(size0, b_i, sqrt(sig.e^2 * (wfitn^2 + age*sig.a^2) / (wfitn^2 + age * (sig.a^2 + sig.e^2)))),
+      z_i = b_i + e_i,
       # Survival
       s_i = s.max * exp(-(z_i - theta0)^2 / (2*wfitn^2)) * exp(-alpha * size0),
       # Offspring (0 for males, Poisson draw for females)
       r_i = rpois(size0, lambda = ifelse(fem, 2 * r, 0)),
       # Phenotypic optimum in this time step
       theta_t = theta0
-    )
+    ) %>%
+    select(-e_i)
   
   # If initial size is above the specified ceiling, truncate
   if (nrow(popn) > kceil) { 
     popn = popn %>% 
       slice_sample(kceil, replace = FALSE) 
     # Sort rows to order individuals by index
-      arrange(i)
+    arrange(i)
   }
   
   return(popn)
