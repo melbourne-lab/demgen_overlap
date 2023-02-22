@@ -591,6 +591,244 @@ Fun fun! Re-read at some point. Not even sure how much additional knowledge ther
 
 lmao... another citation for a hypothesis instead of a test/result. Well let's test it! The rest of this stuff was not supre relevant although there was some good stuff about pleiotropy vs. alleles of large effect...
 
+### Cotto, O., et al. 2017. A dynamic eco-evolutionary model predicts slow response of alpine plants to climate warming. Nature Comms.
+
+- SDMs are used for assessing biodiversity loss on long-ish timescales
+	-  But, they do not account for eco-evolutionary processes, even though populations may adapt to novel conditions
+- Mountain species are especially threatened by climate change
+	- Nobody is modeling or making predictions from models including evolutionary dynamics of these species
+	- How does local additive genetic variance, life history, landscape structure, dispersal influence rapid evolutionary adaptation?
+	- Furthermore most relevant studies to adaptation focus on short-lived zpecies!
+		- Theory predicts that long-lived species in stressful mountain environments should have slower evolutionary response (Savolainen et al., 2004, Kuparinen et al., 2010)
+- Here: DEEMs (dynaimc eco-evolutionary models) that combine niche-based projections from SDMs with empirical data
+	- first, predict current distribution with "static ecological niche models" (SENMs)
+	- then use DEEMs to simulate changes in distribution given adaptation driven by different scenarios of environmental change
+	- Use four endemic alp species in 15 landscapes of Austrian Alps
+	- environmental variables modeled: bedrock carbonates, mean annual temprature, mean annual precipitation
+		- model environmental change with IPCC forecasts
+	- compare SENMs and DEEMs
+	- perform sensitivity analysis of DEEM projectsions to additive genetic variance, strength of selection on survival, adult survival rate
+##### Methods
+- Hill-Smith analysis (?) to select species to model
+- DEEMs fit with an approach like  Nemo
+	- Three polygenic quantitative traits, one corresponding to each environmental variable
+	- Ten unlinked aditive diploid loci with pleiotropic mutations (at rate mu)
+		- mutations drawn from 3D gaussian with fixed variance
+		- "continuum-of-allele model" (see ref 49)
+		- traits is sum of genotypic value plus random non-genetic component, h2 ~ 0.3
+	- Hermaphroditic species with four life stages: seeds, seedlings, pre-reprod adults and reprod adults
+		- life cycle: mating, seed production, seed dispersal, aging, seed germination, seed survival in seed bank, clonal reproduction, seedling competition (density-dependent Beverton-Holt), seedling viability selection
+		- two-year maturation period before reaching reproductive adult stage
+		- adult survival determined by parameter s_a (not necessarily known, tried values 0.7, 0.8, 0.9)
+		- seedlings compete against other seedlings and adults previously established in favorable microsites (!!)
+		- viability selection is Gaussian, uncorrelated selection between traits
+		- migration also occurs (somehow)
+	- Simulations in two phases: burn-in allowing species to reach genetic-demographic equilibria and colonization, then 150 years under RCP scenarios
+		- 10 reps per combo of species, spatial grid, RCP scenario, mutation rate, selection regime
+		- data saved (before selection for each ten year window): individuals per site, individuals per age class, average genotype and phenotype, variance of genotype and phenotype, trait values, average seedling fitness
+##### Results
+- SENMs predict contraction while DEMs predict early expansion (colonization outside initial range?) and then decrease until final year (extinction debt?)
+	- DEEM range size contraction occurs via maladaptation to local environmental change
+	- Fig 1: DEEMs show greater change in final relative occupancy as well as a longer phase of decline
+	- DEEMs show a decrease in habitat suitability over time (Fig. 2)
+	- DEEMs show consistent decline in seedling survival but eventual steady-state-ish (lower than original; ~0.75 -> ~0.2)
+- Decrease in range sizes occurs more quickly when population size is reduced (isn't this obvious? is order backwards?)
+	- variation in population size correlated (?) with climate specialization and range fragmentation
+	- range loss higher where there is larger temporal shift relative to traits (faster population decline)
+	- declines associated with reduced strength of selection through drift and more demographic stochasticity
+		- extinction vortex!
+		- "quick" ability to rebound and adapt to local conditions for those populations that escape the vortex
+- Effects of climate change is modulated by strength of selection on seedling survival and baseline adult survival
+	- Stronger selection on seedlings means faster decline
+	- Higher adult survival means longer persistence of adults, slowing near-term rates of adaptation in species range but slower turnover
+	- period of decline of relative population size, particularly adults, then plateau (at ~-0.8) after ~90 years
+- Age structure: pre-change "stable" age structure is mostly reproductive adults, then seedlings, then pre-reproductive adults
+	- maladaptation decreased frequency of pre-reproductive adults (this is because initially there are fewer seeds surviving selection and thus there is less recruitment)
+	- Long-lived adults (not subject to selection!?) restrict recruitment through competition and increasing maladaptation to the new climate
+		- because new individuals were not replacing senescing adults, adult frequency decreased as population size decreased
+	- Environmental stabilization allows population size to equilibrate and frequency of pre-reproductive adults (adapted to novel environment) to increase	
+- Local adaptation vs. global adaptation: simulations where individuals had one genotype (average environment in occupied patches) that did not evolve but did disperse (similar to non-evolving control?)
+	- This lack of local adaptation meant faster decline
+	- But, if local conditions ameliorate towards the center of the niche-space, phenotypic diversity that local adaptation maintains increases maladaptation
+##### Discussion
+- Long lifespan limits adaptive capacity but does allow long-term persistence in unsuitable sites
+	- in this study long lifespan and limited dispersal means that less specialized and more abundant species have slower declines but very rapid loss of adaptive potential
+- Results suggest that species range shifts and local dynamics might be somewhat temporally decoupled, with local demographic and genetic processes occurring more quickly than elsewhere
+	- local extinction vortex, meaning that small local population sizes might cause rapid extirpation that deterministic expectations might not capture
+- A model with only SENM + demography found slower decrease in range size compared to SENM-only projections
+- On model assumptions: unlike in model, bioclimatic variables are often correlated and selection on phenotypic traits may also be correlated
+	- (see ref 37)
+	- model also has independence of the three traits but genetic correlations are likely
+	- other variables might be important - the simulation approach makes it possible to incorporate these
+	- Also, key assumption: selection from climate is exerted mostly on seedling survival (refs herein)
+		- apparently, simulations with selection influencing adult fecundity did not have the same influence
+		- of course in a demographic model of longer-lived species population growth is more sensitive to survival than recruitment rates
+		- it's possible that the survival function is not gaussian (e.g., could be truncation instead)
+		- community composition might be a better predictor of adult fecundity than environmental variables
+		- COMPADRE may be useful for figuring out which vital rates in certain environments are most vulnerable to selection via climatic variables
+
+Super cool stuff. Downside is no analytic tractability, but there is some good stuff in here.
+
+Their result is caused by the fact that, as with the Schmid et al. paper, selection is only acting on one vital rate. The influence of longevity is because adult survival is not subject to selection (only seedling viability, occurring once).
+
+Kinda cool to see the age-distribution-related analyses here, particularly the sort of ripple effects (low seedling survival meant fewer pre-reproductive and then reproductive adults, with a large portion of the population held in the seed/seedling stage).
+
+This NEMO stuff sounds interesting!
+
+### Lindstrom, J., and Kokko, H. 2002. Cohort effects and population dynamics. Ecology Letters.
+
+- Cohort effects (mean differences among cohorts) often arise due to conditions during early development (e.g., Lindstrom 1999)
+	- population density may also have effects
+	- Cohort effects are different from maternal effects: cohort effects are typically not passed on to offspring in the same way that maternal effects are
+	- theory typically suggests that individual differences provide a stabilizing effect on population dynamics
+		- e.g., effects of resource monopolization: if some high quality individuals can secure enough resources in bad conditions then this may buffer populations (Lomnicki and Sedziwy 1989)
+##### Model
+- Discrete time population growth with overlapping generations
+- Approach: compare population dynamics + cohort effects with no environmental stochasticity vs. population dynamics + cohort effects + environmental stochasticity vs. population dynamics + no cohort effects + "non-remembered" environmental fluctuations
+	-  here final model (no cohort effects but fluctuations still present) are a control/alternative model such that fluctuations only are important in current time step
+- Maynard Smith-Slatkin density dependence:
+	- p_{i,t} is survival of an individual from year t to t+1 as a function of birth year i
+	- p_{i,t} = p_0 / (1 + a_{i,t} sum_j N_{j,t})^b
+	- f_{i,t} is fecundity of individual born in year i in time step t
+	- f_{i,t} = f_0 / (1 + c_{i,t} sum_j p_{j,t}N_{j,t})^d
+	- thus population size in t+1 is: 
+		- N_{i,t+1} = p_{i,t} N_{i,t}
+		- N_{t+1,t+1} = sum_i f_{i,t+1} p_{i,t} N_{i,t}
+	- a_{i,t} and c_{i,t} are resp. strength of density on survival for cohort i
+		- a_{i,t} = a_0 exp(-alpha q_i + (1-alpha)q_t)
+		- similar expression for c
+		- q_t is quality of year t; q_t ~ N(0,sigma^2)
+		- so alpha scales relative importance of birth year and current year (alpha = 1 is extreme cohort effect, alpha = 0 is no cohort effect)
+##### Results
+- Fig. 1 shows that cohort effects can be stabilizing or destabilizing
+- Fig. 2: identical deterministic effects, comparison of stochastic dynamics with/without cohort effects
+	- seems like results on CV (of population size?) with/without cohort effects are similar to each other? (at least, effects are similar compared to deterministic model... wait what is CV in a deterministic model...?)
+- Fig. 3 shows effects of inter-cohort variation producing different dynamics than near-term environmental stochasticity (b > 1)
+	- populations of certain size can be composed of cohorts of different qualities, producing homoegeneity in vital rates (compared to the population as a whole)
+		- through non-linear averaging, the average rate in the heterogeneous population will be below the mean in the homogeneous population (Jensen's ineq.)
+		- variation producing "shallower" density dependence curves...?
+	- also, small population size tends to result from poor past conditions nad large population size tends to result from good years
+		- with "memory" of past conditions (i.e., cohort effects) then population size will correlate with individual quality (e.g., good years -> large populations of good individuals)
+		- this will strengthen NDD after "good" years and weaken it after "bad" years, producing a (stabilizing?) effect
+		- Fig. 2 also shows thish: high p_0 (high baseline survival) means adding stochasticity has a greater dampening effect than when p_0 is low
+		- high environmental variability will produce the largest difference between environmental variations-only and cohort effects case
+- If original density dependence is steep enough to produce a deterministic fluctuation, then shallowing-effects due to NDD will produce more stable dynamics
+	- but if the original slope of the density dependence is shallow and resulting dynamics are stable, then cohort effects that produce a shallower relationship will lessen the stability of the system (less likely to return to equilibrium if perturbed)
+		- e.g., Fig. 4: shallower density dependence means slower recovery from fluctuations
+##### Discussion
+- Cohort effects and individual variation will increase variation in fluctuations when underlying dynamics are stable but can stabilize population size when dynamics are unstable
+	- increasing fluctuations when: fluctuations producing cohort effects introduce variation to populations similarly to how environmental fluctuations influence individuals (regardless of birth year)
+	- stabilizing effects when: cohort effects maintain individual-level variation that produces buffering
+	- in nature: vertebrates tend to low growth rates and stable dynamics so cohort effects may be de-stabilizing
+		- inverts though have shorter life spans, less overlap in generations, thus unlikely to have cohort effects at all
+	- stabilizing effects more likely when there are strong non-linearities in density dependence, high potential growth rates
+		- e.g., Soay sheep apparently have cohort effects? (Coltman et al.. 1999, Forchhammer et al. 2001) and have strong density dependence and inherently unstable dynamics
+		- prediction from Soay that this model/analysis suggests: sequence of similar years should produce more pronounced flutuations than under stable environments (not sure why... because the quality and population size will be correlated?)
+- This model is conservative: all individuals in a cohort are assumed equal, but more structured variation will also have effects on population growth
+
+Interesting stuff. Interesting idea here is that there are possible positive effects of within-population variability in vital rates and cohort effects are one of several ways to produce or maintain them. 
+
+I like the intuition that Jensen's inequality produces a flattening effect (Fig. 3).
+
+I also like the idea of cohort effects producing correlations between population size and individual quality - seems like potential for de-stabilizing dynamics. I suppose with Markovian environmental change, these might be uncorrelated without cohort effects, but with cohort effects there is a kind of temporal autocorrelation (not sure if that is the right term - "memory" in the intro was a good way to put this).
+
+The stabilizing vs. de-stabilizing stuff... seems like the point is that it will somewhat counteract whatever the underlying dynamics are. When are underlying dynamics unstable? Not sure when these would be; feel like I'd mostly be interested in stable dynamics (low growth rates) in which case the cohort effects might be de-stabilizing...
+
+
+### Beckerman, A.P., Benton, T.G., Lapsley, C.T., and Koesters, N. 2003. Talkin' 'bout my generation: environmental variability and cohort effects. Am Nat.
+
+- Cohort effects: delayed life-history effects synchronized among groups within a population
+- In variable environments, there can be time-delayed effects of environment on performance of individuals at future times (through life history traits)
+	- (citation here: Beckerman et al., 2002)
+	- within-generation effects (e.g., delayed-life history effects) can produce cohort effects
+	- maternal or paternal environment effects are examples of among-generation effects
+	- Cohort effects will arise when variance in an LH trait within a group is appreciably *smaller* than variance in the trait among the population such that cohorts are statistically distinct in the trait (think like ANOVA within/among group differences)
+	- Some empirical examples cited herein
+- Lindstrom and Kokko (2002): cohort effects (variation among cohorts) can be produced by cohort-specific density dependence
+	- if the NDD is non-linear curve of performance ~ density, then variation among cohorts will produce non-linear averaging in the average effects of NDD across cohorts (rel. to a population with variation that is not structured)
+	- L&K02 also show: so long as "underlying population dynamics are stable" (?), then cohort effects can introduce variation and fluctations akin to effects of environmental variation
+		- or, cohort effects can decrease temporal variation when "underlying dynamics are variable"
+
+
+### Vinton, A.C., Gascoigne, S.J.L., Sepil, I., and Salguero-Gomez, R. 2022. Plasticity's role in adaptive evolution depends on environmental change components. TREE.
+
+- Does adaptive plasticity facilitate adaptive responses in changing environments, and if so when and by how much?
+- Contradictory evidence on whether plasticity facilitates or hinders adaptive evolution; few general patterns
+	- H1: Plasticity slows phenotypic change by masking genotypic variation (e.g., Bogert effect?)
+	- H2: Plasticity facilitates evolution by buffering populations while genetic change occurs (e.g., plasticity-first hypothesis, Baldwin effect)
+- Under "moving optimum theory" under (continuously?) (uni-?)directionally changing environments
+	- There is a critical rate of change that the mean population phenotype must be capable of tracking (probably from B&L95)
+		- During this tracking there will be a phenotypic lag (larger lags increase extinction risk)
+		- Magnitude of lag determined by evolution (selection strength, genetic variatioin) and ecologicy (life history, plasticity, population dynamics)
+	- Plasticity can contribute to persistence and adaptation in relationship to this lag
+- Adaptation requires selection on heritable variation in a trait
+	- Population-dynamic traits tend to be quantitative traits (refs: Yamamichi 2022, Hill 2010)
+	- Breeder's equation: change in a trait is selection differential x narrow-sense heritability
+	- Mean change, variability of change, and temporal autocorrelation can influence heritability, genetic variation, selection
+- (Mean) rate of environmental change is important
+	- Sufficient environmental change is required to produce strong enough selection for the population to track the moving optimum
+	- Slow environmental change produces weak selection (ineffective?)
+	- Additive genetic variance and heritability can change (possibly increasing genetic potential)
+	- But, change beyond the critical rate can be too fast for the optimum to follow, producing increasingly large lag and eventual extinction
+- Environmental variation and autocorrelation (novel and harsh environments)
+	- "Moderate" environmental variation can optimize selection
+	- Positive temporal autocorrelation can also increase additive genetic variance over time (increasing tracking ability)
+	- More variability and less autocorrelation means more exposure to novel, usually unfavorable environments
+	- "Temporal refugia" (should arise from positive autocorrelation?)
+	- But, exposure to unfavorable environments can also increase additive genetic variance (??) (Hoffman and Merilla 1999)
+		- occurs because selection will not remove mutations maladaptive only in rare environments
+			- (not removing these mutations, because they occur rarely in novel environments, increases variance)
+	- Harsh, novel environments can also decrease genetic variance
+		- e.g., environmental conditions may prevent expression of underlying genetically-determined trait benefits, reducing heritability (because genetic influence on the trait is lowered)
+- Although usually assumed that variation hinders population growth, there variability can have positive or negative effects on population dynamics
+	- E.g., through varying effects of density dependence
+	- Might also see transient dynamics, or unexpected dynamics due to deviation from age distribution
+	- Nonlinearities or correlations between/among vital rates in differing populations may produce buffering strategies
+		- Plasticity of vital rates can also influence buffering
+	- Likewise, diferent phylo- histories or life history strategies will have different effects on environmental fluctuations
+		- Positive autocorrelation increases likelihood of long stretches of adverse conditions
+		- Positive autocorrelation also increases likelihood of positive growth that replenishes size and allows tracking of trait values
+		- Paniw et al. 2018: density-independent, stage-structured population models show that pace of life and iteroparity positive correlate (??) with sensitivity to autocorrelation
+- Within-generational plasticity: because plasticity can evolve or have different forms, its effects on the phenotypic lag are complex
+	- Typically, plasticity increases phenotypic lag
+	- Assumption under moving optima: plasticity can buffer decreases in population size but come at an energetic cost
+	- Mixed results about environmental variability and plasticity combined effects
+	- Plasticity's effects rely in part on unreliable cues, in which case autocorrelation is helpful (inasmuch as autocorrelation is a proxy for predictability)
+##### Hypotheses
+- Benefits of plasticity on adaptation in response to increasing mean rate of change
+	- HA1: Plasticity benefits increase with faster environmental change.
+		- Slow change means weak selection, high population growth and high heritability of fitness
+			- Then, plasticity has little benefit
+		- But, mean environmental changes that are too fast may be assisted if plasticity can help the population "catch up" and maintain genetic diversity
+	- HA2: Plasticity benefits decrease with faster environmental change
+		- Weak selection -> lag load -> plasticity overcomes
+		- Increasing rates of change might incur larger costs than benefits of plasticity
+		- Small populations under high rates of environmental change are susceptible to drift, which plasticity may increase by moving the phenotypic average and obscuring genetic variation from selection
+	- HA3: Plasticity benefits are highest at an intermediate rate of change
+		- Some combination of HA1 and HA2
+- Benefits of plasticity on adaptation in response to increasing environmental variation
+	- HB1: Benefits of plasticity increases with increasing variation
+		- With increasing variability, plasticity can dampen detrimental effects of very large fluctuations and buffer populations from extinction
+		- This probably has diminishing returns such that some variation is too extreme
+	- HB2: Benefits of plasticity decrease with increasing variation
+		- Under more stable environments, plasticity speeds up the process of fixing advantageous traits
+		- More (environmental) variation decouples phenotypic and genotpyic selection, possibly producing genetic maladaptation
+	- HB3: Benefits of plasticity are highest under low and high environmental variability
+		- Ability of the trait to reach the peak of the fitness landscape on its own (without plasticity) might be higest under intermediate rates of change
+		- In which case, plasticity would have least marginal benefit under intermediate environmental variability
+- Benefits of plasticity on adaptation in response to autocorrelation
+	- HC1: Benefits of plasticity increase with increasing autocorrelation
+		- Higher autocorrelation means higher reliability of temporal cues and predictablity of future states
+		- So, plastic responses will be more accurate and more likely to assist under tracking
+	- HC2: Benefit of plasticity to adaptive evolution decreases with autocorrelation
+		- Autocorrelation can occur at various scales with varios lag-lengths
+			- What if the lag is out of sync with the pace of life history? (e.g., generation time)
+		- Autocorrelation may cause populations to sit in unfavorable conditions for long periods of time, reducing genetic variation
+			- With reduced genetic variation, it's harder for plasticity to help track the moving optimum (but also plasticity might be needed even more here?)
+##### Conclusions
+- 
+
+
 ### Chevin, L.-M., and Lande, R. 2010. When do adaptive plasticity and genetic evolution prevent extinction of a density-regulated population? Evolution.
 
 (reading again... this time though I'm focusing on the plasticity part)
