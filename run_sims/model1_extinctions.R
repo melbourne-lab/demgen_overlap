@@ -106,18 +106,22 @@ sim.r = sim.out %>%
     nn = n()
   )
 
-sim.n = sim.out %>%
+sim.n.all = sim.out %>%
   merge(
     expand.grid(
-      # (t=0 not needed here - everyone initialized with non-zero)
-      gen   = 1:pars$timesteps[1],
-      p0    = c(.5, .75, .95),
-      lstar = c(.8, .9, .95) * pars$l.max[1],
-      h2    = c(.25, .5, 1)
+      gen   = 0:pars$timesteps[1],
+      trial = 1:(nrow(pars) * trys.per)
     ),
-    all.x = TRUE, all.y = TRUE
+    all.y = TRUE
   ) %>%
   mutate(n = ifelse(is.na(n), 0, n)) %>%
+  group_by(trial) %>%
+  arrange(gen) %>%
+  mutate(
+    p0 =    p0[1],
+    h2 =    h2[1],
+    lstar = lstar[1]
+  ) %>%
   group_by(p0, lstar, h2, gen, trial) %>%
   summarise(n = sum(n)) %>%
   group_by(p0, lstar, h2, gen) %>%
@@ -125,6 +129,16 @@ sim.n = sim.out %>%
     nbar = mean(n),
     nvar = var(n),
     psrv = mean(n > 0),
+    nn   = n()
+  )
+
+sim.n.surv = sim.out %>%
+  group_by(trial) %>%
+  filter(max(gen) == pars$timesteps[1]) %>%
+  group_by(h2, lstar, p0, gen) %>%
+  summarise(
+    nbar = mean(n),
+    nvar = var(n),
     nn   = n()
   )
 
@@ -156,7 +170,13 @@ write.csv(
 )
 
 write.csv(
-  sim.n,
+  sim.n.all,
   row.names = FALSE,
-  file = 'run_sims/out/sim_results_m1_sizes_n.csv'
+  file = 'run_sims/out/sim_results_m1_allsizes_n.csv'
+)
+
+write.csv(
+  sim.n.surv,
+  row.names = FALSE,
+  file = 'run_sims/out/sim_results_m1_survsizes_n.csv'
 )
