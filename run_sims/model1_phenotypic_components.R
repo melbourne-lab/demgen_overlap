@@ -86,11 +86,14 @@ sim.out2 = mclapply(
       summarise(
         n = n(),
         bbar = mean(b_i),
-        bvar = ifelse(any(age > 0), var(b_i[age > 0]), NA),
+        bvar = var(b_i),
+        bvarw = ifelse(any(age > 0), var(b_i[age > 0]), NA),
         ebar = mean(e_i),
-        evar = ifelse(any(age > 0), var(e_i[age > 0]), NA),
+        evar = var(e_i),
+        evarw = ifelse(any(age > 0), var(e_i[age > 0]), NA),
         zbar = mean(z_i),
-        zvar = ifelse(any(age > 0), var(z_i[age > 0]), NA)
+        zvar = var(z_i),
+        zvarw = ifelse(any(age > 0), var(z_i[age > 0]), NA)
       )  %>%
       mutate(
         trial = pars$try.no, 
