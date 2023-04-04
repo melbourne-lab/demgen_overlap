@@ -22,34 +22,35 @@ source('model_source/sim_model1_functions.R')
 trys.per = 1000
 
 # Parameters
+
 pars = expand.grid(
   # (Equilibrium) size of initial cohort
-  p0    = c(.5, .75, .95),
-  # Equilibrium growth rate relative to maximum
-  l.rat = c(.8, .9, .95),
+  s.max = c(0.1, 0.5, 0.9),
   # Heritability of fitness
-  h2    = c(.25, .5, 1)
+  h2    = c(.25, .5, 1),
+  # Gamma squared (pheno variance / sel pressure)
+  sig.z = sqrt(c(.1, .2, .4))
 ) %>%
   # Demographic rates
   mutate(
-    # Maximum growth rate
-    l.max = 2,
-    # Maximum survival
-    s.max = l.max * (1 - p0),
-    # Equilibrium growth rate
-    lstar = l.rat * l.max,
+    # Maximum expected lifetime fitness
+    w.max = 3,
+    # Equilibrium lifetime fitness
+    wstar = w.max * (1 - s.max) / (sqrt(1 + sig.z^2) - s.max),
     # Mean fecundity
-    r     = p0 / (1-p0),
+    r     = w.max * (1 - s.max) / s.max,
+    # Equilibrium population growth rate
+    lstar = (s.max + w.max * (1 - s.max)) / (s.max + (w.max/wstar) * (1 - s.max)),
     # Initial population size
     n.pop0 = 20000,
     # Strength of density dependence
     alpha = log(lstar) / n.pop0,
     # Ceciling-type carrying capacity just in case
-    kceil = 30000
+    kceil = 30000,
+    p0    = (w.max * (1 - s.max)) / (w.max * (1 - s.max) + s.max)
   ) %>%
-  filter(s.max <= 1) %>%
   # Genetic info
-  group_by(p0, lstar, s.max, h2) %>%
+  group_by(lstar, s.max, h2, p0) %>%
   mutate(
     # Gamma-parameterization
     # wfitn = 1 in gamma parameterization
@@ -68,9 +69,7 @@ pars = expand.grid(
   ) %>%
   ungroup() %>%
   # Other junk
-  mutate(
-    timesteps = 50
-  )
+  mutate(timesteps = 100)
 
 # Run simulations
 set.seed(4523)
@@ -78,19 +77,17 @@ set.seed(4523)
 sim.out = mclapply(
   pars %>% uncount(trys.per) %>% mutate(try.no = 1:(nrow(.))) %>% split(.$try.no),
   function(pars) {
-    sim(pars, theta.t = 0, init.rows = 50 * 30000) %>%
+    sim(pars, theta.t = 0, init.rows = 100 * 30000) %>%
       group_by(gen) %>%
-      summarise(
-        n = n()
-      ) %>%
+      summarise(n = n())  %>%
       mutate(
         trial = pars$try.no, 
         p0    = pars$p0,
-        lstar = pars$lstar,
-        h2    = pars$h2
+        h2    = pars$h2,
+        var.z = pars$sig.z^2
       )
   },
-  mc.cores = 16
+  mc.cores = 12
 ) %>%
   do.call(rbind, .)
     
@@ -98,7 +95,7 @@ sim.r = sim.out %>%
   group_by(trial) %>%
   mutate(log.lam = c(diff(log(n)), NA)) %>%
   filter(!is.na(log.lam)) %>%
-  group_by(gen, p0, lstar, h2) %>%
+  group_by(gen, p0, var.z, h2) %>%
   summarise(
     llbar = mean(log.lam),
     llvar = var(log.lam),
@@ -120,11 +117,11 @@ sim.n.all = sim.out %>%
   mutate(
     p0 =    p0[1],
     h2 =    h2[1],
-    lstar = lstar[1]
+    var.z = var.z[1]
   ) %>%
-  group_by(p0, lstar, h2, gen, trial) %>%
+  group_by(p0, var.z, h2, gen, trial) %>%
   summarise(n = sum(n)) %>%
-  group_by(p0, lstar, h2, gen) %>%
+  group_by(p0, var.z, h2, gen) %>%
   summarise(
     nbar = mean(n),
     nvar = var(n),
@@ -135,7 +132,7 @@ sim.n.all = sim.out %>%
 sim.n.surv = sim.out %>%
   group_by(trial) %>%
   filter(max(gen) == pars$timesteps[1]) %>%
-  group_by(h2, lstar, p0, gen) %>%
+  group_by(h2, var.z, p0, gen) %>%
   summarise(
     nbar = mean(n),
     nvar = var(n),

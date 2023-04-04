@@ -24,32 +24,32 @@ trys.per = 200
 # Parameters
 pars = expand.grid(
   # (Equilibrium) size of initial cohort
-  p0    = c(.5, .75, .95),
-  # Equilibrium growth rate relative to maximum
-  l.rat = c(.8),
+  s.max = c(0.1, 0.5, 0.9),
   # Heritability of fitness
   h2    = c(.25, .5, 1)
 ) %>%
   # Demographic rates
   mutate(
-    # Maximum growth rate
-    l.max = 2,
-    # Maximum survival
-    s.max = l.max * (1 - p0),
-    # Equilibrium growth rate
-    lstar = l.rat * l.max,
+    # Maximum expected lifetime fitness
+    w.max = 3,
+    # Gamma squared (pheno variance / sel pressure)
+    sig.z = sqrt(.4),
+    # Equilibrium lifetime fitness
+    wstar = w.max * (1 - s.max) / (sqrt(1 + sig.z^2) - s.max),
     # Mean fecundity
-    r     = p0 / (1-p0),
+    r     = w.max * (1 - s.max) / s.max,
+    # Equilibrium population growth rate
+    lstar = (s.max + w.max * (1 - s.max)) / (s.max + (w.max/wstar) * (1 - s.max)),
     # Initial population size
     n.pop0 = 20000,
     # Strength of density dependence
     alpha = log(lstar) / n.pop0,
     # Ceciling-type carrying capacity just in case
-    kceil = 30000
+    kceil = 30000,
+    p0    = (w.max * (1 - s.max)) / (w.max * (1 - s.max) + s.max)
   ) %>%
-  filter(s.max <= 1) %>%
   # Genetic info
-  group_by(p0, lstar, s.max, h2) %>%
+  group_by(lstar, s.max, h2, p0) %>%
   mutate(
     # Gamma-parameterization
     # wfitn = 1 in gamma parameterization
@@ -68,9 +68,7 @@ pars = expand.grid(
   ) %>%
   ungroup() %>%
   # Other junk
-  mutate(
-    timesteps = 50
-  )
+  mutate(timesteps = 50)
 
 # Run simulations
 set.seed(4523)
@@ -79,9 +77,7 @@ sim.out2 = mclapply(
   pars %>% uncount(trys.per) %>% mutate(try.no = 1:(nrow(.))) %>% split(.$try.no),
   function(pars) {
     sim(pars, theta.t = 0, init.rows = 50 * 30000) %>%
-      mutate(
-        e_i = z_i - b_i
-      ) %>%
+      mutate(e_i = z_i - b_i) %>%
       group_by(gen) %>%
       summarise(
         n = n(),
