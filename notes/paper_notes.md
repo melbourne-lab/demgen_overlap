@@ -734,6 +734,138 @@ I also like the idea of cohort effects producing correlations between population
 
 The stabilizing vs. de-stabilizing stuff... seems like the point is that it will somewhat counteract whatever the underlying dynamics are. When are underlying dynamics unstable? Not sure when these would be; feel like I'd mostly be interested in stable dynamics (low growth rates) in which case the cohort effects might be de-stabilizing...
 
+### Purvis, A., Gittleman, J.L., Cowlishaw, G., and Mace, G.M. 2000. Prediction extinction risk in declining species. Proc R Soc B.
+
+- Predictions about attributes that correlate with extinction vulnerability:
+	- Small populations (due to stochasticity, local catastrophe, slower adaptation, "mutational meltdown", inbreeding)
+	- Island endemics (small geographic range means typically small population and typically no associated LH enemies)
+	- Higher trophic level species (magnified effects of disturbance)
+	- "Slow" LH such as small litter, slow growth rates, late maturity ("less able to compensate for increased mortality with increased population extinction" - cites MacArthur & Wilson 1967)
+	- Complex social structures (persistence is at higher level than individual)
+	- Large home ranges (more susceptibility to habitat loss and fragmentation)
+	- Large body size (typically correlated with above characteristics)
+- Variables selected against current extinction risk assessments
+	- mammals and carnivores
+	- assessments come from 1996 IUCN list, treating extinction risk as a scaled measure 0-5
+		- these come from criteria listed above??
+		- analyses excluded species referenced in ref to these characteristics
+	- Also performed analysis on subset of recently-declining species
+- Phylogenetic correlation incorporated into error structure... somehow?
+	- "phylogenetically independent contrasts" - what does this mean?
+- Looked at declining species looking at each predictor independently
+	- then compared with multiple regression of contrasts
+		- (this allowed factoring out (?) geographic range which was highly significant)
+	- also looked at multiple regression with model simplification to find minimally adequate models
+		- removed predictor with lowest marginal reduction in variance
+- Small geographic range and island endemicity have greatest predictive importance
+	- less important but still supported: slow life history (gestation length only?), low population density, diurnal activity
+	- incorporating geographic size removes significance of island status, but density, gestation length, and body mass still appear positive
+- Higher extinction risk assessments correlate with small geographic range, high trophic level, low population in minimally adequate models
+- Models of primates and carnivores separately yield similar results to each other, as do separating out declining species only	
+	- in these models, minimally dequate model has significant effect of gestation length (positive) for carnivores but not primates
+	- likewise, age at sexual maturity is significant in the carnivore model too (negative)
+- Small range, low density, high trophic level and low reproductive rates typically associated with higher extinction risk
+	- these appear to override or outweigh effects of contemporary population size
+- Island endemics less at risk than expected by theory (after accounting for range size), agreeing with two other recent studies
+- It is possible that rates of range decline are underrepresented in widespread species compared to narrow ranges
+	- but also range size might correlate to habitat specificity, which likely hinders adaptive potential in face of environmental change
+- Model "misses" where model seriously underestimates threats occur in areas with unusually high tropical forest loss
+	- species might be robust to change but change is simply too much
+
+Interesting. I don't know how the phylogenetic contrasts are modeled (it isn't really explained). Other possible methodological issues: (1) treating response as linear, (2) data source for DV, (3) not reporting collinearity among predictors. Taking results at face value, this does suggest that slower LH populations are classified as higher risk. The specific proxy supporting this is gestation time, which correlates with several other pace-of-life factors. Notably age at first reproduction does not seem to be significantly correlated except in one case (also, holy multiple testing Batman).
+
+Cite or no? I guess for showing how this is a widely supported hypothesis. Perhaps not pointing to as a result in and of itself.
+
+
+### Millner, J.M., et al. 1999. Repeated selection on morphometric traits in the Soay sheep on St. Kilda. Jouranl of Animal Ecology
+
+- Monitoring sequential selection events: som examples of natural selection of quantitative traits in birds (refs herein)
+	- although phenotypic selection may produce little/no change if the variance is environmental rather than genetic
+	- in soay sheep (St. Kilda), 1985 - 1996 measurements of winter mortality in relationship to quantitative traits
+		- previous studies have shown selection on morphometric characters
+##### Methods
+- Population fluctuations (600 - 1825 individuals over ~30 years), where crashes may be due to starvation exacerbated by gastro parasites
+- Morphomeasurements (annually): body weight, hindleg length, incisor arcade breadth (bite size, food intake rate)
+	- correlations among variables
+- Estimate selection differentials (change in population  means before/after selection divided by variance before selection)
+	- use t-tests to estimate character means of survivors and non-survivors
+	- using selection gradients (multiple regressions) to figure out which traits featured largest selection
+		- 1990 - 1996, estimating selection gradients each year
+	- estimate heritabilities as well
+##### Results
+- Selection for larger body size w/ stat. sign. differences in body size between living and dead sheep in 4/6 years
+	- significant selection on hindleg length in same years
+	- only two years of significant selection in females, one in males, for incisor arcade breadth
+- Between-year variation: density dependent s/t not discernible at low density but discernible differences in all three traits at higher density
+	- (but also note easier to detect these things at high density - larger sample size) 
+	- survival in age was correlated with population size in lambs but weaker in adults
+	- incisor breadth - negative direction of selection in most years
+- Interestingly, no evidence from a regression (hmm...) of body weight over time despite evidence of consistent selection for larger size
+	- heritability of body weight was significant @ 0.05 but low
+	- higher heritabilities of other traits
+##### Discussion
+- Ah interesting... body weight is body size + condition, and hindleg length should correlate with body size but not necessarily with condition
+	- so the lack of response of hindleg length suggests that trends are driven in part by condition
+	- (connection here between heritability and "repeatability" - interesting point!)
+	- it's possible that the repeated selection on body weight has depleted genetic variation for the trait, causing low heritability
+	- or, there may be low response to selection because of opposing selection occurring at other points in the life cycle e.g., fecundity
+
+Hmm not useful in the way I was hoping (not looking at the consequences of the *repeated* aspect of selection) but it is still a useful result. Might not be high longevity here though so effects might not be detectable. 
+
+There is some other interesting stuff though - e.g, lack of detectable response due to low heritable variation, or the depletion of additive genjetic variance for body size, some notes about body size as a trait and selective pressures upon it.
+
+### Gadgil, M., and Bossert, W.H. 1970. Life historical consequences of natural selection. Am Nat.
+
+(Took notes on paper copy)
+
+Confusing at times. 
+Model had functions for consequences of reproductive investment on survival (decreasing w/ investment), growth (decreasing w/ investment), and reprodcution. Assume that in the final stage, reproductive investment is maximized. 
+
+Main predictions are what is important.
+
+- "Profit" and "cost" of reproduction to lifetime fitness at different stages; optimal reproductive investment at a given age when profit minus cost is maximized. 
+	- Semelparity is favored if the optimal investment is 0/1 for all stages
+	- Iteroparity is favored if the optimal investment is at intermediate values for several life stages.
+		- This will happen at if the profit function is concave and the cost function is convex (phrased differently in this paper but this *has* to be what they mean)
+- Reproductive effort should increase with age in the case of iteroparity
+- If there is an environmental effect with equal investments on all ages after a certain age (i.e., for all ages j > j'), this will lower age of reproduction for semelparous individuals and increase investment prior to that age for iteroparous individuals
+- Soething about reproductive potential relationships with size... had a hard time understanding this one
+- Population regulation: predation-limiting populations (influencing mortality) and resource-limiting populations (influence mortality and reproduction)
+	- Uniform probabilities in survival odds (associated with predation-limitation) will not influence reproductive effort in either semelparous or iteroparous populations
+	- If equilibrium density declines (due to uniform influence on survival), relaxation of resource limitation should lower age of reproduction for semelparous individuals and increase reproductive effort in iteroparous individuals
+
+Hmm... useful at the very least for making points that reproductive effort should change with age (not present in our model). We also do not include size (explicitly influencing future fitness) or growth effects. 
+
+
+### Vaupel, J.W., Manton, K.G., and Stallard, E. 1979. The impact of heterogeneity in individual frailty on the dynamics of mortality. Demography.
+
+- Define mortality measure mu(x,y,z) is mortality of individual of age x at time y with 'frailty' z
+	- frailty is constant over lifespan(z > 0)
+	- wlog let mu(x,y,1) be mortality of "standard" individual
+	- mu(x,y,z) = z * mu(x,y,1)
+		- can express this as mu(z) = z * mu
+- H(x,y,z) is cumulative mortality hazard of individual born at age y-x, up until age x (from age 0 to x, from time y-x to y)
+	- H(x,y,z) = int_0^x mu(t,y-x+t,z) dt
+		- can express this as H(z) = z * H
+	- survival s(x,y,z), probability of surviving to age x, is exp(-H)
+		- if we let s(x,y,1) = s, then s(z) = s^z
+- Mortality within a cohort
+	- mean is \bar{mu}(x,y) = int_0^infty mu(x,y,z) p(z) dz
+	- mean frailty is \bar{z}(x,y) = int_0^infty z p(z) dz
+	- from this it follows that \bar{mu}(x,y) = mu(x,y,1) \bar{z}
+		- i.e., \bar{mu} = mu * \bar{z}
+- Assume frailties within a cohort are gamma distributed upon birth
+	- gamma has parameters k (shape) and lambda (scale)
+	- k = 1 gives exponential, k growing large approaches normal
+	- at age x, frailty of survivors will remain gamma with same k, now lambda(x) = lambda + H(x)
+	- mean frailty is \bar{z}(x) = \bar{z}(0) k / (\bar{z}(0) + k + H(x))
+		- so mean frailty tends to zero with time
+	- frailty of those dying @ age x is also gamma distributed, same labmda, shape is now k+1
+
+There is other stuff in here too applying this to some datasets. I skimmed only.
+
+Useful! I can't help but feel like there's a link between gamma distributions in frailty and normal distributions in traits under gaussian selection. The results just look too clean - just look at that mean frailty at age x expression!
+
 
 ### Beckerman, A.P., Benton, T.G., Lapsley, C.T., and Koesters, N. 2003. Talkin' 'bout my generation: environmental variability and cohort effects. Am Nat.
 
