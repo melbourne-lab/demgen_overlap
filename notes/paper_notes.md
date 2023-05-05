@@ -18,6 +18,7 @@ Ugh, okay, so yes very similar to what I had originally intended for this projec
 - Dan's recommendation about spatial mixing (or temporal mixing too?) and some other feedback I guess
 - What is this genetic storage effect?
 
+
 ### Ellner, S., and Hairston, N.G. 1994. Role of overlapping generations in maintaining genetic variation in a fluctuating environment. The American Naturalist.
 
 - Temporally fluctuating selection (relative fitnesses of phenotypes varies over time) proposed and rejected (!?) as a process for maintenance of genetic variation
@@ -91,6 +92,7 @@ The modeling did not necessarily stick with me (the approach did though - invasi
 
 Interesting that this happens while also true that the persistence of this genetic variation will also slow the rate of adaptation. It's worth reading the other papers cited in here.
 
+
 ### Hairston, N.G., and De Stasio, B.T. 1988. Rate of evolution slowed by a dormant propagule pool. Nature.
 
 - Theory suggests that dormant propagules will slow down rates of genetic change by shielding part of the gene pool from selection pressures
@@ -116,6 +118,7 @@ Interesting that this happens while also true that the persistence of this genet
 Ahhhh. Okay this was such a bizarrely written paper. Just not clear, *too* concise. There was a drought, which led to delayed production of eggs because of the disappearance of predators. These eggs persisted in the egg bank for a few years. I think after this drought, should the populations have returned to normal? What was the deal with this mass reproductive failure? This belies the ecological need for the egg bank but not necessarily the evolutionary consequences of it. Why are the evolutionary consequences of this mass reproductive die off not examined? The emergence of the eggs from this year, which had the phenotype for delayed reproduction, should have delayed the return of the population to typical pre-drought levels? But what is this in comparison to?
 
 A re-read may be useful but it probably would be better to just ignore this and focus on other papers!
+
 
 ### Pelletier, F., et al. 2007. The evolutionary demography of ecological change: linking trait variation and population growth. Science.
 
@@ -152,6 +155,7 @@ I'm not quite sure what it means to say contribution of a trait's variation to p
 Basically, selection pressure varies across time/environments, and across age as well as sex. Different demographic stages have different selection pressures and these vary in how much they contribute to population growth.
 
 For our simplified model, it seems like the thing here that is most likely to show up is that there's variation in how much variation contributes to population growth over time. But also thinking about relative effects of even just two vital rates (adult ? Age and sex I think are less important. Think more.
+
 
 ### Ozgul, A.,, et al. 2010. Coupled dynamics of body mass and population growth in response to environmental change. Nature.
 
@@ -219,6 +223,7 @@ Interesting study although a little bit limited. Here, for a long-lived species,
 
 What does this mean for this project? Just that survival of longer-lived individuals is in fact very important for their long-term persistence. Growth as well. Other than that not incredibly much.
 
+
 ### Compagnoni, A., et al. 2021. Herbaceous perennial plants with short generation time have stronger responses to climate anomalies than those with longer generation time. Nature communications.
 
 - Climate change: influencing mean and variance in temperatures and precip
@@ -272,6 +277,7 @@ Validates (on a large, although possibly biased, set of species/populations) the
 Also some interesting stuff here (H1-3!) about specific drivers in specific environments. Namely, that preciptation anomalies matter more than temperature anomalies? Useful for thinking about fates under climate change. Relevant to Thermopsis projects, maybe?
 
 The Cotto paper may be a good read next... I think there was some stuff in there about the rate of adaptation.
+
 
 ### Lanfear, R., Kokko, H., and Eyre-Walker, A. 2014. Population size and the rate of evolution. TREE.
 
@@ -388,6 +394,7 @@ Populations will (with large t) have a lag proportional to k/s (why?) - higher a
 Some cool analytical approximations in here although there are some cases (ignoring various types of stochasticity) where they fail.
 
 As far as previous simulations go - this does explain previous simulation results where populations initially increase (carrying capacity or something) then decrease - an inverse of ghe G&H U. Extinction dynamics here have two parts - first decline to lambda = 1, then lambda below 1. This creates that shape. Also the guidance at the end about speed of change rel. to phenotypic variance is useful. Needs to be very small! E.g., for sigma^2_z = 3, a critical rate of change between 0.03 anmd 0.3?
+
 
 ### Helantera, H., and Uller, T. 2020. Different prospectives on non-genetic inheritance illustrate the versatile utility of the Price equation in evolutionary biology. Phil Trans R Soc B.
 
@@ -591,6 +598,7 @@ Fun fun! Re-read at some point. Not even sure how much additional knowledge ther
 
 lmao... another citation for a hypothesis instead of a test/result. Well let's test it! The rest of this stuff was not supre relevant although there was some good stuff about pleiotropy vs. alleles of large effect...
 
+
 ### Cotto, O., et al. 2017. A dynamic eco-evolutionary model predicts slow response of alpine plants to climate warming. Nature Comms.
 
 - SDMs are used for assessing biodiversity loss on long-ish timescales
@@ -675,6 +683,7 @@ Kinda cool to see the age-distribution-related analyses here, particularly the s
 
 This NEMO stuff sounds interesting!
 
+
 ### Lindstrom, J., and Kokko, H. 2002. Cohort effects and population dynamics. Ecology Letters.
 
 - Cohort effects (mean differences among cohorts) often arise due to conditions during early development (e.g., Lindstrom 1999)
@@ -733,6 +742,7 @@ I like the intuition that Jensen's inequality produces a flattening effect (Fig.
 I also like the idea of cohort effects producing correlations between population size and individual quality - seems like potential for de-stabilizing dynamics. I suppose with Markovian environmental change, these might be uncorrelated without cohort effects, but with cohort effects there is a kind of temporal autocorrelation (not sure if that is the right term - "memory" in the intro was a good way to put this).
 
 The stabilizing vs. de-stabilizing stuff... seems like the point is that it will somewhat counteract whatever the underlying dynamics are. When are underlying dynamics unstable? Not sure when these would be; feel like I'd mostly be interested in stable dynamics (low growth rates) in which case the cohort effects might be de-stabilizing...
+
 
 ### Purvis, A., Gittleman, J.L., Cowlishaw, G., and Mace, G.M. 2000. Prediction extinction risk in declining species. Proc R Soc B.
 
@@ -866,6 +876,491 @@ There is other stuff in here too applying this to some datasets. I skimmed only.
 
 Useful! I can't help but feel like there's a link between gamma distributions in frailty and normal distributions in traits under gaussian selection. The results just look too clean - just look at that mean frailty at age x expression!
 
+
+### Partridge, L., and Harvey, P.H. 1988. The ecological context of life history evolution. Science.
+
+- Consensus is that under simplifying assumptions, optimal life history maximizes r (intrinsic rate of population growth for a population at stable stage distribution)
+	- this parameter is determined by age-specific survival and fertility
+	- (it is missing frequency dependence, tho)
+- Iteroparity and Cole's paradox
+	- Letting parental survival be P and offspring survival be Y, then rather than one additional offspring (as in the case of Cole's paradox) the cost of iteroparity is actually P/Y
+		- (so, higher adult to juvenile survival is expected to lead to perennial life histories)
+	- Law (Am Nat, 1979) grew Poa annua from two different environments in a CG
+		- one population was from low-density environment with high mortality
+		- one population was from pasture with high density and high juvenile mortality
+		- in common conditions, pasture population were more likely to survive and breed again
+- Reproductive effort: theory here relies on ideas about reproductive cost
+	- theory suggests that individuals should maximize their reproductive value (sensu Fisher) at each age through appropriate resource allocation
+		- e.g., forgo reproduction at younger age if it allows for increased survival or growth to (st)age with more reproductive capacity
+	- reproductive costs are difficult to measure, making advance there difficult
+		- observational studies may have confounding (environment, phenotypic effects, etc.)
+	- experiments also have issue with genetic vs. purely-phenotypic manipulations of reproductive rate
+		- intersting stuff about Drosophila manipulations... genetic correlations between fertility and longevity appears negative but phenotypic correlation is often positive du to effects of body size
+	- some stuff on single species studies, comparative studies...
+- Temporal variability: an allele or genotype with zero fitness in *some* environment will go extinct in enough time (bet hedging, phenotypic plasticity)
+- Constraints on life history evolution
+	- Mutational variance: Stearns suggesting that fixed LH traits in a lineage while closely related lineages in similar habitats do not have the trait is a result of shortage of mutations?
+	- Body size may limit LH evolution in some ways, although other LH components often correlate more closely with each other than they do with body size (e.g., gestational length and age at weaning)
+		- size may not necessarily be a fixed constraint determining LH differences and may instead be evolving in response to LH selection pressures
+	- age, selection intensity, mutation accumulation
+		- Williams (1957) - expected reduction (?) in ferrtility with advancing age?
+		- detected reduction in fertiltiy with age in natural populations of long-lived species?
+		- reproductive senesence may be a constraint in maintenance/repair
+		- Medawar: evolution of aging is due to selection acting on mutations (or any allele?) with age-dependent effects on fecundity or survival
+			- from this we can make the prediction that mutation (positive or negative) with effects early in life will be subject to stronger selection than mutations with affects later in life
+- Population density can influence how growth rates can be maximized (r- vs. k-selection)
+	- investment for high reproduction allows for high growth at low densities (e.g., when colonizing new environments) - r selection
+	- cf investment for competitive ability when frequently at high density - K selection
+	- K-selection may maximize numbers in the "critical age group" where DD occurs (Charlesworth book)
+	- predictions:
+		- can't simultaneously have high r and K
+		- growth rate patterns should reflect density
+			- see experiments on Drosophila that seem to confirm this
+	- drawback: selection at high density favors improved competitive ability, which reduces popualtion size (ref)
+
+Great overview! Won't cite here but good for intro to some interesting questions.
+
+### Coulson, T., and Tuljapurkar, S. 2008. The dynamics of a quantitative trait in an age-structured population living in a variable environment. Am Nat.
+
+- Probability of survival and successful reproduction can be reliatn on a phenotype, incl. quantitative traits
+	- mean demographic rates in a population may depend on trait distribution, trait distribution and rates of change may depend on underlying demography, etc.
+	- "demographic rates can therefore be considered as phenotype-by-environment interactions (Coulson et al. 2006)"
+	- viability selection can alter trait distributions within an aging cohort, and fertility selection upon traits with heritable variation can alter trait distributions over time
+		- (these strengths can also vary with environment...)
+	- "it should be possible to write an expression to exactly describe change in the mean value of a quantitative trait in an age-structured population over a time step" (similarly to the way MPMs work)
+		- benefit of this would be to look for retrospective decomposition of observed fluctuations in trait values to contributions from survival, reproduction, and other factors like density dependence, climate
+- What can cause (rapid) phenotypic change within a population?
+	- viability selection removing individuals as they age
+	- fertility selection allowing genotypes to differentially contribute to successive cohorts
+	- genetic, maternal, and environmental affects on offspring size (and presumably also rates of growth?)
+	- phenotypic plasticity within the lifespan
+	- fluctuations in the demographic composition of the population
+- Previous works on quant trait dynamics (assuming non-overlapping generations)
+	- Breeder's equation: Delta(\bar{z}) = (Cov(Z,W) / \bar{W}) (V_A / V_P)
+		- selection differential times heritability
+		- estimating the mean and covariance of fitness, trait across the population
+		- covariance term gives the difference in the mean of the distribution of parents (weighted by number of offspring per parent) and mean of population before selection (?)
+	- Assume that the mean of the phenotypic distribution among parents (after selection) and the mean of offspring is the same [n.b. we do the same]
+	- some other assumptions (see Bulmer 1980) e.g., independence between breeding values and environmental components, traits in parents and offspring are normally distributed
+	- Lande (1982) and Charlesworth (1993) derived expressions to handle how traits will change with age (assuming weak selection, stable age structure)
+- Intracohort viability (e.g., Vaupel's frailty) can be combined, perhaps, with Price's equation: \Delta(\bar{z}) = \bar{Z}(a+1) = \bar{Z}(a) = Cov(Z,S) / \bar{S}(a)
+	- Z is trait (frailty) and a is age, \bar{S}(a) is a mean survival of individuals at age a
+	- Vaupel's frailty is assumed to be constant through an individual's life, although we do know that phenotypic plasticity can occur to change an individual's trait over time, or that trait values may change with age, environment, physiological status
+		- approaches will need to handle this!
+	- likewise, fluctuations in the demographic structure of a population are important!
+- Price's (1970) equation: change in mean value in a trait between generations is the sum of (1) differences in mean trait values selected to be parents and those of whole population and (2) differences in mean trait values between parents and offspring
+	- traits can be scalar or vector, fitness W is scalar
+	- fitness is defined as lifetime offspring production (assuming non-overlapping gneerations)
+		- in an annual setting, let W = R, the number of offspring of an individual
+	- Say n individuals in year t, individual i with trait z_i produces r_i offspring
+		- \bar{Z}(t) = (1/n) sum_i z_i
+		- \bar{R}(t) = (1/n) sum_i r_i (offspring numbers)
+	- Let trait value of jth individual offspring of i be y_ij = z_i + d_ij
+		- (so, mean of parent(s), plus some deviation unique to j)
+	- \bar{Z}(t+1) = (1 / (\bar{R}n)) sum_i=1^n sum_j=1^ri (z_i + d_ij)
+		- (1 / (\bar{R}n) sum_i=1^n sum_j=1^ri zi term is just parental phenotypes weighted by number of offspring, which authors claim is equal to \bar{Z}(t) + Cov(Z,R) / \bar{R}
+			- (n.b., in our model cov(Z,R) = 0, so this is just \bar{Z}(t))
+		- second term is "infidelity in transmission of mean phenotype from aprents to offspring", which is usually assumed to be zero in expectation
+			- (1/\bar{R}n) sum_i=1^n r \bar{z}_i = \bar{D} + cov(D,R)/\bar{R}
+			- let \bar{d}_i be difference in mean trait value of individual i's offspring and parental value z_i, then averaging over all parents (and ignoring or setting \bar{d}_i = 0 for non-parents - this shouldn't affect expectation but it should affect variance yes?)
+	- Combining these terms gives \bar{Z} = Cov(Z,R)/\bar{R} + \bar{D} + Cov(D,R)/\bar{R}
+	- Def n_p <= n to be number of parents, let \bar{R}_+ be mean number of offspring *among parents* (i.e., excluding zeros)
+		- then, \bar{Z}(t+1) = (1 / \bar{R}_+ n_p) sum_i=1^n_p sum_j=1^r_i (z_i+ d_ij)
+			- (I think this works because non-overlapping generations means that non-reproducing parents have no contribution to successive generations?)
+		- in above expression, first term is \bar{Z}_+ + Cov_+(Z,R) / \bar{R}_+
+			- (but because of non-overlapping generations?) this is equal to above? same for second term)
+	- We can combine all of this to rewrite Price's equation as follows:
+		- Delta(\bar{z}) = (\bar{Z}_+ - \bar{Z}) + Cov_+(Z,R) / \bar{R}_+ + (\bar{D}_+ + Cov_+(D,R)/\bar{R}_+)
+			- term 1 is selection of parents among individuals, middle term is effect of ferility selection among parents, final term is difference in mean trait between parents and offspring
+	- the breeder's equation will produce the same results as Price's equation under some restrictive circumstances
+- Quite impressive decompositions in expressions 11, 12
+	- looking at some specific cases, e.g., no selection
+	- interesting one is second example: no fertility selection, but viability selection, assuming that demographic structure doesn't change, demonstrating that \bar{Z}(t+1) is sum of
+		- (1) age-weighted sum of current trait values, weighted by proportion of future time step?
+		- (2) fertility-related contributions of each cohort to the next time step
+		- (3) changes due to viability selection, in which case non-zero Cov(Z,S)  for each/any ages will produce a change in the mean population phenotype
+- Application to red deer in Scotland: rut in S/O, births in M/J, mortality predominantly in F/M/A
+	- trait is weight: residual birth weight is residual from regerssion line of weight and capture date (at time of birth)
+		- individuals followed through time, allowing complete reconstruction of LHs
+		- birth weight is fixed throughout life, in which case some terms in the age-structured Price equation are zero (plasticity terms, \bar{G}_+(a,t) = 0)
+		- maximum litter size is 1, so covariance terms Cov_+(D,R)(a,t) are zero (not entirely sure why...)
+	- viability selection differentials appear to be positive, mean of 42g/year (?)
+	- fertility selection differentials are positive but lower - mean of ~10g/year
+	- recruitment contributes ~+26g/year to change in mean population trait
+	- somehow, "approximately 70% of selection occurs through survival"
+	- fluctuations in demographic structure only explain ~2g increase in birth weight
+	- in total there is a predicted average increase in 70g/year (~1% increase per year in mean calf birth weights)
+		- but this is not achieved because \bar{D}(a,t) is often negative? female calf weights are less than birth weights of their mothers?? (OH SHIT - see note below)
+	- Fig. 3a - evidence of viability selection. Fig 3b - this seems important... difference in maternal and offspring birth weights as a funciton of age is unimodal (?!)
+##### Discussion
+- This approach allows us to decompose observed changes in a quantitative trait within a population (which has been observed on rapid timescales!) into contributions of viability selection, fertility selection, phenotypic plasticity, mean difference between offspring and parental values, and fluctuations in demographic structure
+	- \bar{D}_+(a,t) term, difference in mean trait value between parents and offspring, can arise through several factors, e.g., additive genetic variance (?), environmental effects, and resource availability
+- Viability selection had a larger effect than fertility selection
+	- Clutton-Brock (1988) cross a variety of vertebrates found that longevity was important in explaining variation in lifetime reproductive success
+	- however, viability selection is somewhat offset by difference of mean parental and offspring trait values
+		- "parents tend to produce offspring that are more similar to the pouplation mean than they are to themselves"
+		- "the observation that this means parental birth weights are, on average, greater than offspring birth weights has not been preciously described. The reasons for the difference are not clear but could be the result of developmental or energetic constraints (citations), which may or may not have additive genetic components."
+			- (some stuff in here about what is meant by AGV?)
+- Future work that would be cool:
+	- extinding work to higher moments of trait distributions (Rice 2004 may have already started progress on this)
+	- would be cool as well to incorporate how these terms are influenced by environmental variables
+
+
+AHH holy shit this rules. Great framing here and also some unexpected results here that our model provides insight into!
+
+Love the dichotomy they provide between viability and fertility selection, and the fact that the two may have varying influences on adaptation. That is what longevity controls - the relative effects of these two!
+
+The negative \bar{D}(a,t) term (lower offspring weight than parental weight) is the effect of repeated viability selection - within a cohort, the phenotypic value outpaces the underlying genes under directional selection. We don't see the same unimodal pattern they see (where only "prime age" mothers produce offspring close to the population-mean birth weight), but they do see a divergence happening growing beyond a certain age. This is likely the effect that we see, and simplifying assumptions in our model about growth, environment, etc. produce the pattern they see at lower ages.
+
+It would also be cool to (1) try to see if we can reconcile our math with theirs and (2) apply this decomposition to some simulation results!
+
+Should read the Clutton-Brock 1988 next! (aw shit it's a book...)
+
+
+### Jones, O.R., et al. 2014. Diversity of ageing across the tree of life. Nature.
+
+- Looking at 46 species (11 mammals, 12 non-mammalian vertebrates, 10 inverts, 12 vascular plants, green algae), trying to find variation among species in age-specific reproduction and mortality
+	- standardized demographic trajectires, starting with mean age of reproductive maturity, ending at terminal stage where ~5% of adults are alive (beyond this point sample sizes are very small)
+	- very large variations in trajectories!
+- Fig. 1 is the money fig: variation in shape, etc. of fertility over time, survival/mortality over time
+	- Mortality: there is both increase in mortality with age (e.g., humans) and mortality declining with age (e.g., desert tortoise) up to temrinal age
+		- seems though like most common pattern is increasing mortality with age, even if this is non-monotonic (e.g., bathtub-shape)
+	- Fertility: typically "bell-shaped" although the width of this can vary considerably (i.e., fertility spread out)
+		- some species, not just humans, have post-reproductive lifespans - perhaps this is more common than originally thought?
+- Senescence: most species can be put on a spectrum of senescence
+	- Fast-slow continuum has been proposed for arranging species, but is does not produce any obvious pattern in Fig. 1
+	- perhaps it is more interesting to define senescence by its abruptness (low to high mortality in a short time) rather than simply the presence of an increase
+	- one interesting possible measure of the "shape" of a senescence curve: ratio of mortality at terminal age to average level fo adult mortality (this is nice - it is time-invariant)
+		- using this measure, perhaps a relationship between longevity and degree of senescence may emerge... but when testing, there is no relationship between longevity and length of life and senescence-abruptness
+		- "Hence the data support Baudisch's conjecture that pace and shape may be two orthogonal axes of life histories" - Baudisch ref is 2011, Mol. Ecol. Evol.
+	- Survivorship curves (prop. of population surviving to a given age) - if mortality increases with age, the log-survival curve is concave while decreasing mortality will have convex log-survival curves
+- Some phylogenetic signal although not super strong
+
+Very cool! Uses for us are (1) lots of diversity in vital rates over the lifespan and (2) these do not seem to map very neatly onto longevity. Useful for saying that our simple model is an adequate starting point for looking at the effects of longevity, in particular noting that while there is variation in LH patterns they do not appear to be intrinsic to ageing.
+
+
+### Miller, DA., et al. Stochastic population dynamics in populations of western terrestrial garter snakes with divergent life histories. Ecology.
+
+- We can perform ecological inference on variation life history strategies using (among other things), comparative studies within and among species to see if there are differences in mean demographic parameters)
+	- e.g., how prediation can be a top-down agent of selection while resource variability can be a bottom-up force of selection
+	- theory suggests that temporal variation in vital rates/dynamics should impose some selection pressures on LH/demographic traits and should help explain patterns in LH
+- Here: testing some predictions about temporal variation and its influences on life history evolution by looking at (distinct) populations of a garter snake
+	- Study populations in N. Cali originated from an ancestral source population that diverged into genetically diverged ecotypes that have maintained distinct morphologies and LH strategies
+	- Lakeshore (L-fast) ecotype has fast growth, early maturity, large litter sizes
+	- Meadow (M-slow) ecotype has slow growth, late maturity, less frequent breeding
+	- CG work (Bronikowski 2000) suggests that these differences among populations have a genetic basis
+##### Methods
+- Six populations in N. California, three L-fast and three M-slow
+	- variation in representation, temporal extent of population in each dataset
+- Diet: Anurans (frogs, toads), annually-varying portion of the snake diet and a proxy for environmental conditions (form a high proportion of diet in years with little food)
+	- anurans are a greater proportion of th diet in meadows (M-slow), where fish are not available
+	- for L-fast populations, diet is fish and leech heavy and more consistent among years
+	- Prediction: presence of breeding anurans, which varies across years, will have a larger effect in the M-slow populations (due to the presence of alternative food sources in the L-fast populations)
+	- years classified as A-present or A-absent
+- Matrix models: life cycle graphs made into Lefkovitch matrices, estimated five vital rates for fitting models, made matrix model for each population (in each obs. year?), then looked at differences in LH among populations in relation to environmental mean fitness and mean stochastic population growth rate
+	- L-fast population has three stages, M-slow has five
+		- age of reproduction in L-fast is three, five in M-slow (but can remain in this class for several years)
+	- for each population, got annual matrices, mean annual matrix
+	- estimate deterministic growth rates from A and deterministic sensitivities and elasticities from from \tilde{A}
+	- also estimated the sensitivities of lambda_s to standard deviation of annual (co-)variation in (among) vital rates using Doak et al.'s (2005) formulation
+- Test for effects of buffering: there should be an inverse relationship between E_v (deterministic elasticity of vital rate v) and CV of a vital rate v (from Pfister 1998 and others)
+	- scales of analysis: E_v vs CV for all vital rates from all populations at same time (overall), E_v vs CV for all vital rates within one population (within-pop), and E_v vs CV for all populations for one vital rate (within-rate)
+		- prior analyses have focused on overall and within-populationships, but here the same vitals are measured across populations
+		- within-rate relationships tell us if buffering is occurring in a comparative context (reasons given, not read)
+- LTRE gives retrospective analysis
+	- Decompose contribution of annual variation in vital rates to variance in lambda and variance in lambda explained by anurans
+	- letting C_ij = S_vi S_vj cov(vi,vj), where S_vk is deterministic sensitivity to vital rate k, then variation in lambda is approximated by the sum of C_ij over all ij
+	- also used SLTRE for something...
+	- something about another analysis where, for a given rate, populations with observed v_it were compared to hypothetical populations where v_it was set to values where breeding anurans were present (or not? one or the other) (seems like the RIE effects from the Louthan et al. paper that I borrowed)
+##### Results
+- Vital rate differences among populations:
+	- Proportion of gravid females and litter size were higher in L-fast than M-slow
+	- Higher survival in M-slow than L-fast
+	- in M-slow populations, juvenile survival was as high or higher than adult survival (limited cost for delayed age of first reproduction)
+		- in L-fast populations, there was more variation in survival with age? (maybe I am misunderstanding?)
+		- Fig. 2: generally increasing survival with age in L-fast populations, more stable-seeming in M-slow populations, with main difference being at neonate stage where L-fast populations have lower survival but they seem more similar at adult stages
+- Varying population growth rates, with more variation among L-fast populations
+	- among populations, pretty similar deterministic and stochastic growth rates
+	- no consistent differences in effects of stochastic variation on labmda_s between the two ecotypes
+- Deterministic perturbation analysis suggests that fecundity is more "influential" in L-fast populations and survival more "influential" in M-slow
+	- in L-fast populations, vital rates were similar in their deterministic elasticities, M-slow populations typically had more variation due to the fact that some of the survival rates had substantially higher elasticity
+	- longer juvenile period in meadow populations (three vs. one year) means greater elasticity for juvenile survival in M-slow populations (compared to juv. survival in L-fast)
+	- similar adult survival elasticities in both cases, while certain rates (percent gravid, neonate survival... LS, what is this, litter size?) were higher in L-fast populations than M-slow
+- Evidence supporting buffering:
+	- overall negative correlation between E_v and CV for overall tests, suggesting no cases where v varied a lot and was highly influential in producing variance in lambda
+	- did not find support for differences in correlations among populations; pooling together all populations produced a significant negative correlations among CV and E_v
+	- similarly, no consistent differences between E_v and CV among vital rates; pooling all vital rates together produced a very strongly-negative correlation between the two
+	- four of five vital rates showed a negative relationship when comparing CV/E_v across the two environments, such that increasing CV decreased E_v (lone exception is survival of neonates)
+		- P_G has much higher variation than other vital rates, and had nearly double the CV in M-slow populations than L-fast ones
+		- percent of gravid females, then, seems to be important for differentiating the life cycles here?
+		- variation in percent gravidity explained 75-98% of the annual variation in lambda between groups! effects of variance was higher in M-slow than L-fast
+	- small effects of covariance terms
+- SLTRE also suggests that PG had large contribution to annual variation in lambda, with greater contributions of PG-variance to growth rates in M-slow populations
+	- this is consistent with greater fitness-related costs of prey availability in M-slow populations, as M-slow pouplations may be more susceptible to variability in prey in determining the proportion of the population that may be gravid
+##### Discussion
+- Gravid proportion seemed to have a disproportionate effect in both ecotypes, with a larger effect in M-slow
+	- variability in prey availability "synchronizes reproduction" (hmm...)
+	- annual variance in proportion of gravid females had hte largest effect on growth rates, as measured by stochastic sensitivities and elasticities... despite having high CV/low deterministic elasticities??
+	- there was more variability in gravidity in M-slow populations than L-fast, and seemed to have larger effects (according to random LTREs) in M-slow than L-fast
+- Novel support for Pfister's buffering hypothesis:
+	- LH differences among populations of a single species is consistent with buffering and longevity
+	- also, this holds at the level of individual vital rates (4/5 vital rates showed decreasing E_v when increasing CV of the rate, moving from one ecotype to the other)
+	- inverse relationship between elasticity and CV holds within ecotypes, and moving between ecotypes preserves this pattern in expected ways
+		- average CVs of percent gravid females in M-slow populations are doubled compared to L-fast, while M-slow has half of the elastiicty for proportion of gravid females
+		- but even with buffering, absolute effect of variability in percent gravid females does have a larger effect on growth rates in M-slow compared to L-fast (although if L-fast had the same level fo annual variability, there would be larger effects in L-fast)
+- This study demonstrates how top-down and bottom-up selective effects can influence life history evolution
+	- high mortality across all ages in L-fast population suggests high predation produces more extrinsic mortality here, likely due to avian predators
+	- buttom-up processes: present study demonstrates prey availability and its influence on LH evolution through variation in the proportion of gravid females in a population
+
+
+This is cool, although not relevant as I was hoping. Is great for thinking about vital rate buffering and LH evolution. PG can vary substantially from year to year; in a population where PG varies more (seemingly due to the variable amount of food), it has lower determinstic elasticity (but still a larger contribution to variation in growth rates? kinda makes sense but still a potential discrepancy here to think about). But beyond deterministic elasticities, what exactly is the life history evolution? Improved survival and delayed reproduction?
+
+
+### Dirzo, R., et al. 2014. Defaunation in the Anthropocene. Science.
+
+- Here: patterns and consequences of contemporary anthropogenic impact on terrestrial animals
+	- "anthropogenic defaunation" - similar to deforestation although difficult to deterct (unlike advances due to remote sensing)
+	- some interesting refs/statements herein:
+		- declines in individuals in a population still have large consequences, influencing other species and ecosystem functioning (refs 8, 10)
+		- abundance declines to "functionally extinct" levels can happen quickly (2, 12)
+- Extinctions: annually losing 10K-50K animal species per year (of 5-9 mil)
+	- ofc. does not account for population extirpations, non-extinct rapid declines
+	- vertebrate data indicate mean decline of ~28% in number of individuals across species across recent decades
+	- less attention in inverts than vertebrates, although it is likely they are at least as severe as vertebrate declines
+		- <1% of described invert species have been assessed by IUCN, with ~40% considered threatened
+		- e.g., moths in UK - "substantial portion" of moths have experienced range contraction recently!
+		- non-leps seem to have more decline than leps
+- Patterns: certain lineages appear to be more susceptible to others, e.g., amphibians more threatened, birds less threatened, mammals and reptiles intermediate threat
+	- geographic distributions: per 10K km^2, few to 75 (mammals), 125 (birds) listed as in decline due by IUCN
+	- more decline in tropics, even considering the greater sp. richness in tropics
+	- statistical models try to find predictors or correlates of extinction status/risk
+		- refs 31 - 34 (Cardillo and Meijaard, TREE 2012; Davidson et al., PNAS 2009; Ockinger et al. Ecol Let 2010; Lee et al. Phil B 2011)
+		- correlates include low reproductive rates
+		- these analyses appear to be at the global scale rather than the population scale, though, possibly producing weaker (measured) correlations
+			- e.g., body size is a better predictor of extinction risk in island birds than for mainland birds
+	- body mass-risk relationsihps associated with extinction risk:
+		- Fig. 3: anthropocene extinct animals typically larger than anthro-threatened, which are larger than anthro-nonthreatened
+			- however, species that went extinct in the pleistocene were larger than those going extinct now
+- Impacts on ecosystem services:
+	- pollinators mostly in decline in abundance and diversity
+	- pest control: small vertebrate declines can cause multitrophic cascades with influences on herbivores, plant populations
+	- nutrient cycling: mobile species can move nutrients long distances, some interesting stuff about pleistocene extinctions changing influx of phosphorus
+	- water quality: loss of amphibians increases algae concentration, detritus biomass, reducing nitrogen uptake, while loss of larger animals may lead to formation of more anoxic zones
+- Evolution: more rapid evolutionary changes for short-lived organisms (ref 72: Palumbi, Science, 2001)
+	- defaunation typically selects for body size
+		- however, smaller-sized species may not be able to (quickly) fill niche or functional roles of larger animals, possibly causing cascades
+
+
+Useful stuff. At the very least, pointing out that there are a number of animals, particularly large ones (which probably will have delayed reproduction and/or longevity), face considerable risk in extinction at species or population level.
+
+Cool (morbid) ideas in here about selection for smaller body size and cascading effecst there. Also a mention (I didn't take a note on it) for pollinator extinctions possibly causing rapid evolution in plant mating systems.
+
+
+### Cardillo, M. 2003. Biological determinants of extinction risk: why are smaller species less vulnerable? Animal Conservation.
+
+- Growing body of literature suggesting that body size influences extinction risk, even after accounting for phylogeny, although typically these are univariate analyses that don't provide additional insight into why or how this relationship may exist
+	- e.g., size may directly determine a species vulnerability, e.g., by being less conspicuous to predators
+	- e.g., body size may be a surrogate for other traits (LH, ecological) which affect vulnerability
+		- e.g., smaller species may have higher reproductive output and higher densities, although this may come at cost to mobility and energetic efficiency
+		- of course these traits may be environment- or context-dependent
+- Here: looking at two factors that correlate with body size and see their effects on extinction risk
+	- reproductive output: should generate faster population growth, faster recovery from disturbances (Pimm, Jones, and Diamond, 1988)
+	- home range: small home range may require less energy, higher population densities, allowing for persistence in low-quality habitats
+	- analysis in terrestrial mammals of Australia, where evidence already suggests a body size-extinction risk relationship
+		- in Australian mammals, there are strong correlations between these to variables and body size
+	- also: Australia can be divided into different environment types (low-productivity arid zone and high-productivity mesic zone)
+- Dataset: extinctions and declines in last 200 years in Australia
+	- no islands, no invasives
+	- extinction risk assigned, 1-5 (using some published criteria elsewhere - Strahan)
+	- reproductive output: mean litter size (does not account for number of litters due to data scarcity)
+	- home range size: only four extinct species with data on this, so consider caution
+- Randomizations to see if extinct or extinct + endangered species were non-random subsets of the continent's fauna
+	- tests of residuals for litter size ~ body size, home range size ~ body size
+		- select species from the continental species pool and look at residual statistics
+		- this generates null distribution of... what exactly/
+- Independent contrasts derived to fit multiple regression models
+	- phylo assembled through published phylogenies
+	- analyses performed separately for each zone (not possible to do in one model because some species occupy both zones as do the LH contrasts)
+- Extinct (5) or extinct + endangered (4+5) are non-random with respect to litter size and home range size
+	- residuals of litter size on body size are low (lower than random selection of resids?), suggesting that extinct species have smaller litters than expected by chance
+	- home range size residuals also larger than expected
+	- Differences among zones: there is a difference, where extinction risk is higher in arid zone
+		- no difference in residual patterns wrt litter size between zones
+		- home range residual patterns vary by zone, with arid-zone species having larger range size than home range
+- Testing for phylogenetic confounding: the two taxa with the largest numbers of extinct and endangered species have smaller litter sizes than would be predicted from their body sizes, and slightly larger home ranges than predicted
+	- so, there is a possibility of phylogeny contributing to bias in thse factors among extinct and endangered species
+- In multiple regression, litter size seems to be consistently significantly negatively related with extinction risk
+	- body size alone (no litter size) shows positive association with extinction risk although p ~ 0.09 so marginal
+	- seems like adding home range size weakens this relationship (p < 0.01 w/o home range but p ~ 0.01 with home range)
+	- but, when all variables are present, litter size is only significant variable
+	- w/o home range size, model explains ~12.5% of variance in extinction risk
+	- effects of litter size were stronger in the mesic zone than in the arid zone, where effects were n.s.
+- Strong evidence that litter size affects extinction rate, contributing to pattern of body size-extinction risk relationship
+	- litter size is only one component of reproductive output, as current analysis does not account for multiple litters in a year
+	- other hypotheses to explain body size relationships (not tested here): torpor? 
+	- Johnson (2002) finds a similar relationship between litter size and extinction during the quaternary (pleistocene?) megafaunal extinctions
+- Some possibly-interesting stuff I only skimmed about home-range size (rocky outcrops are important? neat)
+
+Cool! Possibly limited. Limitations (1) just mammals, just australia (2) still need to think about robustness of residual analysis and (3) does not account for multiple litters. Although now that I thinka bout it (3) is just greater iteroparity is it not, so perhaps this is not so bad? 
+
+Interesting that he attributes the low-litter size to slowed recovery to original size. This is what I am arguing. He cites a Pimm et al. paper that I think would be useful for this. That's a good one to read next (Pimm, Jones, Diamond, 1988: On the risk of extinction; Am Nat)
+
+
+### Salguero-Gomez, R., et al. 2016. Fast-slow continuum and reproductive strategies structure plant life-history variation worldwide. PNAS.
+
+- Plant kingdom has considerable LH variation, e.g., longevity (ref 12), seedbanks (13), dormancy (14), variable magnitude (15)
+- Here: combine demographic, phylogenetic, ecological data from natural populations in 418 plant species
+	- What are main axes of variation in plant LH strategies?
+	- How do phylogenetic ancestry, habitat, growth fom, size constrain variation?
+	- How do positions on axes of variation predict population growth and recovery from disturbance?
+- Data: COMPADRE database with 105 families, 825 natural populations, each of which has at least four years of data
+##### Methods
+- Constructed a phylogenetic tree (they just did it on their own? lol)
+- Derived nine LH traits:
+	- Population turnover (T)
+	- Longevity (H, L_a)
+	- Growth (gamma, rho)
+	- Reproduction (phi, S, R_0, L_omega)
+	- (also, not LH score, but habitat data as well...)
+- Traits log-transformed, scaled to standard normal for normality, fed into phylogenetically informed PCA
+	- Looked for signf differences in PCA scores w/ 3w ANOVA w/ post hoc Tukey
+##### Results
+- Two PCA axes explain 55% of variation
+	- Axis 1 (34% of variation) is a fast/slow axis, where an increasingly positive value implies increasing allocation to longevity-related traits, decrease in turnover rates at the expense of growth and production of new recruits
+	- mix of generation time T, mean sexual reproduction number across life cycle weighted by SSD phi, individual plant growth rate gamma
+		- Positive loading for T, negative loading for growth and mean sexual reproduction, supports trade-off
+	- Axis also includes shape of survivorship curve H, mean age at maturity L_a
+		- H is Keyfitz's entropy where sign wrt 1 gives different survival-type curves, so increasing H produces increasingly-I (human-like)-type curve
+	- Axis 2 (21% of variation) has increasingly positive values for increasing frequency of reproduction and less shrinkage?
+		- reproductive strategy that is independent of mean sexual reproduction: net reproductive rate R_O, degree of iteroparity S (both positively loaded)
+		- rate of shrinkage (rho) also appears, negatively loaded
+	- Axis 3, explaining much less variation than the rest, contains mature life expectancy and period between age of sexual maturity and mean life expectancy
+		- does have eigenvalue >1 for some groupings (herbs) but not others (trees, shrubs) when procedure is repeated on subsetted data
+- Predictors of positioning on axes:
+	- Major habitat type is a significant predictor on fast-slow axis (tropical and subtropical species live longer lives than others, due to dominance of long-lived trees) (may also be sampling effect though)
+	- Habitat type is only a weak predictor of position on reproductive strategy axis
+	- Taller plants tend to have greater fast-slow axis scores (slower?) than smaller plant with apical meristems closer to or below the ground
+	- Growth form and reprdouctive strategy axis (phylo stuff idk about)
+	- Phylogenetic relationships play a weak role in PCA
+		- a handful of exceptions suggest there may be infra-class structure
+- Some overlap among growth forms and size, e.g., overlap between short-lived trees and shrubs overlap on fast-slow axis with longer-lived herbaceous perennials
+	- Runkiaer growth forms used in here
+- "Population performance" assessed through damping ratio, which measures the rate of  return to asymptotic dynamics following a disturbance (ref 22 - Caswell...)
+	- Rate of recovery is associated strongly with position on both axes s/t rapid recovery occurs more with fast growth, high reproduction, and shorter generation time or low reproduction and frequent shrinkage
+	- higher asymptotic population growth rates for faster-growing, iteroparous, highly reproductive species
+		- lower growth rates for delayed maturity, low senesence, frequent shrinkage
+##### Discussion
+- The fast-slow continuum has considerable support in animals (refs, but most important seems to be 11: Stearns's 1999 book)
+	- analyses of fast-slow have found secondary axes of altricial-precocial (req'ing parental care or not) and iteroparity (Gaillard et al.)
+	- present analysis in plants does not suggest phylogenetic signal or influences of size, allometry, in contrast with animals
+	- studies in animals typically find two axes capture ~80% of variation in animal strategies, but in plants only ~50% is explained
+		- plants typically have life cycle complexity, e.g., dormant stages or long-term seedbanks
+	- plants are indeterminate growers
+- There were portions of the two-axis plane that was unoccupied (low on axis 2 and extreme on axis 1, i.e., high-shrinkage and low iteroparity low R_0 and either very fast or very slow)
+	- these combos may be inviable, but also because the data was taken from natural populations, they may reflect current state of habitat as well
+	- populations that are high on both axes (high iteroparity/R_0 and long-lived?) appear to be cases of successfully expanding populations, typified by successful invasive species
+		- can't partition how much of this is due to habitat quality vs. other conditions
+
+
+Super cool! Not entirely sure what axis 2 is capturing that axis 1 is not (how is iteroparity not loaded onto axis 1?) but otherwise great stuff. I wish they explained what the values of high/low damping ratio corresponded to; this is useful stuff and at the very least is informative in our case for giving us insight into the rate of return to the stable stage distribution. Probably would be good to look into the animal refs too... don't want to read all of Stearns but other refs in here are useful. Oli 2004, Gaillard dt al. 2005 are possible sources for this.
+
+
+### Pimm, S.L., Jones, H.L., and Diamond, J. 1988. On the risk of extinction. Am Nat.
+
+- Extinction risk is higher for small populations than large, from which it follows that (1) populations with more temporal variation in density will be at higher risk and (2) populations with low intrinsic rates of increase (r) will have increased extinction risk
+- Two extreme cases of environmental change: (1) "solely" by demographic accidents in an unvarying environment, or (2) total environmental destruction
+	- In models of (1), models assume constant per capita birth rate up to ceiling, K
+		- these models predict rapid increase in time to extinction (T) with increasing K
+	- Models of (2) should assume identical time to extinction for all populations (? why?)
+	- Leigh's model with "modest" environmental variation and demographic effects expects T to scale with log(K)
+	- Define C = (1/T)^(1/K), a "corrected" risk of extinction (why? and what is this?)
+		- in the case of demographic accidents being the sole contributor to extinction risk, T = a^K and C is constant over K
+		- If the time to extinction increases more rapidly than a^K, then C decreases with K; the reverse is true if T increases more slowly than a^K
+		- because C is less sensitive to K than T may be, use C (but why)
+- r, longevity, and extinction rates: can't provide direct estimates of longevity and r, but we can with body size, which is correlated with r
+	- r and longevity are known to be related to body size
+	- increasing r will proportionately decrease longevity (observed in animals... but not cited)
+	- body size is associated with low r, which should increase extinction rates
+	- large body size is associated with high longevity, producing lower extinction rates
+	- possibly opposing effects here on extinction: is large body size helpful through increased longevity, or harmful through decreased r?
+	- verbal argument: for a population of size one, large body size means higher longevity so slower extinction; for a large population, a large-bodied population will take longer to grow back following a reduction in numbers
+		- "Although the large-bodied species may persist longer at low densities than a small-bodied species, remaining at low levels greatly increases the risk of extinction; a large-bodied, slowly growing species may still be at low levels when the next severe reduction in numbers occurs"
+		- so, verbal argument suggests that large-bodied is advantageous at low densities, but a disadvantage at high densities
+	- measuring in terms of lifetimes (rather than years), small-bodied species are always at an advantage due to high r (why?)
+		- but conservation planning often requires planning on the order of years ("The year is not a biologically arbitrary unit of time")
+		- also years are also relevant to scales of dispersal
+	- Illustration of the above with Leigh's (1981) model, with exponential growth @ rate r up until K and only demographic accidents
+		- Table 1 has numerical results from Leigh's model, showing that r has small effects at low K, but increasing r for larger K has increasingly drastic effects on time to extinction (i.e., sensitivity to r is low at low K high at high K)
+	- temporal variability in population size also is a result of r (and correlatees with body size and longevity): large-bodied species should generally tend to survive environmental disturbances, but they also will have slower recoveries - what is the net effect on CV of population size?
+		- using British bird data (birds subject to abrupt declines in density following harsh winters), small-bodied birds show greater reductions in size following harsh winters than large-bodied birds (Cawthorne and Marchant 1980)
+		- but the majority of temporal variation in temporal densities comes from slowness in speed of recovery - Pimm 1984 shows that slowly recovering species have larger CVs than species that recover quickly
+		- CV and r negatively correlate in this case, although correlation appears to be weak
+- Predictions from above:
+	- (1) Small populations will have higher extinction rates than large
+		- (confirmed in many populations - see Diamond 1984)
+	- (2) at low densities, small-bodied fast-growing short-lived species will have higher extinction risk
+	- (3) at high densities, large-bodied, slow-growing, long-lived species will have higher extinction risk
+	- (4) populations with high CVs will have higher extinction risk
+- Test of these predictions from bird data from bird data from 16 islands off the coast of Britain
+	- yearly counts of nesting pairs for 100 bird species, 355 populations (island-species combos)
+	- species are taxonomically and trophically diverse
+	- at least some migratory species are philopatric
+		- migratory and resident species may differ in extinction susceptibility: wandering may cause local extinctions, split time between mainland and islands providing short-lived island populations, migration is risky but also may avoid hrasher winters?
+ 	- for each population, record mean number of nesting pairs years present; then for each species, calculate a mean number of nesting pairs per island averaged over all island (N)
+	- get CV in number of nesting pairs for each populations when there were 5+ consecutive years of breeding, then estimated a mean CV over all islands with estimates
+	- also recorded number of years between colonization and extinction w/ continuous breeding
+	- classified birds by body size as large or small
+- Analysis on reciprocal of # years each population survived (zero if never extinct), "risk of extinction per year"
+	- excluded populations with mean number of pairs >18 (18 was largest mean size for which extinction occurred), leavig 316 pop'ns of 67 species
+		- 62 of said species had at least one extinct population, five had no extincitons despite mean size that was smaller than 18
+	- assume that, because K can not be truly measured (and is a modeling construct), N (avg. population size) is a correlate of real K
+		- use this to estimate C = (1/T)^(1/N)
+		- use of (1/N) here corrects for differences in mean population size (ahhh nice)
+		- use of C here also produces results that are more approximately normal
+	- handling non-extinct species: absence of extinctions may be informative at low densities but is less informative at high ddensities, which why populations were excluded if they exceeded mean size 18; for smaller populations C was treated as zero
+	- some other technical considerations here - bullet point 4 I skimmed and did not understand fully
+	- Analyses performed: ANCOVAs, with predictor N included?
+		- analyses separated out by body size; separated out by migrants vs. residents
+		- (some technical considerations about N being present in both dependent and independent variables... but they say it's okay. nothing alarming in residuals, any bias is going to be consistent across N)
+- Results:
+	- as expected, strong relationship where (1/T) decreases with N
+	- body size effects: C ~ body size for large- and small-bodied birds signf. in slope and intercept
+		- (does intercept matter here?)
+		- small-bodied birds: correcting for population size (using C) removes relationship between C and N (n.s. slope)
+		- large-bodied birds: C increases with N (p ~ 0.01), so times to extinction increase more slowly with population size
+		- below a certain threshold (~7 pairs), large-bodied species have a smaller extinction risk than large; this reverses above the threshold
+			- in the regression, the intercept of the regression line is lower than for small-bodied species, but greater slope (Fig. 4)
+		- large-bodied residents are less extinction prone at low densities, but increases more rapidly with increasing density
+		- this is in line with predictions (2) and (3)
+	- migrants do have higher risk of extinction than residents but patterns with population and body size do not appear, although this may be due to to data scarcity
+	- five species without extinction: all residents; three larger bodied with a span of densities (1-10) and two are small-bodied with high densities
+	- residuals ~ CV does suggest increasing CV does increase residuals (i.e., extinction risk)
+- Present study finds relationships between population size and risk found in other studies, although claims to do so in a better way than others
+	- This relationship requires accounting for population size in analysis (and presumably to use C as a response and not just 1/T)
+	- Indeed, other studies claiming to find effects of body size on extintion risk did not account for body size (and large-bodied organisms tend to have smaller population sizes)
+		- Here, there is a residual effect of body size after accounting for population size
+		- large body size is correlated with rate of population growth and longevity, meaning we can likely draw inference about longevity and intrinsic growth rates from results of body size
+- Large body size, through correlations with population growth rates and longevity, may have mixed effects on extinction risk
+	- here, the net result is that large body size lowers extinction risk at low population densities, but increases extinction risk (rel. to small body size) at higher densities
+	- for populations at small densities, "demographic accidents" (stochasticity) are likely the largest cause of variation in size that increases extinction risk
+- Differences between migrant and resident bird species - maybe not observed before! Migrants had greater corrected extinction risk than resident species of the same pop size and body size
+- These results looked at short timescales and small population densities; for medium-sized populations, effects of population size may wane relative to other influences such as CV, r, or longevity
+- Conservation concern: some may ask why care about populations of this size, rather than populations in the 20 - 500 size?
+	- Fragmentation may produce very small populations
+	- Reintroduction into the wild may face such questions, e.g., one population of size 50 or five populations of size 10
+	- Captive breeding programs in zoos typically have small populations
+	- (Also, rescue means populations may decline to very small sizes!!)
+
+
+Really useful and informative stuff. First thing to note is that there is a need to correct for population size, which may possibly correlate with other traits (not measured here, but we'd expect large-bodied organisms to be in smaller populations)
+
+But otherwise, I really love the arguments suggesting and the analysis supporting the density-dependent influences of population size. This is an apparent tension that I have struggled with and not really put to words before! The idea is that at small size, large-body size (or, more appropriately, its correlate of higher longevity) will increase extinction risk (or, relatedly, prolong extinction). However, as body size increases, intrinsic population growth rates (r) decrease, such that there is a slower increase. There's some surprising stuff in here about CV being lower for low-r populations (is this due to the decline or due to the r?), but the CV being associated with extinction risk is also useful.
+
+Some of the stats methods in here are ehhh but I think it's still fine to use on the whole.
+
+
+
+# Incomplete stuff
 
 ### Beckerman, A.P., Benton, T.G., Lapsley, C.T., and Koesters, N. 2003. Talkin' 'bout my generation: environmental variability and cohort effects. Am Nat.
 
