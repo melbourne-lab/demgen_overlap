@@ -1359,8 +1359,97 @@ But otherwise, I really love the arguments suggesting and the analysis supportin
 Some of the stats methods in here are ehhh but I think it's still fine to use on the whole.
 
 
+### Oli, M.K. 2004. The fast-slow continuum and mammalian life-history patterns: an empirical evaluation. Basic and Applied Ecology.
+
+- r-K selection: early attempt by MacArthur and Wilson 1967, Pianka 1970, to explain diversity of LH patterns but eventually deemed to be insufficient on its own
+- Proposed fast-slow continuum:
+	- "Fast" end - early maturation, large reproductive rates, short generation times
+	- "Slow" end is opposite end
+	- "some" empirical support this is qualitative
+		- Gaillard et al. (1989) did this with a PCA but did not explore what the first principal component measured
+		- Read and Harvey (1989) looked at mortality relative to body weight
+- F / a ratios as proposed by Oli and Dobson (2003) are ratio of fertility rate (F) to age of first reproduction
+	- low F/a is slow, high F/a is fast, cut-offs provided here
+- Another hypothesis: LH patterns are due to adult body size
+	- also (not sure why in this para) evidence that LH evolution may be phylogenetically constrained
+	- relative influences of these are not clear
+- Here: characterize pace-of-life of mammals with F/a ratio, then use population dynamics modeling to look at some other stuff
+##### Methods
+- LH data for 138 mammal populations, estimated fertilities F and survival probabilities P, built matrix models accordingly
+	- caveats with Leslie matrices:
+		- variation in LHs can cause sizes of projection matrices to vary in size and therefore they can not be directly compared
+		- timing of certain life cycle events are not explicitly modeled in these matrices (e.g., ages of first and last reproduction)
+	- divide life histories into a two-stage cycle: pre-reproductive J, post-reproductive A
+		- survival to adulthood has probability P_j per time unit with a time steps to do so
+		- assume that upon reaching reproductive maturity they reproduce with average fertility F and survive with probability P_a until age of last reproduction omega
+		- some work from prior Oli and Zinner papers demonstrating that the partial life cycle approach desribed here has deficiencies but overall does a good job of addressing above-mentioned caveats
+	- consequence: life cycle can be characterized by five parameters: a, omega, P_j, P_a, F
+	- estimated lambda from characteristic equation of these life cycles (neat!)
+		- With lambda obtained, can estimate elasticities
+- For each population, estimate F/a, bin them as fast, slow, medium
+	- perform AoV to assess differences in parameters vary among three groups:
+		- variables testded: log body mass, LH params above, lambda, elasticities of each rate
+		- REGW multiple range test (is this post-hoc or what?)
+- Phylogenetic constraint hypothesis tested with nested ANOVA (order main effect, family nested within order)
+	- analyze residuals to see if fast-slow continuum still appears after controlling for phylogeny
+- Allometric constraint hypothesis tested by regressiong LH vars, lambda, elasticities on body mass
+	- analysis of residuals: do effects among variables persist after removing body size?
+##### Results
+- Even split among the three pace of life gropus
+	- body mass, all LH vars, lambda differed among groups
+		- Table 1 has results
+		- higher lambda (>1) for fast than medium/slow (~1)(see Fig. 1F)
+		- higher F for fast than medium/slow
+		- for P_a: slow > medium > fast
+- Elasticities: increasing F/a increased elasticity of lambda to reproductive parameters (a, F) and decreased elasticity to survival parameters
+- Analysis of residuals after controlling for body size (allometric constraint hypothesis) shows strong evidence of the residuals even after controlling for body size
+	- body size relationships being incorporated into models also did not change relationships between F/a and elasticities
+- After removing phylogenetic effects, correlations between F/a and life history variables became weaker but still were sign. non-zero
+
+Very cool. Did not critique demo and stats techniques that much, but I did find the approach to be straightforward! I'm not using age of first reproductiona as a parameter here but results here I still think are applicable or useful to us, particularly as there are variables for survival probabilities and fertilities.
+
+Useful results here: (1) yes, evidence of a robust fast-slow continuum that involes advancing age (even if age at first reproduction) and fertility rates (2) differences among these groups in lambda. The elasticities argument is interesting too although I would need to think about it more, but the idea here is that sensitivity to survival increases with increasing F/a (or, slowing pace of life) which makes sense. Does this influence our results at all? I want to say no because the proportional effects of selection/maladaptation load here do not necessarily have to do with any particular rate, yes? Also seems cool and worthwhile that these results remain if controlling for body size, although I'm not sure this matters in our hypothesis.
+
+
+### Gaillard, J.-M., et al. 2005. Generation time: a reliable metric to measure life-history variation among mammalian populations.
+
+- Response to Oli and Dobson (2003), who found from analysis of 142 mammal populations that the F/a ratio (as described above) predicts elasticities of vital rates to lambda and provides a good proxy for position on the slow-fast continuum
+	- they also did not find strong empirical support for age at first reproduction affecting (...? something?) and did not find relationships between phylogeny and body size predicted in literature
+- Critique of Oli and Dobson, presented here:
+	- Authors ignore prior theoretical work that demonstrates that elasticities of lambda to vital rates shrink with generation time (Charlesworth 1994)
+	- F/a ratio has "no theoretical justification"
+	- Work presented here suggests that age of first reproductino is likely a good index of position of mammals on the slow-fast continuum
+- Prior work on generation time:
+	- Leslie (1966) and Charlesworth (1994) demonstrated the importance of generation time, which could be defined as weighted mean age of child birthing-mothers in a population
+	- definition provided in here, but with simplifying assumption of fecundity that is independent of age, very nice expression: a + (s / lambda - s)
+	- as such, generation time is a function of all vital rates
+	- (Lebreton and Clobert 1991 seems useful)
+	- seems likely that generation time would be a reliable measure of populations on the slow-fast continuum although this has not been tested yet
+	- re-analysis of a subset of O&D's data: PCA on five LH parameters suggested by O&D (same as above)
+		- first axis of PCA accounts for 69% of variation in variables, corresponds to timing of start/stop of reproduction, fecundity, survival
+		- generation time as defined here is highly correlated with PC1 (rho = 0.9)
+	- note, though, that generation time assumes a stable age structure, which may be violated in temporally-varying environments
+- The F/a ratio: not theoretically supported, may not be intepretable as originally claimed, and something about elasticities
+	- that second point: O&D correctly estimated F, but this means that F/a includes adult survival and is thus can't be straightforwardly used as a measure of reproductive output to age at maturity
+	- however, there is a strong correlation between F/a and PC1 (rho = -0.92), but there are several other variables that correlate with PC1 which would also work well as fast-slow indicators
+- Is fast-slow placement truly independent of phylogeny or body size, as claimed?
+	- ANCOVA where log-generation time is dependent variable, log body mass is covariate, order is a factor with eight levels
+		- common slope to all orders of body mass on generation time, although orders have wildly differing intercepts
+		- additive effects of body mass and mammalian order explain ~60% of variation in generation time
+	- n.b. that O&D's survival estimates come from life tables, which require strong assumptions for valid and accurate inference (stationary age distribution, equal probability of sampling all individuals)
+- Conclusions: generation time is a good metric for assessing importance of life history variables to population growth rates and position of a population on the fast-slow continuum
+	- generation time may be just as easy to estimate in the field as other variables
+
+Short and sweet. Love it. Okay so this claims that generation time should work just as well if not better as an indicator for position on the fast-slow continuum (for mammals at least) as F/a. Some arguments herein. For the sake of what I'm interested, it is good to know that generation time is a proxy for LH-placement - I even think the expression for T_b appears in some form in my analysis (if a = 0, then T_b would be s/(lambda-s), which I feel appears somewhere...). This does seem to fit in better with my framing than Oli 2004, although Oli 2004 may be useful for providing more evidence of fast-slow placement with lambda (where medium/slow species have lambda ~ 1 and fast species have greater ones). Use these both!
+
+
+
 
 # Incomplete stuff
+
+### Isaac, J.L. 2009. Effects of climate change on life history: implications for extinction risk in mammals. Endangered Species Research.
+
+- 
 
 ### Beckerman, A.P., Benton, T.G., Lapsley, C.T., and Koesters, N. 2003. Talkin' 'bout my generation: environmental variability and cohort effects. Am Nat.
 
