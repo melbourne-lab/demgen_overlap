@@ -1443,6 +1443,88 @@ Useful results here: (1) yes, evidence of a robust fast-slow continuum that invo
 Short and sweet. Love it. Okay so this claims that generation time should work just as well if not better as an indicator for position on the fast-slow continuum (for mammals at least) as F/a. Some arguments herein. For the sake of what I'm interested, it is good to know that generation time is a proxy for LH-placement - I even think the expression for T_b appears in some form in my analysis (if a = 0, then T_b would be s/(lambda-s), which I feel appears somewhere...). This does seem to fit in better with my framing than Oli 2004, although Oli 2004 may be useful for providing more evidence of fast-slow placement with lambda (where medium/slow species have lambda ~ 1 and fast species have greater ones). Use these both!
 
 
+### Rosenblad, K.C., Baer, K.C., and Ackerly, D.D. 2023. Climate change, tree demography, and thermophilization in western US forests. 
+
+- Global climate change is, in some systems, increasing the relative abundance of heat-tolerant ("thermophilic") taxa
+	- widespread, observed across taxa, regions, spatial scales (see refs 6-8)
+	- but, rates of thermophilization vary with much unexplained variation
+	- Possible influences on the rate of thermophilization
+		- rates of warming ofc
+		- physiology, e.g., plant water and/or temperature regulation mechanisms
+		- in forest and understory communities, changes to canopy structure influence solar radiation penetration and temperature changes
+		- topography
+	- can measure these in part with community weighted mean of some climate-driven trait, e.g., climatic niche
+		- relative weights of each species and their traits depends on abundance, and change in abundance relies on demographic processes
+		- can use a decomposition to get relative influences of demographic processes (for each species) to community mean change
+			- e.g., thermophilization through enhanced recruitment of thermophile species, or through increased mortality of cool-adapted taxa
+- Here: 10 year dataset of ~45K forest subplots using USDA FIA dataset
+	- model mean temperature indices of tree communities over time using Bayesian hierarchical models
+	- includes effects of long-term average climate, "recent" climate change, topography, disturbance, other predictors
+	- Q1: are western forests undergoing thermophilization?
+	- Q2: what influences the rate of thermophilization?
+	- Q3: what are separate contributions of mortality, growth, recruitment to thermophilization
+##### Methods
+- Baseline censuses 2000 - 2008, resureys 2010 - 2018, in Phase 2 FIA (>10% tree canopy coverage)
+	- plots each have four circular subplots, radius 7.32m, wherein DBH of trees with at least DBH of 12.7 cm measured in each subplot
+- 110 species in dataset; assessed "niche means", "modeled niche optima", and "simple niche means" of each
+	- measure mean or optimal mean annual temperature across sp range
+- Regression models use a community temperature index of one subplot at one time point as a response
+	- estimate thermophilization with a binary variable for the difference between baseline and resurvey (resp., T1 and T2)
+	- fixed effects: baseline MAT, baseline MAP, baseline mean annual CWD (climatic water defecit), temporal differences in variables
+		- topographic heat load, binary effects of fire or insect damage
+		- intercept is mean of T1 observations, non-interaction coefficients are effects of variables with T1
+		- then included interactions of predictors with temporal changes (i.e., difference between driver's influence in T1 and T2)
+	- random effects of subplot, subplot-level spatial random effect
+- Demographic processes:
+	- recruitment is entry into the 12.7+ size class
+	- re-ran analyses described above, except with response for T2 now somehow includes effects of one demographic processes
+		- here, T1 values are all unchanged, T2 values reflect only observed effects of one processes with remaining processes removed and said trees hel at their T1 observed value?
+- Some cool climate data that might be good to look into
+##### Results
+- Community mean T1 temeprature ("baseline community temp" correlates very well with baseline annual mean temperature; 
+	- in resurvey, mean temperature change of ~1/3 deg C
+		- mean thermophilization rate across forest was .0039C/y (compared to .032 C/y)
+	- thermophilization was greater in plots with more warming (1C thermophilization per 1C warming)
+	- also greater thermophilization in drier areas
+- Mortality had greatest contribution to thermophilization (~1.1 deaths/subplot)
+	- minimal contributions of recruitment at both 12.7cm and 2.5cm thresholds
+		- from subplots where saplings 2.5-12.7cm were recorded, 87% of saplings recorded in the 12.7cm class in T2 were saplings in T1 (i.e., 13% made it from zero or <2.5 cm to 12.7cm between surveys)
+- Fig. 2: strong pos. effects on baseline temperature, baseline CWD; weak pos. effects of baseline precip, baseline topographic heat load, weak neg. effect of baseline conifer dominance
+- Mortality- and recruitment-driven thermophilization greater in plots experiencing more warming, whereas growth-driven thermophilization was stronger in plots with more CWD, lower precip
+	- look at data-rich Fig. 4
+	- thermophilization greater on north-facing slopes than southern-facing (mortality-driven)
+	- thermophilization greater where there was insect damage observed between surveys (strongest per-sd coefficient effect)
+	- net-~zero effect of fire, but this is due to differences in mortality- and drought-driven processes
+	- greater effects in conifer-dominated subplots, apparently due to growth
+##### Discussion
+- Widespread pattern of community weighted mean temperature niche optimum increasing, but only at ~1/10 of the rate of actual temperature changes in the same period
+	- projected forwards, the ~3C avg. increase in temperatures may only be accompanied by a <.5C increase in community mean temperature niche, in which case the "climate debt" will go up by ~2.5C in addition to other anthropogenic lags
+- Some of these processes may have been operating before the study's timeframe, with possibly complex relationships among blah blah blah...
+- Also, the study period coincided with a severe drought, in which case patterns observed may be greater than realized future trends
+- Lack of contribution from recruitment to thermophilization suggests that new recruits have thermal niches similar to their baseline communities
+	- instead, thermophilization is from mortality of individuals (species) unable to withstand the increasing temperatures
+	- loss of vulnerable species...
+	- this contrasts with ref 22 that "hot spots" of fecundity and recruitment for tree species in the western US are shifting toward cooler, moister regions at rates commensurate with climate change
+		- perhaps this is because present study did not look at seedlings directly
+		- if this is correct, then perhaps effects of recruitment-driven thermophilization will appear in future resurveys
+		- or, difference in spatial grain of analysis explains this difference... didn't try to understand this lmaooo
+- Insect damage increased rates of thermophilization, but conflicting effects of fire
+	- bark beetles tend to attack drought-stressed trees in the first place
+	- insect damage may also have direct effects on understory by modifying the canopy
+	- fire produced greater mortality-thermophilization and weaker growth-thermophilization
+		- a prior study suggests that cool-associated tree taxa have poor tolerance, in which case increased temperature may just be killing these species
+- Stronger thermophilization on pole-facing, cool hillslopes, possibly because equator-facing sites already had more tree-adapted species at baseline
+	- produces possible biotic homogenization in topographically-heterogeneous landscapes, incl. reduced turnover among subplots and reduced landscape-level richness
+
+
+Ooh this is super interesting. Community-weighted trait means similar to a population-weighted trait means - interesting! Wonder also about community-weighted variance and its effects on thermophilization rates... how easy is that to figure out? Or can one even figure out community-weighted variance in the same way? Or is this really just species diversity? Or maybe related but not a perfect correlate.
+
+But regardless it seems cool. The increase in community means did appear to be driven more by survival than anything else. What I think we can use from this is that with increased warming (and related changes), there is a large mortality that influences trait means... not totally sure if there is a straight line here to population means, but assuming there is variation among species traits that influence survival, there should also be intraspecific trait differences that influence this as well right? If there is heritable variation in these traits (big if) then we should expect adaptation.
+
+Note that this fits in much more with the B&L-mode of change! In fact, if we can treat the communities as similar to a population with trait variation, then this in fact does look like their lagging rates of change. Very interesting!
+
+Also I wonder if there is a way to apply longevity to this? Or at least look at species traits from FIA.
+
 
 
 # Incomplete stuff
