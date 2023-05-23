@@ -1526,6 +1526,49 @@ Note that this fits in much more with the B&L-mode of change! In fact, if we can
 Also I wonder if there is a way to apply longevity to this? Or at least look at species traits from FIA.
 
 
+### Lande, R. 1982. A quantitative genetic theory of life history evolution.
+
+- Life history evolution typically assumes some quantity is being maximized...
+	- Maynard Smith (1978): optimize expected number of individuals over lifetime
+	- Fisher (1958), Charlesworth (1980): in a constant environment, LH evolution should maximize population growth rates or population size itself
+	- It's also possible that there are multiple stable equilibria
+- Dynamic models of LH evolution should include necessary or relevant constraints (can come from quantitative genetics theory)
+##### Model
+- Assume same patterns of age-specific seletion on both sexes, no sexual dimorphism
+- Life history represented as a vector of traits, $z_n$, with elements properly scaled to be gaussian with mean $\bar{z}$ and vcov matrix $P$
+	- each of the elements of $P$ can be decomposed into additive genetic and environmental components, s/t $z = x + e$, and $P = G + E$
+	- assume breeding values and environmental effects are multivariate normal
+	- any system of mating consistent with MV normality is allowed (totally random, assortative by phenotype, assortative by age)
+	- elements of $z$ may be, e.g., individual growth curve parameters
+- let individuals with phenotype $z$ have fertility and mortality rates at age $a$ defined by $m_a(z)$ and $mu_a(z)$ (respectively)
+	- probability of survival is $l_a(z) = \exp{-\int_0^a mu_y(z) dz}$, i.e., exponentiated negative integral of mortality over age
+	- fitness at age $a$ of individuals with LH z is $w_a(z) = l_a(z) m_a(z)$
+	- let the expected fitness of a newly-conceived cohort at age $a$ be $\bar{w}_a$
+	- with assumptions of maximum age of reproduction or non-zero survival, can define $\int_a^\infty exp{-ra} \bar{w}_a da = 1$ 
+		-  $r$ is rate of increase of population in the absence of evolutionary changes when phenotypic variation is non-heritable or population is at equilibrium
+	- (some other stuff in here: generation time, stable age distribution, reproductive number...)
+- Assume selective forces on a population are weak and change only very slowly over time (rel. to typical demographic processes)
+	- population then should (disregarding transient dynamics) track a "stable" age distribution with population size $N$ governed by $dN/dt = rN$
+	- under assumptions that mean the rate of evolution of mean life history phenotype in unselected (newly-conceived) individuals is $d\bar{z}/t = G \grad r$
+		- $\grad r$ is the gradient of $r$ with respect to z, i.e., vector of partial derivatives of $r$ wrt elements of $z$, i.e., sensitivity of growth rate to each LH trait value
+	- above can be expressed also as $d\bar{z}/dt = \sum_j=1^n G_ij dr/d\bar{z}_j$, i.e., sensitivity of growth rate to each LH trait value, weighted by variance/covariances
+	- it can be shown (appendix) that selection gradient takes form $\grad r = P^{-1} Cov(w(z), z)),$
+		- RHS of this equation is partial regression coefficients of trait on relative fitness (holding all else constant)
+	- also in appendix: relative fitness of a LH trait  can be approximated by age-specific fecundity and mortality rates
+		- weights on these processes depend on present and future reproductive values
+	- conclusion from all this: changes in age-specific fecundity and mortality rates, independent of the phenotype $z$, can still alter relative fitnesses of individuals with different life histories (duh?)
+	- defining $\bar{W} = exp{r}$ as the mean absolute fitness per unit time allows $\grad r = \grad \log{\bar{W}},$ allowing for some other things...
+	- from this it can also be shown that $dr/dt \geq 0,$ i.e., rate of population growth is always increased by life history evolution at rates proportional to the selection gradient and the degree of additive genetic variance/covariance $G$
+	- in a constant environment, fitness (and population growth) will typically be optimized at some local optimum of $r,$ akin to the adaptive topography for phenotypic evolution
+##### Discussion
+- Some studies showing effects of selection and relating them to variances and covariances in fitness components (often negative)
+	- morphological, physiological, behavior characteristics are often under joint stabilizing selection
+		- as trait distributions move towards this optimum, additive genetic correlations will typically decrease, depleting additive genetic variance and increasing the proportion of nonadditive genetic variance in fitness (is the depletion due to stabilizing selection??)
+	- for characters that are not direct components of fitness, approximations where the phenotypic vcov matrices are held constant typically perform well for a few generations
+
+This is more about the evolution of LH rather than evolutionary consequences of LH. Not sure there's a ton in here that is directly relevant to this project, particularly as I am only working on a single trait.
+
+
 
 # Incomplete stuff
 
