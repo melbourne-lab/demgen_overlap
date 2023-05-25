@@ -1569,6 +1569,72 @@ Also I wonder if there is a way to apply longevity to this? Or at least look at 
 This is more about the evolution of LH rather than evolutionary consequences of LH. Not sure there's a ton in here that is directly relevant to this project, particularly as I am only working on a single trait.
 
 
+### Willi, Y., and Hoffmann, A.A. 2009. Demographic factors and genetic variation influence population persistence under environmental change. Journal of Evolutionary Biology.
+
+- Lynch and Lande's (1993) model: first one to merge quantitative genetics with populatin persistence
+	- Growth rate of sexual population comes from four loads:
+		- Phenotypic variation during development (? reads like variance load)
+		- Lag load is how much the population mean differs from the optimum
+		- Two other types of load due to genetic drift and stochasticity
+			- Genetic drift causes deviation of realized phenotypes from expectation and is (inversely) proportional to N_e
+			- Stochasticity in selection also causes departure from the optimum
+	- Burger and Lynch (1995) noted that stochasticity in genetic variation, demography, and environment can produce extinctions
+- Empirical evidence of load including those not mentioned in L&L93 or B&L95, particularly loads at small population size
+	- inbreeding depression, accumulation or fixation of deleterious alleles, Allee effects, demographic variability from stochasticity in vital rates
+	- refs herein
+- Here: empirical look at these types of load and their relationships to population size in a Drosophila system
+##### Methods
+- Study organism: *Drosophila birchii* native to tropical rainforests in NE Australia
+	- collected from six populations, establishment of six "isolines"
+	- 28 experimental populations of size 20 (18 reps), 100 (eight reps), 1000 (two reps), created from 15 randomly chosen isofemale lines per site
+		- more populations founded by mixing flies from different origins (>20 lines?)
+	- populations maintained in vials w/ 20 individuals/vial
+- Estimated natural rate of increase ($r = \log{R_0}$ where $R_0$ is mean number of offspring per individual) beginning at generation 4
+	- in proceeding 10 generations, 12 populations at size 20 went extinct
+	- assess if population mean $r$ and within-population s.d. in $r$ depended on population size (mixed effects? models)
+- After ten generations held at or below initial size, populations exposed to directional selection
+	- populations flushed (???) to at least 200 flies for 5-6 populations
+	- selection for heat-knockdown resistance for 4-5 generations
+		- resistance is time until fly was incapacitated following heat exposure
+		- most resistant 50% of females transferred to vials for ovipositioning, mated with males with similar resistance levels
+		- compared to lines with >200 individuals
+		- estimated selection intensity, selection differential, heritability, additive genetic variance
+- Simulation stuff: estimate maximal rate of env. change $k_C$ (minutes of heat resistance per generation) for which populations can maintain $r \geq 0$
+	- assume trait is subject to stabilizing selection, with optimum moving deterministically and unidirectionaly
+	- let $r^*$ be the growth rate in the absence of selection (but including drift and inbreeding depression)
+	- formula for $k_C$ as defined by L&L93
+	- also use some analytical estimates from B&L95 to estimate growth rates, mean lag, mean variance
+	- simulation stuff to get time until extinction
+##### Results
+- Populations of size 20 had lower $r$ over time than the other two sizes
+	- but no sign. difference between 100 and 1000
+	- similar pattern for standard deviation in $r$
+	- suggests genetic drift (independent of env. change) in small populations
+- Heritability of knockdowns was low, but insign. differences among the size groups
+- Small population had significantly lower additive genetic variance than the size-100 populations
+	- insignificant differences at other contrast levels but mean $V_A$ in size-1000 populations was smaller than for size-100 populations (!)
+	- correspondingly higher $k_C$ for size 100 compared to size 20, with size 1000 intermediate (!)
+- Tight relationship between mean reproductive rate, stochasticity, and time to extinction in the small populations
+	- small populations had no relationship between simulated time to extinction and $k_C$
+	- for low $k_C$, differences in time to extinction among size-100 and size-1000, but for intermediate or fast $k_C$ nearly-identical extinction times
+- Fig. 3: simulated times-to-extinction as a function of growth rate, stochasticity in growth rate, and additive genetic variacne for different sizes
+	- rapid (<50 gen) time to extinction for size-20 populations, unless $r$ was very large and $V_A$ was small
+	- for size-100 populations, increasing $V_a$ increased time to extinction only for high $r$, low stochasticity in $r$
+	- for size-1000 populations, for intermediate-to-large $r$, increasing $V_A$ increased time to extinctions rapidly, similar effects for lower stochasticity in $r$
+##### Discussion
+- Differences in reproduction and additive variance between small-medium populations but not so much for largest ones
+	- intermediate-size populations did seem to have some negative impact of stochasticity and drift (support...?)
+- Relationship between population size and fitness: size-20 populations seem to have ~50% of the fitness of size-1000 popiulations, in line with other studies (e.g., Reed 2005)
+	- seems like an effect of inbreeding depression, or at least that's what Reed (2005) concludes and O'Grady et al. (2006) found
+- Yes - higher stochasticity in $r$ for smaller populations
+- Additive genetic variance: the small-medium comparison result makes sense, the medium-large is harder to explain
+	- may be an effect of drift-induced rise observed in some other settings (e.g., Van Buskirk and Willi 2006, wherein traits with a non-additive basis may have an increase in $V_A$ following a bottleneck)
+
+
+Hmm... might have been useful for the NDD project and its basics but less so here. The interesting results are simulation-based so not something I'm inclined to cite for empiricism. 
+
+
+
 
 # Incomplete stuff
 
